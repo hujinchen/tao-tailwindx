@@ -55,6 +55,7 @@ const tarball = join(host, packed[0].filename)
 const manifest = {
 	name: 'tao-tailwindx-demo',
 	version: metadata.version,
+	type: 'module',
 	private: true,
 	devDependencies: {
 		[metadata.name]: `file:./${packed[0].filename}`
@@ -81,6 +82,18 @@ const hostRequire = createRequire(join(host, 'package.json'))
 const installedEntry = hostRequire.resolve(metadata.name)
 assert.ok(installedEntry.startsWith(join(host, 'node_modules') + '/'))
 assert.deepEqual(Object.keys(manifest.devDependencies), [metadata.name])
+// 从安装后的宿主验证示例使用的静态导入，避免误用源码项目中的包。
+execFileSync(
+	process.execPath,
+	[
+		'--input-type=module',
+		'--eval',
+		`import assert from 'node:assert/strict';
+import { uniAppXTailwind } from 'tao-tailwindx';
+assert.ok(Array.isArray(uniAppXTailwind()));`
+	],
+	{ cwd: host, stdio: 'inherit' }
+)
 // 在 pnpm 严格布局中，宿主不能直接解析插件的传递依赖；CSS 必须从公开入口加载。
 if (manager === 'pnpm')
 	assert.throws(() => hostRequire.resolve('tailwindcss'), { code: 'MODULE_NOT_FOUND' })
@@ -97,8 +110,8 @@ await writeFile(
 )
 await writeFile(
 	join(host, 'README.md'),
-	'# Tao Tailwind X 独立示例\n\n' +
-		'只安装 tao-tailwindx，不依赖 Tao-Unix 组件库；插件来源为随工程附带的 npm tarball。\n\n' +
+	'# Tao Tailwind X 示例\n\n' +
+		'插件通过随工程附带的 npm tarball 安装。\n\n' +
 		'解压后执行 pnpm install，再用 HBuilder V 或 HBuilderX 打开工程并运行。\n\n' +
 		'npm 正式发布后，也可改为 pnpm add -D tao-tailwindx。Vite 与 CSS 均通过包名接入。\n'
 )
@@ -122,7 +135,7 @@ try {
 		)
 		assert.match(result.code, /--brand:\s*#2563eb/)
 		assert.doesNotMatch(result.code, /\.text-lg\s*\{|\.text-brand\s*\{/)
-		assert.doesNotMatch(result.code, /@apply|--tao-/)
+		assert.doesNotMatch(result.code, /@apply/)
 		assert.match(result.code, platform === 'web' ? /:root\s*\{/ : /page\s*\{/)
 		const page = join(host, 'pages/index.uvue')
 		const classes = plugins.find((plugin) => plugin.name === 'uniappx-tailwind-important-class')
@@ -147,4 +160,4 @@ try {
 }
 console.log(`${manager} 单包安装及公开入口 Node 检查通过：${host}`)
 console.log(`产物：${tarball}`)
-console.log('独立宿主仅声明插件；内部依赖由包管理器安装。这不是框架 E2E 或真机验证。')
+console.log('检查覆盖静态导入与插件样式处理；完整项目编译与真机运行需另行验证。')

@@ -139,10 +139,10 @@ test('directory scanning detects added and deleted candidates without watcher no
 	})
 })
 
-test('Windows rename retry is opt-in and warnings have no library-specific prescription', async () => {
+test('Windows 缓存重试与颜色变量显式启用，原生主题警告使用通用建议', async () => {
 	const source = await readFile(new URL('../src/index.mjs', import.meta.url), 'utf8')
 	assert.match(source, /utsRenameRetry:\s*options\.utsRenameRetry\s*\?\?\s*false/)
-	assert.doesNotMatch(source, /use Tao-Unix semantic theme tokens/)
+	assert.match(source, /use platform-compatible theme classes or CSS variables instead/)
 	assert.match(source, /colorVariables:\s*options\.colorVariables\s*\?\?\s*\[\]/)
 })
 

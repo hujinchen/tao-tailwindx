@@ -1,6 +1,6 @@
 # Tao Tailwind X 开发与发布
 
-本项目独立维护 npm 包 `tao-tailwindx`，首个版本沿用 `0.3.0`。源码直接使用 ESM，不需要额外打包器。
+源码直接使用 ESM，无需额外打包。
 本文件供维护者使用，不进入 npm 发布包。
 
 ## 项目结构
@@ -9,7 +9,7 @@
 - `tailwind.css`：公开 CSS 入口，在包内解析 Tailwind 依赖。
 - `src/`：编译、扫描、class 转换、CSS 适配与主题导出实现。
 - `test/`：Node 回归；`test/fixtures/host/` 是独立的 uni-app x 示例夹具。
-- `scripts/prepare-release-host.mjs`：实际打包插件，在临时独立宿主只安装一个包，检查六端样式与 `@apply`。
+- `scripts/prepare-release-host.mjs`：实际打包插件，在临时宿主检查安装、静态导入、六端样式与 `@apply`。
 - `README.md`、`CONFIGURATION.md`、`STYLE-GENERATION.md`：用户接入与配置说明。
 - `CHANGELOG.md`、`LICENSE`：版本记录与 MIT 许可。
 
@@ -37,7 +37,8 @@ pnpm run test:package --npm
 | `NODE_PATH`                   | `uniapp-cli-vite/node_modules` 与其 `@dcloudio/uni-cli-shared/lib/dom2/app`；用系统路径分隔符连接 |
 
 这些路径位于 SDK 的 `plugins/` 下。HBuilder V 使用 `code --locate-extension dcloud.hbuilderx-uniapp-sdk` 定位当前 SDK，避免写死扩展版本。
-发布检查输出独立宿主和 tarball 的绝对路径。示例仅声明本地 tarball，内部依赖由包管理器安装；正式发布前也能运行，不依赖 Tao-Unix 源码。
+发布检查输出临时宿主和 tarball 的绝对路径。宿主仅声明本地 tarball，内部依赖由包管理器安装；正式发布前即可运行。
+生成宿主的 `package.json` 设置 `"type": "module"`，`vite.config.js` 使用顶部静态导入，与接入文档一致。
 
 ## 发布到 npm
 

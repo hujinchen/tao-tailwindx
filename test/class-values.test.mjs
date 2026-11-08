@@ -37,8 +37,8 @@ test('v-pre 中花括号之间的真实标签仍转换，结束后恢复插值�
 
 test('class 快速返回保持全部空白及嵌套输入语义，特殊字符继续转换', () => {
 	const tokens = [
-		't-row',
-		'tao-theme-light',
+		'app-row',
+		'app-theme-light',
 		'flex-row',
 		'_item-12',
 		'w-[13px]',
@@ -55,9 +55,9 @@ test('class 快速返回保持全部空白及嵌套输入语义，特殊字符�
 				const value = `${space}${left}${space}${right}${space}`
 				assert.equal(normalizeClass(value), value.replace(/\S+/g, toSafeClassName))
 			}
-	const value = ['t-row flex-row', null, ['w-[13px]', false], { 'p-4!': true, 'hidden': false }]
+	const value = ['app-row flex-row', null, ['w-[13px]', false], { 'p-4!': true, 'hidden': false }]
 	const copy = structuredClone(value)
-	assert.equal(normalizeClass(value), 't-row flex-row w-13px p-4-important')
+	assert.equal(normalizeClass(value), 'app-row flex-row w-13px p-4-important')
 	assert.deepEqual(value, copy)
 })
 
@@ -220,7 +220,7 @@ test('helper 只注入当前平台启用的 setup，新增 setup 继承生效普
 
 test('关闭重复登记保持静态、动态和 PT 绑定转换结果一致', () => {
 	const code = `<template><view class="p-4!" :class="classes" :hover-class="'bg-[#000]'" />
-<t-button :pt="pt" v-bind="bindings" /></template>
+<app-button :pt="pt" v-bind="bindings" /></template>
 <script setup>
 const classes = ['w-1/2', 'm-2!']
 const pt = { text: 'text-[#fff]' }
@@ -275,7 +275,7 @@ test('$attrs 保留编译器的透传入口，class 在父级使用处转换', (
 test('结果分支转换 class，条件、对象条件和文案中的伪代码原样保留', () => {
 	const code = `<template><view :class="kind === 'large!' ? 'p-8!' : 'p-4!'" />
 	<view :class="{ 'p-12!': kind === 'large!' }" />
-	<t-button :pt="{ 'text': kind === 'large!' ? 'text-xl!' : 'text-sm!' }" /></template>
+	<app-button :pt="{ 'text': kind === 'large!' ? 'text-xl!' : 'text-sm!' }" /></template>
 	<script setup>const message = "pt: { text: 'hello/world!' }"</script>`
 	const result = normalize(code)
 	assert.ok(result.includes("kind === 'large!' ? 'p-8-important' : 'p-4-important'"))
@@ -288,7 +288,7 @@ test('结果分支转换 class，条件、对象条件和文案中的伪代码�
 
 test('hoverClass 和 hover-class 的静态配置与动态绑定使用相同规则', () => {
 	const result = normalize(`<template><view :hoverClass="raw" />
-<t-button v-bind="{ hoverClass: 'p-4!', 'hover-class': 'bg-[#000]', title: 'p-4!' }" /></template>
+<app-button v-bind="{ hoverClass: 'p-4!', 'hover-class': 'bg-[#000]', title: 'p-4!' }" /></template>
 <script setup>const raw = 'bg-[#000]'</script>`)
 	assert.ok(result.includes(':hoverClass="__twClass(raw)"'))
 	assert.ok(result.includes("hoverClass: 'p-4-important'"))
@@ -315,7 +315,7 @@ test('动态 v-bind 键在使用处判断，正则配置不覆盖内置 class �
 })
 
 test('普通变量、ref、带泛型 computed、别名与 v-bind 仅在绑定处转换', () => {
-	const code = `<template><view :class="[plain, wrapped, derived]" /><t-button v-bind="alias" /></template>
+	const code = `<template><view :class="[plain, wrapped, derived]" /><app-button v-bind="alias" /></template>
 	<script setup lang="ts">
 	const plain = 'p-4!'
 	const wrapped = ref('p-8!')
@@ -361,7 +361,7 @@ test('无分号声明与 getter 返回值止于表达式边界，忽略脚本中
 
 test('reactive 对象的 PT 与 class 绑定保持原对象及业务字段', () => {
 	const code = `<template>
-		<t-button :pt="buttonState" />
+		<app-button :pt="buttonState" />
 		<view :class="buttonState.iconClass" />
 	</template>
 	<script setup>
@@ -384,7 +384,7 @@ test('reactive 对象的 PT 与 class 绑定保持原对象及业务字段', () 
 test('执行转换后的绑定：文案、字符串比较与共享对象保持原值', () => {
 	const code = `<template>
 		<view :class="classes" :hover-class="raw" />
-		<t-button :pt="pt" v-bind="options" />
+		<app-button :pt="pt" v-bind="options" />
 	</template><script setup>
 	const raw = 'bg-[#000]'
 	const classes = [raw, { 'p-4!': raw === 'bg-[#000]' }]

@@ -145,14 +145,14 @@ test('未配置主题导出时不注册生成器，自定义 class 属性仍按�
 	)
 	assert.ok(
 		plugin
-			.transform(`<t-demo :pt="{ root: 'p-2!' }" />`, '/demo.uvue')
+			.transform(`<app-demo :pt="{ root: 'p-2!' }" />`, '/demo.uvue')
 			.code.includes('p-2-important')
 	)
 	const defaultPlugin = defaults.find(
 		(plugin) => plugin.name === 'uniappx-tailwind-important-class'
 	)
 	assert.equal(
-		defaultPlugin.transform(`<t-demo :pt="{ root: 'p-2!' }" />`, '/default.uvue'),
+		defaultPlugin.transform(`<app-demo :pt="{ root: 'p-2!' }" />`, '/default.uvue'),
 		null
 	)
 })

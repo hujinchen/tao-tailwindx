@@ -1,13 +1,10 @@
 import { defineConfig } from 'vite'
 import uni from '@dcloudio/vite-plugin-uni'
+import { uniAppXTailwind } from 'tao-tailwindx'
 import { fileURLToPath } from 'node:url'
 
-export default defineConfig(async () => {
-	const { uniAppXTailwind } = await import('tao-tailwindx')
-	return {
-		plugins: [
-			uniAppXTailwind({ entry: fileURLToPath(new URL('./tailwind.css', import.meta.url)) }),
-			uni()
-		]
-	}
+const entry = fileURLToPath(new URL('./tailwind.css', import.meta.url))
+
+export default defineConfig({
+	plugins: [uniAppXTailwind({ entry }), uni.default()]
 })

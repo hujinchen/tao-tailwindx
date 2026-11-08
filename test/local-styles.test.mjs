@@ -950,7 +950,7 @@ test('跨端静态 v-bind 和别名 PT 均按 SFC 局部生成', async (t) => {
 		'mp-weixin',
 		'mp-alipay'
 	]) {
-		const source = `<template><t-button v-bind="alias" /></template><script setup>
+		const source = `<template><app-button v-bind="alias" /></template><script setup>
 		const styles = { 'text': 'text-xl!', loading: 'mr-8' }
 		const options = computed<Props>(() => ({ title: 'hello/world!', pt: styles }))
 		const alias = options
@@ -1117,7 +1117,7 @@ test('自定义属性候选按文件局部生成，公共手写 CSS 与 inline �
 		inline: '@source inline("bg-blue-500");',
 		page: `<template>
 			<view class="bg-red-500" hover-class="bg-blue-500" customClass="p-4" paletteClass="m-4" data-class="text-green-500" />
-			<t-input :pt="{ root: 'border-[#000000]' }" />
+			<app-input :pt="{ root: 'border-[#000000]' }" />
 			<x-special tone="border-[#000000]" />
 			<view :class="skinName" />
 			<view :unknown-class="'text-yellow-500'" />
@@ -1183,7 +1183,7 @@ test('自定义属性候选按文件局部生成，公共手写 CSS 与 inline �
 
 test('PT 与普通 class 共享变量时局部生成，保持重要号', async (t) => {
 	const fixture = await createFixture(t, {
-		page: `<template><view :class="iconClass" /><t-button :pt="{ icon: iconClass }" /></template>
+		page: `<template><view :class="iconClass" /><app-button :pt="{ icon: iconClass }" /></template>
 		<script setup>const iconClass = 'text-2xl!'</script>`
 	})
 	const plugins = getPlugins(fixture.entry, { customAttributes: { '*': ['pt'] } })
@@ -1203,10 +1203,10 @@ test('PT 与普通 class 共享变量时局部生成，保持重要号', async (
 
 test('主包、分包页面与组件采用相同的局部 PT 规则', async (t) => {
 	const fixture = await createFixture(t, {
-		page: `<template><t-button :pt="{ loading: 'mr-8', text: 'font-bold' }" /></template>`
+		page: `<template><app-button :pt="{ loading: 'mr-8', text: 'font-bold' }" /></template>`
 	})
 	const component = join(fixture.directory, 'component.uvue')
-	await writeFile(component, `<template><t-button :pt="{ icon: 'text-2xl!' }" /></template>`)
+	await writeFile(component, `<template><app-button :pt="{ icon: 'text-2xl!' }" /></template>`)
 	const pagesFile = join(fixture.directory, 'pages.json')
 	for (const routes of [
 		'{ "pages": [{ "path": "page" }] }',
@@ -1231,7 +1231,7 @@ test('主包、分包页面与组件采用相同的局部 PT 规则', async (t) 
 
 test('路由变化不再改变同一 SFC 的工具类归属', async (t) => {
 	const fixture = await createFixture(t, {
-		page: `<template><t-button :pt="{ loading: 'mr-8' }" /></template>`
+		page: `<template><app-button :pt="{ loading: 'mr-8' }" /></template>`
 	})
 	const pagesFile = join(fixture.directory, 'pages.json')
 	await writeFile(pagesFile, '{ "pages": [] }')
@@ -1275,7 +1275,7 @@ test('Web 页面归属使用 Vite root，支持真实分包和同类名的页面
 	)
 	const page = join(fixture.directory, 'feature/index.uvue')
 	const component = join(fixture.directory, 'feature/widget.uvue')
-	const source = `<template><t-button :pt="{ loading: 'mr-8' }" /></template>`
+	const source = `<template><app-button :pt="{ loading: 'mr-8' }" /></template>`
 	await writeFile(page, source)
 	await writeFile(component, source)
 	const plugins = getPlugins(entry, { customAttributes: { '*': ['pt'] } })
@@ -1304,7 +1304,7 @@ test('Web HMR 在普通 class 与 PT 间切换时保持局部归属', async (t) 
 		await writeFile(
 			fixture.page,
 			external
-				? `<template><t-button :pt="{ icon: 'text-2xl!' }" /></template>`
+				? `<template><app-button :pt="{ icon: 'text-2xl!' }" /></template>`
 				: '<template><view class="text-2xl!" /></template>'
 		)
 		plugins.app.watchChange(fixture.page)
@@ -1336,7 +1336,7 @@ test('App 明确使用的候选保留全局，未引用脚本不引入隐式全�
 
 test('App 的 PT 局部工具类复用全局主题变量，主题 oklch 转换为 rgb', async (t) => {
 	const fixture = await createFixture(t, {
-		page: `<template><t-slider :pt="{ track: 'bg-neutral-600' }" /></template>`
+		page: `<template><app-slider :pt="{ track: 'bg-neutral-600' }" /></template>`
 	})
 	await writeFile(join(fixture.directory, 'pages.json'), '{ "pages": [{ "path": "page" }] }')
 	const plugins = getPlugins(fixture.entry, { customAttributes: { '*': ['pt'] } }, 'app-android')
@@ -1385,11 +1385,11 @@ test('main.ts 全局配置通过公共 inline 显式声明', async (t) => {
 
 test('App 局部 @apply 透明度使用全局注入的主题 RGB 通道', async (t) => {
 	const fixture = await createFixture(t, {
-		theme: 'page { --tao-primary: #1677ff; }\n@theme inline { --color-primary: var(--tao-primary); }',
+		theme: 'page { --app-primary: #1677ff; }\n@theme inline { --color-primary: var(--app-primary); }',
 		page: '<template><view class="bg-primary/50" /></template>',
 		sources: "@source './App.uvue';\n@source './page.uvue';"
 	})
-	const colorVariables = [/^--tao-[\w-]+$/]
+	const colorVariables = [/^--app-[\w-]+$/]
 	const plugins = getPlugins(fixture.entry, { colorVariables }, 'app-android')
 	const app = await compileApp(plugins.app, fixture.app, fixture.directory)
 	const local = await plugins.apply.transform(
@@ -1397,8 +1397,8 @@ test('App 局部 @apply 透明度使用全局注入的主题 RGB 通道', async 
 		`${fixture.page}?vue&type=style&index=0&lang.css`
 	)
 
-	assert.match(app.css, /--tao-primary-rgb:\s*22,119,255/)
-	assert.match(local.code, /background-color:\s*rgba\(var\(--tao-primary-rgb\),0\.5\)/)
+	assert.match(app.css, /--app-primary-rgb:\s*22,119,255/)
+	assert.match(local.code, /background-color:\s*rgba\(var\(--app-primary-rgb\),0\.5\)/)
 	assert.doesNotMatch(local.code, /color-mix|@supports/)
 })
 

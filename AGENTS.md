@@ -1,8 +1,6 @@
 # Tao Tailwind X 维护约定
 
-每次回复称呼用户“涛哥”，说明、文档和新增注释使用简体中文。
-
-本项目只维护 npm 包 `tao-tailwindx`，面向 uni-app x Vapor 与 Tailwind CSS v4。`src/` 是唯一核心实现，`index.mjs` 与 `tailwind.css` 是公开入口。业务组件与主题管理器由消费工程维护。
+`src/` 存放核心实现，`index.mjs` 与 `tailwind.css` 是公开入口。
 
 - 保持公共 API 与配置兼容，改动聚焦；优先已有依赖，不新增第三方依赖或兼容分支。
 - 测试按风险选择，复用 `test/`，发布前运行 `pnpm test`、`pnpm run format:check` 与 `pnpm run test:package`；npm 安装检查添加 `--npm`。

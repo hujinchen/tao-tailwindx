@@ -1,8 +1,6 @@
 # Tao Tailwind X 配置与工作原理
 
-一个面向 uni-app x Vapor 模式的 Tailwind CSS v4 Vite 适配插件。
-
-它负责把 Tailwind v4 生成的 CSS 转换为更适合 uni-app x 原生渲染器的形式，同时处理
+插件将 Tailwind v4 生成的 CSS 转换为更适合 uni-app x 原生渲染器的形式，同时处理
 `.uvue` 中 Tailwind 重要号 class、Vue SFC 的 `@apply`，以及 App 全局 Tailwind 样式入口。
 Tailwind 本身由 `@tailwindcss/postcss` 编译，本插件负责编译流程和 Vapor 兼容处理。
 
@@ -30,7 +28,7 @@ Android、App iOS、HarmonyOS Next 和其他 uni-app x 目标端。
 - 保留 Vapor 5.31+ 支持的 `@keyframes`、`animation` 系列；`@apply animate-*` 同时保留关键帧定义。
 - 移除 `content`、`resize`、`@property` 和不适合原生端的 `display: block/grid/table`。
 - 展开 `@layer`，避免把 CSS cascade layer 交给 Vapor 编译器。
-- 全端保留 `@media (prefers-color-scheme: light/dark)` 主题规则；原生端仍移除响应式断点等其他媒体查询。
+- 全端保留 `@media (prefers-color-scheme: light/dark)` 主题规则；App 仍移除响应式断点等其他媒体查询，Web 和小程序保留。
 - 将 Tailwind 生成的 `:root` 变量作用域按平台改写：Web 使用标准 `:root`，原生端和小程序使用
   uni-app x 的 `page` 标签选择器。
 - 保留 `rem` 原单位，不提供单位兼容补齐；App 对 Tailwind 生成的可完全静态求值且保持属性语义的 `calc()` 做编译期折叠。
@@ -51,30 +49,30 @@ Android、App iOS、HarmonyOS Next 和其他 uni-app x 目标端。
 pnpm add -D tao-tailwindx
 ```
 
-Vite 与 uni-app 编译器由宿主工程或 IDE 提供。插件不依赖组件库或运行时主题管理器。
+Vite 与 uni-app 编译器由宿主工程或 IDE 提供。
 
-在 `vite.config.js` 中注册插件：
+在 ESM Vite 配置中注册插件（`vite.config.mjs`，或设置 `"type": "module"` 后的 `vite.config.js`）：
 
 ```js
 import { defineConfig } from 'vite'
 import uni from '@dcloudio/vite-plugin-uni'
+import { uniAppXTailwind } from 'tao-tailwindx'
 import { fileURLToPath } from 'node:url'
 
 const entry = fileURLToPath(new URL('./tailwind.css', import.meta.url))
 
-export default defineConfig(async () => {
-	const { uniAppXTailwind } = await import('tao-tailwindx')
-	return { plugins: [uniAppXTailwind({ entry }), uni()] }
+export default defineConfig({
+	plugins: [uniAppXTailwind({ entry }), uni.default()]
 })
 ```
 
 CLI 项目请把 Tailwind 入口调整到 `src/` 下，包名导入不变。完整步骤见[快速接入](./README.md)。
+配套 SDK 的 `@dcloudio/vite-plugin-uni` 使用 CommonJS 导出，ESM 配置通过 `uni.default()` 注册。
 
 插件同步返回一组 Vite plugins。Vite 原生支持嵌套插件数组，因此可以像普通 Vite 插件一样
-直接注册，不需要展开运算符。包仅提供 ESM；示例使用异步导入兼容以 CommonJS 加载配置的宿主，
-原生 ESM 配置也可使用静态 import。插件内部通过 `enforce: 'pre'` 和 `enforce: 'post'`
+直接注册，不需要展开运算符。插件内部通过 `enforce: 'pre'` 和 `enforce: 'post'`
 控制处理阶段，但同为 `pre` 的插件仍受注册顺序影响。必须将 `uniAppXTailwind()` 放在
-`uni()` 前面，让 `@apply` 先展开为 CSS；否则 Sass 会先解析 `p-12!` 等 Tailwind 语法，
+uni 插件前面，让 `@apply` 先展开为 CSS；否则 Sass 会先解析 `p-12!` 等 Tailwind 语法，
 触发 `expected ";"` 编译错误。
 
 ## Tailwind 入口
@@ -114,7 +112,7 @@ utilities-only 入口，以保持默认主题、工具类和组件 `@apply` 的�
 
 插件将匹配绝对 `entry` 的导入替换为编译后的工具类，保留其他导入与字体。
 页面可以直接使用 `<text class="text-brand">Brand</text>`，组件样式可以使用
-`@apply text-brand`。主题由宿主入口配置提供，不要求主题管理器。
+`@apply text-brand`。主题由入口配置提供。
 
 包含 `#ifdef` / `#ifndef` 的公共 CSS 可以从 `tailwind.css` 间接导入。插件展开入口的本地 CSS
 导入时，会按当前平台执行 uni 条件编译，再交给 Tailwind；因此 App 不会收到 Web 分支中的
@@ -131,17 +129,17 @@ SFC 的 HTML 条件注释与脚本、样式内容分别识别，模板文案中�
 全局仅保留 App 作用域和公共 CSS 正向 `@source inline(...)` 明确声明的 utility。
 函数返回值、循环成员和事件赋值不再因为 class 使用路径未被识别而兜底全局。
 
-文件型 `@source` 只决定扫描范围，不表示全局归属。例如 `main.ts` 中的应用默认 PT，
+文件型 `@source` 只决定扫描范围，不表示全局归属。例如 `main.ts` 中的应用默认样式配置，
 需要在公共 CSS 显式声明 `@source inline('mt-12 mx-12 mb-20');`。页面也使用这些类时，两处各保留一份。
 共享主题变量、keyframes 等基础定义仍由公共编译结果提供，手写公共 CSS 不随 utility 裁剪。
 局部 utility 直接复用入口已编译、清洗的 CSS 片段，保留生成顺序、条件规则和重要号，
 不再为每个 SFC 生成中间 `@apply` 并重复调用 Tailwind。手写 `@apply` 仍按原编译链就地展开。
-完整分类、PT 隔离边界、迁移方式和验证记录见
-[样式生成、隔离与去重策略](./STYLE-GENERATION.md)。
+完整分类、样式隔离规则、迁移方式和验证记录见
+[样式生成、隔离与迁移指南](./STYLE-GENERATION.md)。
 
-同名绑定简写（如 `:pt`、`:hover-class`）与显式绑定使用相同转换。
+同名绑定简写（如 `:class`、`:hover-class`）与显式绑定使用相同转换。
 属性扫描完整跳过事件、指令等非 class 属性的值，不改写其中的业务字符串。
-动态绑定中的实体表达式保留原文，由 Vue 解码求值后再转换 class/PT 结果，保持比较条件与函数参数的语义。
+动态绑定中的实体表达式保留原文，由 Vue 解码求值后再转换绑定值，保持比较条件与函数参数的语义。
 静态属性中的数值实体、基本命名实体及空白实体先解码，再转换安全类名；扫描因此缺少的候选会补编译，
 继续遵守 `@source not` 排除规则及原有局部/全局归属。首次编译已生成的完整单类 utility 会从补编译候选中扣除，
 全部已生成时跳过第二次编译；部分缺失时只补缺失项。手写同名 CSS、关系选择器和伪类规则不作为去重证据。
@@ -197,11 +195,11 @@ uniAppXTailwind({
 - `componentLocalStyles`：默认 `true`。按 `.uvue` 文件及脚本依赖收集完整候选，生成到对应局部样式模块。
   普通类名不变，特殊字符在绑定处转换为可读安全名，脚本原始数据不变。
   App 作用域和公共 CSS 的正向 inline 候选保留全局；未分配的独立脚本不自动全局化。
-  页面、组件、PT 使用同一分配规则，不再依赖 `pages.json` 或完整 class 数据流证明。
+  页面和组件使用同一分配规则，不再依赖 `pages.json` 或完整 class 数据流证明。
   Web 复用可用 style，无可用块时新增 scoped style；App/小程序使用普通 style 交由框架隔离。
   已有外链 style 不阻止局部注入。局部规则保持 Tailwind 顺序与目标平台允许的媒体条件，
   仅 `@apply` 不额外生成独立 utility。设为 `false` 则关闭自动局部注入，保留全局 utility 模式。
-  从 0.2.0 升级需迁移依赖隐式全局的应用配置和跨组件 PT，详见策略文档。
+  从 0.2.0 升级需迁移依赖隐式全局的样式配置，详见策略文档。
 - `include`：Vapor CSS 清洗插件处理的额外文件匹配规则，默认匹配 `.css`、`.pcss` 和 `.postcss`。
 - `exclude`：排除规则，默认排除 `node_modules` 和 `unpackage`。
 - `utsRenameRetry`：是否为 HBuilderX 的 uts2js 滚动缓存重试并兜底 `rename`，所有平台默认 `false`。
@@ -215,7 +213,8 @@ uniAppXTailwind({
 - `themeValues`：可选的 `{ input: string | string[], output: string }`。按输入 CSS 的顺序导出变量数据，
   不配置时不生成文件。路径应为绝对路径，`output` 不能覆盖输入文件。
 - `tailwind`：传递给 `@tailwindcss/postcss` 的插件选项。
-- `customAttributes`：声明额外的 class 属性。值可以是属性名字符串或正则表达式；静态值和动态绑定都会转换。
+- `customAttributes`：按标签名声明额外的 class 属性，默认 `{}`；`*` 表示所有标签。
+  每个标签对应属性名字符串或正则表达式的数组；静态值和动态绑定都会转换。
   属性值可以是字符串、动态表达式或对象；对象会递归转换所有成员中的 class 字符串。
 
 `entry` 应传入上述 `fileURLToPath(new URL(...))` 得到的绝对路径，而不是依赖当前工作目录。
@@ -247,9 +246,9 @@ export const themeValues: Map<string, string> = new Map<string, string>([
 ])
 ```
 
-产物只包含变量表，不导入 Vue 或组件库，不解释皮肤命名、变量别名、节点局部覆盖或 CSS 级联。
-它也不执行颜色转换；取值函数和主题切换逻辑由使用方维护。Tao-Unix 自身提供 `getThemeValue()`，
-接入 Tao-Unix 的业务项目只需配置数据输入和输出，不需要实现该函数。
+产物只包含变量表，不解释变量别名、节点局部覆盖或 CSS 级联。
+它也不执行颜色转换；项目可直接使用 `themeValues.get('light:page:--brand')` 读取已导出的值，
+按需在运行时代码中实现取值封装、主题切换与颜色转换。
 包含变量的复杂媒体查询、`@supports`、嵌套规则等无法用该数据模型表达时，导出明确报错；
 空变量值、缺失输入文件同样报错，不用不完整数据覆盖已有产物。
 
@@ -349,10 +348,10 @@ Tailwind 会根据扫描到的文本生成候选 CSS。说明文本或占位示�
 ## Class 短名规则
 
 普通 class（仅含 `[a-zA-Z0-9_-]`）保持原样，包括 `flex-row`、`p-4`、`-mt-4`、
-`t-tag__text`，已有业务前缀也保持不变。含特殊字符的 class 恢复可读短名：末尾 `!`
+`app-tag__text`，已有业务前缀也保持不变。含特殊字符的 class 恢复可读短名：末尾 `!`
 转换为 `-important`，符号序列简化为 `-`，合并重复分隔符并移除尾部分隔符，保留首部负号。
 任意值开头的数字负号使用 `neg-`，小数点使用 `dot`，只转换含特殊字符的输入。
-模板 class、CSS selector 和 Tao PT 的绑定结果使用相同规则，不全量编码、不使用哈希，也不添加保留命名空间。
+模板 class、CSS selector 和已配置自定义样式属性的绑定结果使用相同规则，不全量编码、不使用哈希，也不添加保留命名空间。
 
 ```text
 p-0!            -> p-0-important
@@ -374,15 +373,14 @@ p-1-5          -> p-1-5
 源码继续使用原始 Tailwind class，更新后重新编译模板与 CSS。
 
 归一化对重复输入幂等，无须缓存模块完整输出，已有短名可直接再次处理。CSS selector
-在归一化前解码 CSS 转义，保留十六进制转义及其终止空白的支持；模板和 PT 不执行 CSS 解码。
+在归一化前解码 CSS 转义，保留十六进制转义及其终止空白的支持；模板属性值不执行 CSS 解码。
 归一化只作用于模板的 `class`、`hover-class`、已配置的 `customAttributes` 和 `v-bind` 样式字段。
 属性表达式中可直接确定的字面量在构建时转换；变量、函数返回值、动态对象键和带 JS 转义的字符串，
 由插件在绑定处注入共享转换函数，先求值再转换。普通 `.uvue` / `.ts` / `.uts` 脚本的变量、
 候选数组、比较条件、全局配置和列表项始终保留原值，不反向改写字符串定义。
-`customAttributes: { '*': ['pt'] }` 会在 PT 或 `v-bind` 的使用处转换对应样式字段；
-PT 仅复制发生变化的对象路径，`v-bind` 的业务字段与事件保留原值，均不修改传入对象。
+自定义属性的样式对象仅复制发生变化的路径；`v-bind` 仅转换匹配的样式字段，
+业务字段与事件保留原值，均不修改传入对象。
 `v-bind="$attrs"` 保留原写法：透传的 class 已在父级使用处转换，避免破坏小程序编译器的原生节点透传识别。
-Tao 的 `parsePt()` 仅浅复制对象并转换类型，保留原始字段值、空白及嵌套对象引用，不修改传入对象。
 
 例如 `buttonStyle` 同时用于 class 和文字展示时，脚本中的 `bg-[#000]` 保持不变，
 文字仍显示 `bg-[#000]`，只有节点实际使用的 class 转换为 `bg-000`。共享转换函数由插件自动导入，
@@ -408,7 +406,7 @@ CSS 中对应的 Tailwind 重要号规则也会被转换为相同的安全 selec
 自定义 class 属性须通过 `customAttributes` 显式声明，默认仅处理 `class` 和 `hover-class`。
 运行时转换不会生成新的 CSS；应使用扫描范围内的完整候选 class，或通过 `@source inline(...)`
 显式收录。`@source inline(...)` 只影响 CSS 生成，不修改脚本数据。共享转换函数复用构建阶段的
-类名映射规则，确保节点 class 与 CSS selector 一致，且不依赖 Tao-Unix 组件库。
+类名映射规则，确保节点 class 与 CSS selector 一致。
 
 ## `@apply` 工作方式
 
@@ -516,7 +514,7 @@ App 样式模块本身不 import 被扫描的源文件，构建工具默认不�
 验证热更新时要走 Vite 的文件变更钩子，再请求 `App.uvue` 样式模块；测试中不能只连续调用
 `plugin.transform()`。页面或 UTS 源文件变化应触发 `handleHotUpdate`，入口及其主题、皮肤 CSS
 依赖变化应触发 `watchChange`，然后检查重新编译结果是否包含最新的 class、变量值和 CSS 声明。
-包内独立 fixture 的 Node 单元测试覆盖了这三类变化，不读取宿主工程的主题或组件源码：
+Node 单元测试覆盖了这三类变化：
 
 ```bash
 pnpm test
@@ -552,7 +550,7 @@ rename 因此抛出 `EPERM: operation not permitted`，整次构建以 `[plugin:
 - App Vapor 5.31+ 的 `<text>` 支持 `word-break: normal / break-all`，三端拍平节点也支持；不依据语法列表推断 `keep-all`、`break-word` 可用，见[官方 word-break 表](https://doc.dcloud.net.cn/uni-app-x/css/word-break.html)。
 - `tailwind.optimize` 在所有平台固定为 `false`，即使调用方传入 `true` 也不启用等价样式改写。
 - 默认情况下，原生端不保留带 CSS 转义符的 class selector；Web 默认允许保留。
-- 本插件只负责 Tailwind CSS 编译和兼容性清洗，不负责实现原生端动画逻辑。CSS 动画按官方属性支持范围使用；需要脚本控制或兼容受限节点时，使用 uni-app x 已验证的动画 API 或组件内部的平台实现。
+- CSS 动画按官方属性支持范围使用；需要脚本控制或兼容受限节点时，使用 uni-app x 动画 API 或组件内部的平台实现。
 
 ## 限制
 
@@ -564,10 +562,10 @@ rename 因此抛出 `EPERM: operation not permitted`，整次构建以 `[plugin:
   显式加入，否则不会生成对应 CSS。
 - 文件级收集可能包含与 utility 同名的业务文本；这是保守扫描，不保证按运行时使用精确裁剪。
   共享脚本须位于 Tailwind 扫描范围，模块依赖不做按导出成员的 tree shaking。
-- 局部 style 遵守 uni-app x 的隔离契约。父组件 PT 中的类名虽在父组件局部生成，
+- 局部 style 遵守 uni-app x 的隔离契约。父组件传入的类名虽在父组件局部生成，
   也不能自动作用于子组件内部；需明确公共 CSS 或有效的 `externalClasses` 通道。
   `customAttributes` 只控制绑定处转换，不授权样式穿透。
-- PT 类名匹配后仍遵循 CSS 级联；覆盖组件已有样式或内联值时，按实际冲突使用重要号或组件对应的属性。
+- 类名匹配后仍遵循 CSS 级联；覆盖组件已有样式或内联值时，按实际冲突使用重要号或组件对应的属性。
 - 重要号 arbitrary value class 会映射为安全名称；模板静态 class 和运行时 class 必须保持一致，
   不能手动只修改其中一侧。
 
@@ -586,7 +584,7 @@ App 样式入口处理和 uts2js 滚动缓存的 rename 重试与兜底。
 只声明插件 tarball，由 pnpm 安装内部依赖，检查公开 JS / CSS 入口、六个目标平台的样式与 `@apply`。
 添加 `--npm` 可验证 npm 安装。
 示例只使用宿主相对路径，不链接本仓库的依赖。
-Tao-Unix 的组件回归在其独立工程中维护，不属于本包测试。
-以上检查都是 Node 单测或发布冒烟检查，不代替 HBuilder 编译、设备运行或框架 E2E。
+普通 Node 单测和发布冒烟检查不代替完整项目编译、设备运行或框架 E2E。
+配置 HBuilder V 配套 SDK 后，Node 回归还会执行真实 Vite watcher 和原生动画 CSS 编译检查；缺少 SDK 时相关测试会明确跳过。
 
 Node 构建工具需要复用主题解析时，可从 `tao-tailwindx` 导入 `parseThemeValues(css)`；返回的 Map 键为 `模式:选择器:变量名`。

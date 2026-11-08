@@ -293,27 +293,27 @@ test('根变量支持标准 Web 根选择器', () => {
 })
 
 test('保留 page 根变量并映射到已配置的根选择器', () => {
-	const webOutput = sanitize('page { --tao-primary: #1677ff; }', {
+	const webOutput = sanitize('page { --app-primary: #1677ff; }', {
 		rootSelector: ':root'
 	}).toString()
-	const appOutput = sanitize('page { --tao-primary: #1677ff; }').toString()
+	const appOutput = sanitize('page { --app-primary: #1677ff; }').toString()
 
-	assert.match(webOutput, /:root\s*\{[^}]*--tao-primary:\s*#1677ff/)
-	assert.match(appOutput, /page\s*\{[^}]*--tao-primary:\s*#1677ff/)
+	assert.match(webOutput, /:root\s*\{[^}]*--app-primary:\s*#1677ff/)
+	assert.match(appOutput, /page\s*\{[^}]*--app-primary:\s*#1677ff/)
 })
 
 test('所有平台都保留明暗配色方案媒体查询', () => {
 	for (const rootSelector of [':root', 'page']) {
 		const output = sanitize(
-			'@media (prefers-color-scheme: light) { page { --tao-primary: #1677ff; } }' +
-				'@media (prefers-color-scheme: dark) { page { --tao-primary: #3d8fff; } }',
+			'@media (prefers-color-scheme: light) { page { --app-primary: #1677ff; } }' +
+				'@media (prefers-color-scheme: dark) { page { --app-primary: #3d8fff; } }',
 			{ rootSelector, preserveColorSchemeMedia: true }
 		).toString()
 
 		assert.match(output, /@media\s*\(prefers-color-scheme:\s*light\)/)
 		assert.match(output, /@media\s*\(prefers-color-scheme:\s*dark\)/)
-		assert.match(output, /--tao-primary:\s*#1677ff/)
-		assert.match(output, /--tao-primary:\s*#3d8fff/)
+		assert.match(output, /--app-primary:\s*#1677ff/)
+		assert.match(output, /--app-primary:\s*#3d8fff/)
 	}
 })
 
@@ -450,12 +450,12 @@ test('Web scoped CSS 保留 Vue 作用域属性并按基础 class 校验', () =>
 })
 
 test('Web scoped 根选择器映射到平台根，同时保留其中的主题变量', () => {
-	const output = sanitize('page[data-v-abc123] { --tao-primary: #1677ff; }', {
+	const output = sanitize('page[data-v-abc123] { --app-primary: #1677ff; }', {
 		preserveVueScope: true,
 		rootSelector: ':root'
 	}).toString()
 
-	assert.match(output, /:root\s*\{\s*--tao-primary:\s*#1677ff/)
+	assert.match(output, /:root\s*\{\s*--app-primary:\s*#1677ff/)
 	assert.doesNotMatch(output, /data-v-abc123|\bpage\s*\{/)
 })
 
@@ -512,7 +512,7 @@ test('保留 Tailwind 转义的任意值及 important 类选择器', () => {
 	const output = sanitize(
 		`
 .text-\\[\\#fff\\] { color: #fff; }
-.text-\\[var\\(--tao-foreground-muted\\)\\] { color: red; }
+.text-\\[var\\(--app-foreground-muted\\)\\] { color: red; }
 .rounded-full\\! { border-radius: 12px; }
 .w-3\\/4 { width: 75%; }
 	`,
@@ -524,7 +524,7 @@ test('保留 Tailwind 转义的任意值及 important 类选择器', () => {
 
 	assert.ok(output.includes(`.${toSafeClassName('text-[#fff]')}{color:#fff}`))
 	assert.ok(
-		output.includes(`.${toSafeClassName('text-[var(--tao-foreground-muted)]')}{color:red}`)
+		output.includes(`.${toSafeClassName('text-[var(--app-foreground-muted)]')}{color:red}`)
 	)
 	assert.ok(output.includes(`.${toSafeClassName('rounded-full!')}{border-radius:12px}`))
 	assert.ok(output.includes(`.${toSafeClassName('w-3/4')}{width:75%}`))
@@ -629,51 +629,51 @@ test('转换 Tailwind color-mix 回退值中的主题变量透明度', () => {
 	const output = sanitize(
 		`
 page {
-	--tao-primary: #1677ff;
-	--tao-warning: #fa8c16;
-	--color-primary: var(--tao-primary);
+	--app-primary: #1677ff;
+	--app-warning: #fa8c16;
+	--color-primary: var(--app-primary);
 }
-.skin-red { --tao-primary: #fa2c19; }
+.skin-red { --app-primary: #fa2c19; }
 .text-primary-20 {
-	color: var(--tao-primary);
+	color: var(--app-primary);
 	@supports (color: color-mix(in lab, red, red)) {
-		color: color-mix(in oklab, var(--tao-primary) 44%, transparent);
+		color: color-mix(in oklab, var(--app-primary) 44%, transparent);
 	}
 }
 .text-warning-30 {
-	color: var(--tao-warning);
+	color: var(--app-warning);
 	@supports (color: color-mix(in lab, red, red)) {
-		color: color-mix(in oklab, var(--tao-warning) 30%, transparent);
+		color: color-mix(in oklab, var(--app-warning) 30%, transparent);
 	}
 }
 `,
-		{ colorVariables: [/^--tao-[\w-]+$/] }
+		{ colorVariables: [/^--app-[\w-]+$/] }
 	).toString()
 
-	assert.match(output, /--tao-primary-rgb:\s*22,119,255/)
-	assert.match(output, /--tao-primary-rgb:\s*250,44,25/)
-	assert.match(output, /color:\s*rgba\(var\(--tao-primary-rgb\),0\.44\)/)
-	assert.match(output, /--tao-warning-rgb:\s*250,140,22/)
-	assert.match(output, /color:\s*rgba\(var\(--tao-warning-rgb\),0\.3\)/)
+	assert.match(output, /--app-primary-rgb:\s*22,119,255/)
+	assert.match(output, /--app-primary-rgb:\s*250,44,25/)
+	assert.match(output, /color:\s*rgba\(var\(--app-primary-rgb\),0\.44\)/)
+	assert.match(output, /--app-warning-rgb:\s*250,140,22/)
+	assert.match(output, /color:\s*rgba\(var\(--app-warning-rgb\),0\.3\)/)
 	assert.doesNotMatch(output, /color-mix|oklab/)
-	assert.match(output, /--color-primary:\s*var\(--tao-primary\)/)
+	assert.match(output, /--color-primary:\s*var\(--app-primary\)/)
 })
 
 test('局部 App 样式使用全局注入的主题 RGB 通道转换透明度', () => {
-	const colorVariables = [/^--tao-[\w-]+$/]
-	const appCss = sanitize('page { --tao-primary: #1677ff; }', { colorVariables }).toString()
+	const colorVariables = [/^--app-[\w-]+$/]
+	const appCss = sanitize('page { --app-primary: #1677ff; }', { colorVariables }).toString()
 	const localCss = sanitize(
 		`.bg-primary-50 {
-			background-color: var(--tao-primary);
+			background-color: var(--app-primary);
 			@supports (color: color-mix(in oklab, red, transparent)) {
-				background-color: color-mix(in oklab, var(--tao-primary) 50%, transparent);
+				background-color: color-mix(in oklab, var(--app-primary) 50%, transparent);
 			}
 		}`,
 		{ colorVariables }
 	).toString()
 
-	assert.match(appCss, /--tao-primary-rgb:\s*22,119,255/)
-	assert.match(localCss, /background-color:\s*rgba\(var\(--tao-primary-rgb\),0\.5\)/)
+	assert.match(appCss, /--app-primary-rgb:\s*22,119,255/)
+	assert.match(localCss, /background-color:\s*rgba\(var\(--app-primary-rgb\),0\.5\)/)
 	assert.doesNotMatch(localCss, /color-mix|@supports/)
 })
 

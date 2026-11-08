@@ -36,7 +36,7 @@ export function parseThemeValues(css) {
 const quoteTsString = (value) =>
 	`'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r/g, '\\r').replace(/\n/g, '\\n')}'`
 
-/** 只生成数据，不依赖组件库或运行时主题管理器。 */
+/** 将变量表输出为 TypeScript 数据模块。 */
 export function renderThemeValues(values) {
 	const entries = [...values].map(
 		([name, value]) => `\t[${quoteTsString(name)}, ${quoteTsString(value)}]`

@@ -23,7 +23,7 @@ test('恢复可读短名，保留普通 class、前缀、负号和下划线', ()
 		assert.equal(toSafeClassName(expected), expected)
 	}
 	assert.notEqual(toSafeClassName('h-[40%]'), toSafeClassName('h-40'))
-	for (const name of ['p-0', 'p-0-important', '-mt-4', 't-tag__text', 'a--b', 'a_b', '']) {
+	for (const name of ['p-0', 'p-0-important', '-mt-4', 'app-tag__text', 'a--b', 'a_b', '']) {
 		assert.equal(toSafeClassName(name), name)
 	}
 })
@@ -152,12 +152,12 @@ test('模板和 CSS 使用一致短名，覆盖小数、正负 arbitrary、分�
 		'p-0!',
 		'a_b!'
 	]
-	const code = `<view class="${names.join(' ')} flex-row t-tag__text" />`
+	const code = `<view class="${names.join(' ')} flex-row app-tag__text" />`
 	const plugin = templatePlugin()
 	const output = plugin.transform(code, 'pages/collision.uvue').code
 	assert.equal(
 		output,
-		`<view class="${names.map((name) => toSafeClassName(name)).join(' ')} flex-row t-tag__text" />`
+		`<view class="${names.map((name) => toSafeClassName(name)).join(' ')} flex-row app-tag__text" />`
 	)
 	const css = names
 		.map(

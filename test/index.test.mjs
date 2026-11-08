@@ -555,11 +555,11 @@ test('属性表达式中的比较符不截断标签及后续 class、hover-class
 	const plugins = uniAppXTailwind({ customAttributes: { '*': ['pt'] } })
 	const plugin = plugins.find((item) => item.name === 'uniappx-tailwind-important-class')
 	const code = `<template>
-<t-button v-if="undoButtonText.length > 0" :class="undoBtnClass" />
-<t-button v-if='redoButtonText.length > 0' :class="redoBtnClass" />
-<t-button v-if="clearButtonText.length > 0 && count < 2" :class="clearBtnClass" />
+<app-button v-if="undoButtonText.length > 0" :class="undoBtnClass" />
+<app-button v-if='redoButtonText.length > 0' :class="redoBtnClass" />
+<app-button v-if="clearButtonText.length > 0 && count < 2" :class="clearBtnClass" />
 <view v-if="count > 0" class="p-0!" :hover-class="'bg-blue-500!'" :pt="{ root: 'm-0!' }" title="提示 > p-0!" />
-<t-button v-if="count > 0" :pt="buttonPt" />
+<app-button v-if="count > 0" :pt="buttonPt" />
 </template><script setup>
 const undoBtnClass = computed(() => ['mr-10!', p.value.undoBtn ?? null])
 const redoBtnClass = computed(() => ['mr-10!', p.value.redoBtn ?? null])
@@ -606,7 +606,7 @@ test('默认不规范化 PT 字符串值', () => {
 test('规范化 v-bind 配置中三元表达式两侧的 PT 对象，保留相邻业务文案', () => {
 	const plugins = uniAppXTailwind({ customAttributes: { '*': ['pt'] } })
 	const plugin = plugins.find((item) => item.name === 'uniappx-tailwind-important-class')
-	const code = `<template><t-calendar v-bind="calendarOptions" /><t-radio :pt="{ root: 'flex-row' }" /></template>
+	const code = `<template><app-calendar v-bind="calendarOptions" /><app-radio :pt="{ root: 'flex-row' }" /></template>
 <script setup lang="ts">
 const calendarOptions = computed<CalendarProps>(() => ({
 	confirmText: '确认 !',
@@ -670,7 +670,7 @@ test('规范化已配置属性所引用的对象变量', () => {
 test('PT 对象键名和类名字符串不作为脚本引用，保留同名业务字段', () => {
 	const plugins = uniAppXTailwind({ customAttributes: { '*': ['pt'] } })
 	const plugin = plugins.find((item) => item.name === 'uniappx-tailwind-important-class')
-	const code = `<template><t-button :pt="{ text: 'text-foreground', label: 'text-xs', icon: iconClass }" /></template>
+	const code = `<template><app-button :pt="{ text: 'text-foreground', label: 'text-xs', icon: iconClass }" /></template>
 <script setup lang="ts">
 const themes = [{ value: 'primary', label: '主色', text: '按钮文字', description: '主要操作。' }]
 const foreground = { text: '前景文字' }
