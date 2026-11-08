@@ -1,0 +1,48 @@
+{
+	"name": "tao-tailwindx",
+	"version": "0.3.0",
+	"author": "hujinchen",
+	"description": "面向 uni-app x Vapor 的 Tailwind CSS v4 Vite 插件，提供局部工具类生成、class 安全转换、@apply、原生 CSS 适配和可选主题数据导出。",
+	"type": "module",
+	"exports": {
+		".": "./index.mjs",
+		"./tailwind.css": "./tailwind.css"
+	},
+	"files": [
+		"index.mjs",
+		"tailwind.css",
+		"src",
+		"README.md",
+		"CONFIGURATION.md",
+		"STYLE-GENERATION.md",
+		"LICENSE",
+		"CHANGELOG.md"
+	],
+	"scripts": {
+		"test": "node --test test/*.test.mjs",
+		"test:package": "node scripts/prepare-release-host.mjs",
+		"format": "prettier --write .",
+		"format:check": "prettier --check ."
+	},
+	"dependencies": {
+		"@tailwindcss/postcss": "4.3.3",
+		"picomatch": "^4.0.3",
+		"postcss": "^8.5.26",
+		"postcss-scss": "^4.0.9",
+		"tailwindcss": "4.3.3"
+	},
+	"keywords": [
+		"tailwindcss",
+		"uni-app-x",
+		"vapor",
+		"vite",
+		"样式构建"
+	],
+	"license": "MIT",
+	"engines": {
+		"node": ">=22.13.0"
+	},
+	"devDependencies": {
+		"prettier": "^3.9.10"
+	}
+}

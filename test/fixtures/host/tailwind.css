@@ -1,0 +1,10 @@
+@import 'tao-tailwindx/tailwind.css' source(none);
+@import './theme.css';
+@import './platform.css';
+
+@theme inline {
+	--color-brand: var(--brand);
+}
+
+@source './App.uvue';
+@source './pages/**/*.{ts,uts,uvue}';

@@ -1,0 +1,11 @@
+<script setup lang="ts">
+import { onLaunch } from '@dcloudio/uni-app'
+
+onLaunch(() => {
+	console.log('Tao Tailwind X 示例启动')
+})
+</script>
+
+<style>
+@import './tailwind.css';
+</style>

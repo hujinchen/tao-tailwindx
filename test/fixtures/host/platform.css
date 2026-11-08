@@ -1,0 +1,8 @@
+/* #ifdef WEB */
+@import './web.css';
+/* #endif */
+/* #ifndef WEB */
+.safe-area {
+	padding-top: var(--uni-safe-area-inset-top);
+}
+/* #endif */

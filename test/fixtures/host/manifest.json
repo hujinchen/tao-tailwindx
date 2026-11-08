@@ -1,0 +1,11 @@
+{
+	"name": "Tao Tailwind X 示例",
+	"appid": "__UNI__A100001",
+	"versionName": "1.0.0",
+	"versionCode": "100",
+	"vueVersion": "3",
+	"uni-app-x": { "styleIsolationVersion": "2", "vapor": true, "vapor-render-target": "bytecode" },
+	"app": { "defaultAppTheme": "auto" },
+	"web": { "darkmode": true },
+	"mp-weixin": { "appid": "", "darkmode": true }
+}

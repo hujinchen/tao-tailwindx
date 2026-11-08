@@ -1,0 +1,4 @@
+{
+	"pages": [{ "path": "pages/index", "style": { "navigationBarTitleText": "Release Check" } }],
+	"globalStyle": { "navigationBarTextStyle": "black", "backgroundColor": "#ffffff" }
+}

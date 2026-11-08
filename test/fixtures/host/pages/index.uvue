@@ -1,0 +1,12 @@
+<template>
+	<view class="flex flex-col p-[12px]">
+		<text class="text-lg text-brand">Tailwind</text>
+		<text class="text-(--accent) font-bold">Brand</text>
+	</view>
+</template>
+
+<style>
+.host-label {
+	@apply flex-row items-center p-4;
+}
+</style>
