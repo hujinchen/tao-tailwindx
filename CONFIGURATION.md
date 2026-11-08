@@ -55,19 +55,20 @@ Vite 与 uni-app 编译器由宿主工程或 IDE 提供。
 
 ```js
 import { defineConfig } from 'vite'
-import uni from '@dcloudio/vite-plugin-uni'
+import uniModule from '@dcloudio/vite-plugin-uni'
 import { uniAppXTailwind } from 'tao-tailwindx'
 import { fileURLToPath } from 'node:url'
 
+const uni = uniModule.default
 const entry = fileURLToPath(new URL('./tailwind.css', import.meta.url))
 
 export default defineConfig({
-	plugins: [uniAppXTailwind({ entry }), uni.default()]
+	plugins: [uniAppXTailwind({ entry }), uni()]
 })
 ```
 
 CLI 项目请把 Tailwind 入口调整到 `src/` 下，包名导入不变。完整步骤见[快速接入](./README.md)。
-配套 SDK 的 `@dcloudio/vite-plugin-uni` 使用 CommonJS 导出，ESM 配置通过 `uni.default()` 注册。
+配套 SDK 的 `@dcloudio/vite-plugin-uni` 使用 CommonJS 导出，ESM 配置先通过 `uniModule.default` 取出插件函数，再调用 `uni()`。使用 `vite.config.mjs` 可以省略工程的 `"type": "module"`；保留 `vite.config.js` 时需要该设置，以便当前 Vite 静态导入 ESM 包 `tao-tailwindx`。
 
 插件同步返回一组 Vite plugins。Vite 原生支持嵌套插件数组，因此可以像普通 Vite 插件一样
 直接注册，不需要展开运算符。插件内部通过 `enforce: 'pre'` 和 `enforce: 'post'`
@@ -580,8 +581,9 @@ pnpm test
 测试覆盖 Tailwind PostCSS 编译、重要号 class、selector 清洗、单位转换、动画保留策略、颜色转换、
 App 样式入口处理和 uts2js 滚动缓存的 rename 重试与兜底。
 
-工程侧发布检查执行 `node scripts/prepare-release-host.mjs`：实际 `npm pack` 后，在独立临时宿主
-只声明插件 tarball，由 pnpm 安装内部依赖，检查公开 JS / CSS 入口、六个目标平台的样式与 `@apply`。
+工程侧发布检查执行 `node scripts/generate-demo.mjs`：以 `test/demo-template/` 为模板，
+将实际 `npm pack` 的插件 tarball 安装到生成工程，检查公开 JS / CSS 入口、六个目标平台的样式与 `@apply`。
+默认输出到项目根目录的 `demo-output/demo-app/`，每次运行清空并重新生成该目录；设置 `UNIAPPX_RELEASE_HOST_PARENT` 可修改输出父目录，工程目录名固定为 `demo-app`。
 添加 `--npm` 可验证 npm 安装。
 示例只使用宿主相对路径，不链接本仓库的依赖。
 普通 Node 单测和发布冒烟检查不代替完整项目编译、设备运行或框架 E2E。

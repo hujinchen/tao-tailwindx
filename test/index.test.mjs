@@ -16,7 +16,7 @@ const safeClasses = (value) =>
 		.map((name) => toSafeClassName(name))
 		.join(' ')
 
-const hostFile = (file) => fileURLToPath(new URL(`./fixtures/host/${file}`, import.meta.url))
+const hostFile = (file) => fileURLToPath(new URL(`./demo-template/${file}`, import.meta.url))
 const temporaryParent = tmpdir()
 const require = createRequire(import.meta.url)
 

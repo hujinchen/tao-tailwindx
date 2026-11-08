@@ -220,7 +220,7 @@ pnpm run test:package
 pnpm run test:package --npm
 ```
 
-发布检查实际打包并在临时 uni-app x 宿主中仅安装 `tao-tailwindx`，检查公开 JS / CSS 入口，以及 Web、Android、iOS、HarmonyOS、微信和支付宝平台配置下的插件样式处理。
+发布检查以 `test/demo-template/` 为模板，在生成的 uni-app x 工程中安装实际打包的 `tao-tailwindx`，检查公开 JS / CSS 入口，以及 Web、Android、iOS、HarmonyOS、微信和支付宝平台配置下的插件样式处理。默认输出到固定目录 `demo-output/demo-app/`，每次运行清空并重新生成；可通过 `UNIAPPX_RELEASE_HOST_PARENT` 修改输出父目录。
 完整 Vite watcher 与原生动画 CSS 编译检查需要 HBuilder V 配套 SDK，配置方式见源码项目的 `PUBLISHING.md`；缺少编译器时相关测试会明确跳过。
 这些检查不代表完整消费项目或设备运行验收通过。消费项目应按实际目录、组件隔离、主题配置与目标端编译并运行验证；发布版本的验证记录见[更新日志](./CHANGELOG.md)。
 

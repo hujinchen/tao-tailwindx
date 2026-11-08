@@ -1,14 +1,18 @@
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { cp, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises'
+import { cp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { dirname, delimiter, resolve, join } from 'node:path'
-import { tmpdir } from 'node:os'
 import { pathToFileURL } from 'node:url'
 
 const root = resolve(import.meta.dirname, '..')
-const parent = resolve(process.env.UNIAPPX_RELEASE_HOST_PARENT ?? tmpdir())
-const host = await realpath(await mkdtemp(join(parent, 'tailwind-release-host-')))
+const parent = resolve(process.env.UNIAPPX_RELEASE_HOST_PARENT ?? join(root, 'demo-output'))
+await mkdir(parent, { recursive: true })
+const hostPath = join(parent, 'demo-app')
+// 重建生成目录，避免同版本 tarball 的安装缓存和旧构建文件影响检查。
+await rm(hostPath, { recursive: true, force: true })
+await mkdir(hostPath)
+const host = await realpath(hostPath)
 const packageRoot = root
 const metadata = JSON.parse(await readFile(join(packageRoot, 'package.json'), 'utf8'))
 const manager = process.argv.includes('--npm') ? 'npm' : 'pnpm'
@@ -27,7 +31,7 @@ const npm = (args, cwd) =>
 		encoding: 'utf8'
 	})
 
-await cp(join(packageRoot, 'test/fixtures/host'), host, { recursive: true })
+await cp(join(packageRoot, 'test/demo-template'), host, { recursive: true })
 const packed = JSON.parse(
 	npm(['pack', '--json', '--ignore-scripts', '--pack-destination', host], packageRoot)
 )
@@ -45,7 +49,7 @@ for (const file of [
 assert.ok(
 	publishedFiles.every(
 		(file) =>
-			!/^(test\/|scripts\/|AGENTS\.md$|PUBLISHING\.md$|node_modules\/|dist\/|unpackage\/|\.)/.test(
+			!/^(test\/|scripts\/|demo-output\/|AGENTS\.md$|PUBLISHING\.md$|node_modules\/|dist\/|unpackage\/|\.)/.test(
 				file
 			)
 	),
@@ -94,9 +98,11 @@ assert.ok(Array.isArray(uniAppXTailwind()));`
 	],
 	{ cwd: host, stdio: 'inherit' }
 )
-// 在 pnpm 严格布局中，宿主不能直接解析插件的传递依赖；CSS 必须从公开入口加载。
+// pnpm 不将 Tailwind 单独安装到宿主；宿主位于源码工程内时，解析仍可能命中祖先依赖。
 if (manager === 'pnpm')
-	assert.throws(() => hostRequire.resolve('tailwindcss'), { code: 'MODULE_NOT_FOUND' })
+	await assert.rejects(readFile(join(host, 'node_modules/tailwindcss/package.json')), {
+		code: 'ENOENT'
+	})
 const { uniAppXTailwind, parseThemeValues } = await import(pathToFileURL(installedEntry))
 assert.equal(parseThemeValues('page { --brand: #2563eb; }').get('light:page:--brand'), '#2563eb')
 await writeFile(

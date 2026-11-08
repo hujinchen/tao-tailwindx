@@ -5,3 +5,5 @@ dist/
 .DS_Store
 unpackage/
 .hbuilderx/
+.cursorrules
+demo-output/

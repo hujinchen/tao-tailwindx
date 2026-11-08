@@ -8,8 +8,8 @@
 - `index.mjs`：公开的 Vite 插件入口，以及 Node 构建用主题解析导出。
 - `tailwind.css`：公开 CSS 入口，在包内解析 Tailwind 依赖。
 - `src/`：编译、扫描、class 转换、CSS 适配与主题导出实现。
-- `test/`：Node 回归；`test/fixtures/host/` 是独立的 uni-app x 示例夹具。
-- `scripts/prepare-release-host.mjs`：实际打包插件，在临时宿主检查安装、静态导入、六端样式与 `@apply`。
+- `test/`：Node 回归；`test/demo-template/` 是 uni-app x 示例工程模板。
+- `scripts/generate-demo.mjs`：实际打包插件，在生成的示例工程中检查安装、静态导入、六端样式与 `@apply`。
 - `README.md`、`CONFIGURATION.md`、`STYLE-GENERATION.md`：用户接入与配置说明。
 - `CHANGELOG.md`、`LICENSE`：版本记录与 MIT 许可。
 
@@ -37,7 +37,15 @@ pnpm run test:package --npm
 | `NODE_PATH`                   | `uniapp-cli-vite/node_modules` 与其 `@dcloudio/uni-cli-shared/lib/dom2/app`；用系统路径分隔符连接 |
 
 这些路径位于 SDK 的 `plugins/` 下。HBuilder V 使用 `code --locate-extension dcloud.hbuilderx-uniapp-sdk` 定位当前 SDK，避免写死扩展版本。
-发布检查输出临时宿主和 tarball 的绝对路径。宿主仅声明本地 tarball，内部依赖由包管理器安装；正式发布前即可运行。
+发布检查以 `test/demo-template/` 为模板，将当前源码打包后安装到示例工程中。默认输出到固定目录 `demo-output/demo-app/`，命令结束时打印工程和 tarball 的绝对路径；用 HBuilder V 打开该工程即可运行示例。
+每次运行会清空并重新生成该目录，包括已安装依赖和构建产物，确保使用本次打包的源码。需要保留的示例修改应放在 `test/demo-template/`，不要保存在生成目录中。
+输出父目录可以通过环境变量修改，目录不存在时自动创建；其下的工程目录名仍固定为 `demo-app`：
+
+```bash
+UNIAPPX_RELEASE_HOST_PARENT="$HOME/Desktop/tao-tailwindx-demos" pnpm run test:package
+```
+
+生成工程仅声明本地 tarball，内部依赖由包管理器安装；正式发布前即可运行。`demo-output/` 不参与 Git、格式检查或 npm 发布。
 生成宿主的 `package.json` 设置 `"type": "module"`，`vite.config.js` 使用顶部静态导入，与接入文档一致。
 
 ## 发布到 npm

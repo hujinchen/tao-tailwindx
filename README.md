@@ -32,14 +32,15 @@ Tailwind CSS 等构建依赖随插件自动安装。
 
 ```js
 import { defineConfig } from 'vite'
-import uni from '@dcloudio/vite-plugin-uni'
+import uniModule from '@dcloudio/vite-plugin-uni'
 import { uniAppXTailwind } from 'tao-tailwindx'
 import { fileURLToPath } from 'node:url'
 
+const uni = uniModule.default
 const entry = fileURLToPath(new URL('./tailwind.css', import.meta.url))
 
 export default defineConfig({
-	plugins: [uniAppXTailwind({ entry }), uni.default()]
+	plugins: [uniAppXTailwind({ entry }), uni()]
 })
 ```
 
@@ -47,7 +48,8 @@ CLI 项目只需把 `entry` 调整为 `./src/tailwind.css`，包名导入不变�
 已有 Vite 配置只需合并导入和插件注册，保留项目的其他配置。
 
 `uniAppXTailwind()` 返回插件数组，Vite 支持直接嵌套使用。
-配套 SDK 的 `@dcloudio/vite-plugin-uni` 使用 CommonJS 导出，ESM 配置通过 `uni.default()` 注册。
+配套 SDK 的 `@dcloudio/vite-plugin-uni` 使用 CommonJS 导出，ESM 配置先通过 `uniModule.default` 取出插件函数，再调用 `uni()`。
+`"type": "module"` 让工程内的 `.js` 按 ESM 加载；使用 `vite.config.mjs` 时可以省略它。保留 `vite.config.js` 时不能直接删除，否则当前 Vite 会拒绝静态导入 ESM 包 `tao-tailwindx`。
 
 ### 3. 创建并引入 Tailwind 入口
 
@@ -159,11 +161,13 @@ tao-tailwindx/
 ├── STYLE-GENERATION.md   # 局部与全局归属、隔离和迁移规则
 ├── LICENSE               # MIT 许可
 ├── CHANGELOG.md          # 版本更新日志
-├── test/                 # 插件回归与独立宿主夹具
+├── test/                 # 插件回归；demo-template/ 为示例工程模板
 └── scripts/              # npm 安装与发布内容验收
 ```
 
 `test/`、`scripts/` 和作者用 `PUBLISHING.md` 不进入 npm 发布包。维护者可在源码项目中查看 PUBLISHING.md。
+
+在源码工程执行 `pnpm run test:package`，会以 `test/demo-template/` 为模板生成示例，并安装当前源码打包的插件。默认输出到固定目录 `demo-output/demo-app/`，用 HBuilder V 打开该工程即可运行。每次运行会清空并重新生成此目录；需要保留的示例修改应放在模板中。自定义输出位置见源码工程中的 `PUBLISHING.md`。
 
 ## 常见问题
 
