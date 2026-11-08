@@ -1,4 +1,13 @@
 {
-	"pages": [{ "path": "pages/index", "style": { "navigationBarTitleText": "Release Check" } }],
-	"globalStyle": { "navigationBarTextStyle": "black", "backgroundColor": "#ffffff" }
+	"pages": [
+		{ "path": "pages/index", "style": { "navigationBarTitleText": "Tao Tailwind X" } },
+		{ "path": "pages/css/property", "style": { "navigationBarTitleText": "CSS 用法演示" } }
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"backgroundColor": "#ffffff",
+		// #ifdef WEB
+		"navigationStyle": "custom"
+		// #endif
+	}
 }

@@ -4,7 +4,22 @@
 
 @theme inline {
 	--color-brand: var(--brand);
+	--color-canvas: var(--demo-canvas);
+	--color-surface: var(--demo-surface);
+	--color-ink: var(--demo-ink);
+	--color-muted: var(--demo-muted);
+	--color-line: var(--demo-line);
+	--spacing: 1px;
+	--text-sm: 14px;
+	--text-sm--line-height: 22px;
+	--text-base: 16px;
+	--text-base--line-height: 26px;
+	--text-lg: 18px;
+	--text-lg--line-height: 28px;
 }
 
 @source './App.uvue';
 @source './pages/**/*.{ts,uts,uvue}';
+
+/* 属性名 transition 本身也是 Tailwind 候选；演示使用明确的过渡属性，排除这个无用默认类。 */
+@source not inline('transition');

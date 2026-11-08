@@ -1,11 +1,173 @@
 <template>
-	<view class="flex flex-col p-[12px]">
-		<text class="text-lg text-brand">Tailwind</text>
-		<text class="text-(--accent) font-bold">Brand</text>
-	</view>
+	<scroll-view class="h-full bg-canvas" direction="vertical">
+		<view class="home-shell">
+			<view class="home-hero">
+				<view class="hero-mark p-[12px]">
+					<text class="text-lg text-[#2563eb]">CSS → Tailwind</text>
+				</view>
+				<text class="hero-title">让每个写法，</text>
+				<text class="hero-title">都有看得见的效果。</text>
+				<text class="hero-description">uni-app x 官方 CSS 的 Tailwind 用法手册</text>
+				<view class="hero-stats">
+					<view class="stat-item">
+						<text class="stat-number">{{ cssDemos.length }}</text>
+						<text class="stat-label">CSS 属性</text>
+					</view>
+					<view class="stat-item">
+						<text class="stat-number">{{ totalCases }}</text>
+						<text class="stat-label">当前端示例</text>
+					</view>
+					<view class="stat-item">
+						<text class="stat-number">{{ categories.length }}</text>
+						<text class="stat-label">用法分类</text>
+					</view>
+				</view>
+			</view>
+			<view class="search-card">
+				<text class="text-(--accent) font-bold">查找一个 CSS 属性</text>
+				<input
+					v-model="query"
+					class="search-input"
+					placeholder="例如 align-content、圆角、动画"
+					aria-label="搜索 CSS 属性或用法"
+				/>
+				<text class="text-sm text-muted">
+					每项包含写法、效果与使用条件。端差异请看属性页说明。
+				</text>
+			</view>
+			<view v-for="group in groups" :key="group.title" class="category-section">
+				<view class="category-heading">
+					<text class="category-title">{{ group.title }}</text>
+					<text class="category-count">{{ group.items.length }} 项</text>
+				</view>
+				<view class="category-card">
+					<navigator
+						v-for="demo in group.items"
+						:key="demo.property"
+						:url="'/pages/css/property?name=' + demo.property"
+						class="property-link"
+						hover-class="property-link-pressed"
+					>
+						<view class="flex-1">
+							<text class="property-name">{{ demo.property }}</text>
+							<text class="text-sm text-muted">{{ demo.title }}</text>
+						</view>
+						<text class="property-badge">{{ demo.cases.length }} 例</text>
+						<text class="property-arrow">›</text>
+					</navigator>
+				</view>
+			</view>
+			<text v-if="groups.length === 0" class="empty-hint">
+				没有找到相关属性，换个关键词试试。
+			</text>
+			<text class="footer-note">
+				以 DCloud 官方 CSS 文档为依据 · 当前端不支持的示例会隐藏
+			</text>
+		</view>
+	</scroll-view>
 </template>
 
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { cssDemos } from './css/catalog'
+
+const query = ref('')
+const categories = [
+	'弹性布局',
+	'布局与层级',
+	'尺寸与间距',
+	'背景与效果',
+	'边框与圆角',
+	'文字排版',
+	'变换与动效',
+	'Web 扩展'
+]
+const totalCases = cssDemos.reduce((sum, demo) => sum + demo.cases.length, 0)
+const groups = computed(() => {
+	const keyword = query.value.trim().toLowerCase()
+	return categories
+		.map((title) => ({
+			title,
+			items: cssDemos.filter(
+				(demo) =>
+					demo.category === title &&
+					(demo.property + demo.title + demo.category).toLowerCase().includes(keyword)
+			)
+		}))
+		.filter((group) => group.items.length > 0)
+})
+</script>
+
 <style>
+.home-shell {
+	@apply mx-auto w-full max-w-[880px] p-[20px];
+}
+.home-hero {
+	@apply rounded-[24px] bg-[#142238] p-[24px];
+}
+.hero-mark {
+	@apply self-start rounded-[12px] bg-[#ffffff] mb-[20px];
+}
+.hero-title {
+	@apply text-[30px] leading-[42px] font-bold text-[#ffffff];
+}
+.hero-description {
+	@apply mt-[12px] text-[15px] leading-[24px] text-[#c0ccdf];
+}
+.hero-stats {
+	@apply flex-row mt-[28px];
+}
+.stat-item {
+	@apply flex-1;
+}
+.stat-number {
+	@apply text-[28px] leading-[36px] font-bold text-[#65e4c1];
+}
+.stat-label {
+	@apply mt-[4px] text-sm text-[#c0ccdf];
+}
+.search-card {
+	@apply mt-[20px] p-[20px] rounded-[20px] bg-surface border border-solid border-line;
+}
+.search-input {
+	@apply my-[12px] h-[48px] px-[14px] text-base text-ink bg-canvas rounded-[12px] border border-solid border-line;
+}
+.category-section {
+	@apply mt-[28px];
+}
+.category-heading {
+	@apply flex-row items-center justify-between mb-[12px] px-[4px];
+}
+.category-title {
+	@apply text-lg text-ink font-bold;
+}
+.category-count {
+	@apply text-sm text-muted;
+}
+.category-card {
+	@apply rounded-[18px] overflow-hidden bg-surface border border-solid border-line;
+}
+.property-link {
+	@apply flex-row items-center min-h-[76px] px-[18px] py-[14px] border-b border-solid border-line;
+}
+.property-link-pressed {
+	@apply bg-canvas;
+}
+.property-name {
+	@apply text-base text-ink font-medium mb-[3px];
+}
+.property-badge {
+	@apply ml-[8px] px-[10px] py-[5px] rounded-[8px] bg-canvas text-sm text-muted;
+}
+.property-arrow {
+	@apply ml-[12px] text-[26px] text-muted;
+}
+.empty-hint {
+	@apply text-base text-muted text-center py-[40px];
+}
+.footer-note {
+	@apply text-sm text-muted text-center my-[28px];
+}
 .host-label {
 	@apply flex-row items-center p-4;
 }

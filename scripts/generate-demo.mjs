@@ -114,13 +114,6 @@ await writeFile(
 	join(host, '.npmignore'),
 	'node_modules/\nunpackage/\n.hbuilderx/\npackage-lock.json\npnpm-lock.yaml\n'
 )
-await writeFile(
-	join(host, 'README.md'),
-	'# Tao Tailwind X 示例\n\n' +
-		'插件通过随工程附带的 npm tarball 安装。\n\n' +
-		'解压后执行 pnpm install，再用 HBuilder V 或 HBuilderX 打开工程并运行。\n\n' +
-		'npm 正式发布后，也可改为 pnpm add -D tao-tailwindx。Vite 与 CSS 均通过包名接入。\n'
-)
 const previousPlatform = process.env.UNI_PLATFORM
 try {
 	for (const platform of [

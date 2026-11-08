@@ -1,0 +1,711 @@
+<template>
+	<scroll-view class="h-full bg-canvas" direction="vertical">
+		<view class="detail-shell">
+			<view class="detail-heading">
+				<text class="eyebrow">{{ demo.category }} / CSS 用法</text>
+				<text class="detail-title">{{ demo.title }}</text>
+				<text class="detail-property">{{ demo.property }}</text>
+				<text class="detail-description">{{ demo.description }}</text>
+				<view class="support-note">
+					<text class="text-sm text-muted">{{ demo.support }}</text>
+				</view>
+				<!-- #ifdef WEB -->
+				<a
+					:href="'https://doc.dcloud.net.cn/uni-app-x/css/' + demo.property + '.html'"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="official-link"
+				>
+					查看 DCloud 官方说明 ↗
+				</a>
+				<!-- #endif -->
+			</view>
+			<view v-if="demo.cases.length === 0" class="notice-card">
+				<text class="text-lg text-ink font-bold">当前端不支持这个属性</text>
+				<text class="detail-description">
+					可在支持的平台打开该属性页查看示例，支持范围见上方说明。
+				</text>
+			</view>
+			<view
+				v-for="(sample, index) in demo.cases"
+				:key="sample.className"
+				class="example-card"
+			>
+				<view class="example-heading">
+					<text class="example-number">
+						{{ index + 1 < 10 ? '0' : '' }}{{ index + 1 }}
+					</text>
+					<text class="example-value">{{ sample.value }}</text>
+				</view>
+				<view class="code-panel">
+					<text class="code-label">TAILWIND CLASS</text>
+					<text class="code-text" selectable>{{ sample.className }}</text>
+					<text class="css-text" selectable>
+						{{ demo.property === 'lines' ? '-webkit-line-clamp' : demo.property }}:
+						{{ sample.value }};
+					</text>
+				</view>
+				<text v-if="sample.note.length > 0" class="case-note">{{ sample.note }}</text>
+				<view class="preview-panel">
+					<text class="preview-label">效果预览</text>
+					<view
+						v-if="demo.kind === 'align-content'"
+						class="wrap-stage flex-wrap"
+						:class="sample.className"
+					>
+						<view v-for="n in 6" :key="n" class="wrap-item">
+							<text class="item-label">{{ n }}</text>
+						</view>
+					</view>
+					<view
+						v-else-if="demo.kind === 'align-items'"
+						class="row-stage"
+						:class="sample.className"
+					>
+						<view class="align-item h-[40px]">
+							<text class="text-[14px] text-[#ffffff]">Aa</text>
+						</view>
+						<view class="align-item h-[72px]">
+							<text class="text-[28px] text-[#ffffff]">Bb</text>
+						</view>
+						<view class="align-item">
+							<text class="text-[18px] text-[#ffffff]">Cc</text>
+						</view>
+					</view>
+					<view v-else-if="demo.kind === 'align-self'" class="row-stage items-start">
+						<view class="align-item h-[40px] bg-[#64748b]">
+							<text class="item-label">1</text>
+						</view>
+						<view class="align-item" :class="sample.className">
+							<text class="item-label">2</text>
+						</view>
+						<view class="align-item h-[64px] bg-[#64748b]">
+							<text class="item-label">3</text>
+						</view>
+					</view>
+					<view
+						v-else-if="demo.kind === 'justify' || demo.kind === 'direction'"
+						class="row-stage"
+						:class="sample.className"
+					>
+						<view v-for="n in 3" :key="n" class="number-item">
+							<text class="item-label">{{ n }}</text>
+						</view>
+					</view>
+					<view
+						v-else-if="demo.kind === 'wrap'"
+						class="wrap-stage"
+						:class="sample.className"
+					>
+						<view v-for="n in 6" :key="n" class="number-item w-[88px]">
+							<text class="item-label">{{ n }}</text>
+						</view>
+					</view>
+					<view
+						v-else-if="['flex', 'grow', 'shrink', 'basis'].includes(demo.kind)"
+						class="flex-stage"
+					>
+						<view
+							class="flex-reference"
+							:class="
+								demo.kind === 'shrink'
+									? 'w-[110px] shrink'
+									: demo.kind === 'grow'
+										? 'w-[40px] grow'
+										: 'grow'
+							"
+						>
+							<text class="item-label">1</text>
+						</view>
+						<view
+							class="flex-subject"
+							:class="[sample.className, demo.kind === 'grow' ? 'w-[40px]' : '']"
+						>
+							<text class="item-label">2</text>
+						</view>
+						<view
+							class="flex-reference"
+							:class="
+								demo.kind === 'shrink'
+									? 'w-[110px] shrink'
+									: demo.kind === 'grow'
+										? 'w-[40px] grow'
+										: 'grow'
+							"
+						>
+							<text class="item-label">3</text>
+						</view>
+					</view>
+					<view v-else-if="demo.kind === 'visibility'" class="flex-stage">
+						<view class="number-item bg-[#64748b]">
+							<text class="item-label">1</text>
+						</view>
+						<view class="number-item" :class="sample.className">
+							<text class="item-label">2</text>
+						</view>
+						<view class="number-item bg-[#64748b]">
+							<text class="item-label">3</text>
+						</view>
+					</view>
+					<view v-else-if="demo.kind === 'position' && sample.value === 'fixed'">
+						<button class="action-button" @click="fixedVisible = !fixedVisible">
+							{{ fixedVisible ? '关闭固定元素' : '显示固定元素' }}
+						</button>
+						<view v-if="fixedVisible" class="fixed-example" :class="sample.className">
+							<text class="item-label">fixed：固定在页面右上方</text>
+							<button class="fixed-close" @click="fixedVisible = false">关闭</button>
+						</view>
+					</view>
+					<!-- #ifdef WEB -->
+					<view
+						v-else-if="demo.kind === 'position' && sample.value === 'sticky'"
+						class="sticky-scroller"
+					>
+						<view class="h-[60px]">
+							<text class="text-sm text-muted">向下滚动预览区域</text>
+						</view>
+						<view class="sticky-subject" :class="sample.className">
+							<text class="item-label">sticky / top: 0</text>
+						</view>
+						<view class="h-[240px]">
+							<text class="text-sm text-muted">滚动内容</text>
+						</view>
+					</view>
+					<!-- #endif -->
+					<view
+						v-else-if="demo.kind === 'position' || demo.kind === 'offset'"
+						class="position-stage"
+					>
+						<text class="position-caption">定位参照框</text>
+						<view
+							class="position-subject"
+							:class="[
+								sample.className,
+								demo.kind === 'offset' ? 'absolute' : 'top-24 left-24',
+								demo.property === 'top' || demo.property === 'bottom'
+									? 'left-24'
+									: '',
+								demo.property === 'left' || demo.property === 'right'
+									? 'top-24'
+									: ''
+							]"
+						>
+							<text class="item-label">A</text>
+						</view>
+					</view>
+					<view v-else-if="demo.kind === 'layer'" class="position-stage">
+						<view class="layer-reference"><text class="item-label">z: 10</text></view>
+						<view class="layer-subject" :class="sample.className">
+							<text class="item-label">{{ sample.value }}</text>
+						</view>
+					</view>
+					<view
+						v-else-if="demo.kind === 'overflow'"
+						class="overflow-stage"
+						:class="sample.className"
+					>
+						<view class="overflow-content">
+							<text class="item-label">内容超出边界</text>
+							<text class="item-label mt-[72px]">这行在边界之外</text>
+						</view>
+					</view>
+					<view v-else-if="demo.kind === 'pointer'" class="pointer-stage">
+						<button class="pointer-button" @click="tapMessage = '下层按钮收到点击'">
+							点击下层按钮
+						</button>
+						<view
+							class="pointer-cover"
+							:class="sample.className"
+							@click="tapMessage = '覆盖层收到点击'"
+						>
+							<text class="item-label">
+								{{ sample.value === 'none' ? '点击穿透到下层' : '覆盖层拦截点击' }}
+							</text>
+						</view>
+					</view>
+					<view
+						v-else-if="demo.kind === 'size' || demo.kind === 'constraint'"
+						class="size-stage"
+					>
+						<view
+							class="size-subject"
+							:class="[
+								sample.className,
+								demo.kind === 'constraint'
+									? demo.property.startsWith('min')
+										? 'w-[40px] h-[40px]'
+										: 'w-[200px] h-[180px]'
+									: ''
+							]"
+						>
+							<text class="item-label">Size</text>
+						</view>
+					</view>
+					<view v-else-if="demo.kind === 'margin'" class="spacing-stage">
+						<view class="margin-subject" :class="sample.className">
+							<text class="item-label">margin</text>
+						</view>
+						<view class="spacing-reference">
+							<text class="text-sm text-muted">后续元素</text>
+						</view>
+					</view>
+					<view
+						v-else-if="demo.kind === 'padding'"
+						class="padding-stage"
+						:class="sample.className"
+					>
+						<view class="padding-content">
+							<text class="item-label">内容区域</text>
+						</view>
+					</view>
+					<view v-else-if="demo.kind === 'box-sizing'" class="size-stage">
+						<view class="box-model" :class="sample.className">
+							<text class="item-label">160px</text>
+						</view>
+						<view class="box-ruler">
+							<text class="text-sm text-muted">参照：160px</text>
+						</view>
+					</view>
+					<view v-else-if="demo.kind === 'backdrop'" class="backdrop-stage">
+						<text class="backdrop-word">Tailwind</text>
+						<view class="backdrop-color"></view>
+						<view class="backdrop-cover" :class="sample.className">
+							<text class="item-label">半透明覆盖层</text>
+						</view>
+					</view>
+					<view
+						v-else-if="
+							[
+								'paint',
+								'shadow',
+								'clip',
+								'border',
+								'border-color',
+								'border-style',
+								'border-width',
+								'radius'
+							].includes(demo.kind)
+						"
+						class="paint-stage"
+					>
+						<view
+							class="paint-subject"
+							:class="[
+								sample.className,
+								demo.kind === 'clip' ? 'clip-subject' : '',
+								demo.kind.startsWith('border') ? 'border-subject' : '',
+								demo.kind === 'border-color' ? 'border-4' : ''
+							]"
+						>
+							<text class="item-label">Tailwind</text>
+						</view>
+					</view>
+					<view
+						v-else-if="demo.kind === 'transform' || demo.kind === 'origin'"
+						class="transform-stage"
+					>
+						<view class="transform-outline"></view>
+						<view
+							class="transform-subject"
+							:class="[
+								sample.className,
+								demo.kind === 'origin' ? '[transform:rotate(25deg)]' : ''
+							]"
+						>
+							<text class="item-label">Transform</text>
+						</view>
+					</view>
+					<view v-else-if="demo.kind === 'transition'" class="transition-stage">
+						<view
+							class="transition-subject"
+							:class="[sample.className, changed ? 'transition-changed' : '']"
+						>
+							<text class="item-label">{{ changed ? 'B' : 'A' }}</text>
+						</view>
+					</view>
+					<view v-else-if="demo.kind === 'animation'" class="animation-stage">
+						<view
+							:key="replayKey"
+							class="animation-subject"
+							:class="[
+								sample.className,
+								demo.property === 'animation-fill-mode'
+									? '[animation-iteration-count:1] [animation-delay:1000ms]'
+									: ''
+							]"
+							:style="
+								demo.property === 'animation-play-state'
+									? running
+										? {}
+										: { animationPlayState: 'paused' }
+									: { animationPlayState: running ? 'running' : 'paused' }
+							"
+						>
+							<text class="item-label">Move</text>
+						</view>
+					</view>
+					<!-- #ifdef WEB -->
+					<view v-else-if="demo.kind === 'composition'" class="animation-stage">
+						<view
+							:key="replayKey"
+							class="composition-subject"
+							:class="sample.className"
+							:style="{ animationPlayState: running ? 'running' : 'paused' }"
+						>
+							<text class="item-label">Compose</text>
+						</view>
+					</view>
+					<view v-else-if="demo.kind === 'timeline'" class="timeline-scroller">
+						<text class="text-sm text-muted">在此区域上下滚动</text>
+						<view class="h-[150px]"></view>
+						<view class="timeline-subject" :class="sample.className">
+							<text class="item-label">Scroll</text>
+						</view>
+						<view class="h-[220px]"></view>
+					</view>
+					<!-- #endif -->
+					<view v-else class="text-stage">
+						<text
+							class="text-subject"
+							:class="[
+								sample.className,
+								demo.kind === 'decoration' ? 'underline' : '',
+								demo.kind === 'text-overflow'
+									? 'overflow-hidden whitespace-nowrap w-full'
+									: '',
+								demo.kind === 'word-break' ? 'w-full' : ''
+							]"
+						>
+							{{ previewText(sample.value) }}
+						</text>
+					</view>
+				</view>
+				<view v-if="demo.kind === 'transition'" class="control-row">
+					<button class="action-button" @click="changed = !changed">切换 A / B</button>
+				</view>
+				<view
+					v-if="demo.kind === 'animation' || demo.kind === 'composition'"
+					class="control-row"
+				>
+					<button class="action-button" @click="running = !running">
+						{{ running ? '暂停动画' : '开始动画' }}
+					</button>
+					<button class="secondary-button" @click="replay">重新播放</button>
+				</view>
+			</view>
+			<text v-if="demo.kind === 'pointer'" class="tap-feedback">{{ tapMessage }}</text>
+			<text class="detail-footer">
+				观察对象使用当前工具类。示例值不代表所有设备的最终表现。
+			</text>
+		</view>
+	</scroll-view>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { cssDemos } from './catalog'
+
+const demo = ref(cssDemos[0])
+const changed = ref(false)
+const running = ref(false)
+const replayKey = ref(0)
+const fixedVisible = ref(false)
+const tapMessage = ref('点击预览区，查看事件接收位置')
+
+onLoad((options) => {
+	const found = cssDemos.find((item) => item.property === options['name'])
+	if (found == null) {
+		uni.showToast({ title: '未找到该 CSS 属性', icon: 'none' })
+		return
+	}
+	demo.value = found
+	uni.setNavigationBarTitle({ title: found.title })
+})
+
+/** 重建动画节点，从首帧重新播放，有限次动画也可重复观察。 */
+function replay() {
+	replayKey.value++
+	running.value = true
+}
+
+/** 文本布局使用真实换行和长单词，避免只有一行而看不出属性效果。 */
+function previewText(value: string): string {
+	if (demo.value.property === 'font-family' && value === 'uni-icon')
+		return '\ue601  \ue603  \ue604'
+	if (demo.value.kind === 'whitespace') return 'Tailwind    CSS\n让每个  写法  都看得见效果。'
+	if (demo.value.kind === 'word-break') return 'Supercalifragilisticexpialidocious TailwindCSS'
+	if (demo.value.kind === 'multiline')
+		return 'Tailwind CSS 让样式更直接。预览文字使用当前工具类。多行文字让行高、对齐和截断效果更容易观察。'
+	if (demo.value.kind === 'text-overflow')
+		return 'Tailwind CSS · 这是一段超过容器宽度的单行文本 · 观察首尾'
+	return 'Tailwind CSS\n让样式更直接'
+}
+</script>
+
+<style>
+.detail-shell {
+	@apply mx-auto w-full max-w-[880px] p-[20px];
+}
+.detail-heading {
+	@apply mb-[24px];
+}
+.eyebrow {
+	@apply text-sm text-brand font-medium mb-[12px];
+}
+.detail-title {
+	@apply text-[28px] leading-[38px] text-ink font-bold;
+}
+.detail-property {
+	@apply mt-[8px] text-lg text-muted;
+}
+.detail-description {
+	@apply mt-[14px] text-base text-muted;
+}
+.support-note {
+	@apply mt-[16px] p-[12px] rounded-[12px] bg-surface border border-solid border-line;
+}
+.official-link {
+	color: var(--brand);
+	font-size: 14px;
+	line-height: 24px;
+	margin-top: 12px;
+}
+.notice-card {
+	@apply p-[24px] bg-surface rounded-[20px] border border-solid border-line;
+}
+.example-card {
+	@apply mb-[20px] rounded-[20px] bg-surface border border-solid border-line overflow-hidden;
+}
+.example-heading {
+	@apply flex-row items-center p-[18px];
+}
+.example-number {
+	@apply mr-[12px] text-sm text-brand font-bold;
+}
+.example-value {
+	@apply flex-1 text-base text-ink font-medium break-all;
+}
+.code-panel {
+	@apply mx-[16px] p-[16px] bg-[#142238] rounded-[12px];
+}
+.code-label {
+	@apply text-[12px] leading-[18px] text-[#a6b7d0] mb-[8px];
+}
+.code-text {
+	@apply text-[16px] leading-[26px] text-[#65e4c1] break-all;
+}
+.css-text {
+	@apply mt-[8px] text-[13px] leading-[22px] text-[#d2dced] break-all;
+}
+.case-note {
+	@apply px-[18px] pt-[12px] text-sm text-muted;
+}
+.preview-panel {
+	@apply m-[16px] p-[16px] rounded-[12px] bg-canvas overflow-visible;
+}
+.preview-label {
+	@apply mb-[16px] text-sm text-muted;
+}
+.row-stage {
+	@apply flex-row w-[240px] h-[160px] bg-[#dce7f5] overflow-visible;
+}
+.wrap-stage {
+	@apply flex-row w-[240px] h-[168px] bg-[#dce7f5] overflow-visible;
+}
+.wrap-item {
+	@apply w-[80px] min-h-[40px] shrink-0 items-center justify-center bg-[#2563eb] border border-solid border-[#dce7f5];
+}
+.align-item {
+	@apply w-[72px] min-h-[32px] bg-[#2563eb] justify-center items-center border border-solid border-[#dce7f5];
+}
+.number-item {
+	@apply w-[56px] h-[44px] shrink-0 bg-[#2563eb] items-center justify-center border border-solid border-[#dce7f5];
+}
+.item-label {
+	@apply text-[14px] leading-[22px] text-[#ffffff] text-center;
+}
+.flex-stage {
+	@apply flex-row items-center w-[240px] min-h-[92px] bg-[#dce7f5] overflow-visible;
+}
+.flex-reference {
+	@apply w-[64px] h-[60px] bg-[#64748b] items-center justify-center border border-solid border-[#dce7f5];
+}
+.flex-subject {
+	@apply w-[96px] h-[60px] bg-[#2563eb] items-center justify-center border border-solid border-[#dce7f5];
+}
+.position-stage {
+	@apply relative w-[240px] h-[160px] bg-[#dce7f5] border border-dashed border-[#64748b] overflow-visible;
+}
+.position-caption {
+	@apply text-[12px] text-[#475569] m-[8px];
+}
+.position-subject {
+	@apply w-[56px] h-[44px] bg-[#2563eb] items-center justify-center;
+}
+.fixed-example {
+	@apply top-[88px] right-[16px] z-[100] bg-[#2563eb] p-[16px] rounded-[12px];
+}
+.fixed-close {
+	@apply mt-[8px] h-[44px] text-sm;
+}
+/* #ifdef WEB */
+.sticky-scroller {
+	@apply w-[240px] h-[180px] overflow-auto bg-[#dce7f5];
+}
+.sticky-subject {
+	@apply top-0 h-[48px] bg-[#2563eb] items-center justify-center;
+}
+/* #endif */
+.layer-reference {
+	@apply absolute top-[20px] left-[20px] w-[100px] h-[80px] z-10 bg-[#64748b] items-center justify-center;
+}
+.layer-subject {
+	@apply absolute top-[56px] left-[76px] w-[100px] h-[80px] bg-[#2563eb] items-center justify-center;
+}
+.overflow-stage {
+	@apply w-[200px] h-[110px] bg-[#dce7f5] border border-dashed border-[#64748b] mb-[70px];
+}
+.overflow-content {
+	@apply shrink-0 w-[180px] h-[170px] bg-[#2563eb];
+}
+.pointer-stage {
+	@apply relative w-[240px] h-[100px];
+}
+.pointer-button {
+	@apply absolute top-0 left-0 w-[240px] h-[100px] bg-[#64748b] text-[#ffffff];
+}
+.pointer-cover {
+	@apply absolute top-[12px] left-[12px] w-[216px] h-[76px] bg-[#2563eb] items-center justify-center;
+}
+.tap-feedback {
+	@apply p-[16px] text-base text-brand;
+}
+.size-stage {
+	@apply w-[240px] h-[200px] bg-[#dce7f5] items-start overflow-visible;
+}
+.size-subject {
+	@apply w-[92px] h-[64px] shrink-0 bg-[#2563eb] items-center justify-center;
+}
+.spacing-stage {
+	@apply w-[240px] h-[180px] bg-[#dce7f5] overflow-visible;
+}
+.margin-subject {
+	@apply w-[96px] h-[48px] shrink-0 bg-[#2563eb] items-center justify-center;
+}
+.spacing-reference {
+	@apply h-[28px] shrink-0 bg-[#c3d2e5] items-center justify-center;
+}
+.padding-stage {
+	@apply w-[240px] min-h-[80px] bg-[#dce7f5];
+}
+.padding-content {
+	@apply min-h-[48px] bg-[#2563eb] items-center justify-center;
+}
+.box-model {
+	@apply w-[160px] h-[88px] p-[16px] border-4 border-solid border-[#0d9488] bg-[#2563eb] items-center justify-center;
+}
+.box-ruler {
+	@apply w-[160px] mt-[20px] border-t border-dashed border-[#64748b];
+}
+.paint-stage {
+	@apply w-[240px] min-h-[112px] items-center justify-center bg-[#dce7f5] overflow-visible;
+}
+.paint-subject {
+	@apply w-[168px] h-[80px] bg-[#2563eb] items-center justify-center;
+}
+.border-subject {
+	@apply border-4 border-solid border-[#0d9488];
+}
+.clip-subject {
+	@apply border-[12px] border-solid border-[rgba(15,23,42,0.3)] p-[12px];
+}
+.backdrop-stage {
+	@apply relative w-[240px] h-[140px] bg-[#2563eb];
+}
+.backdrop-word {
+	@apply absolute top-[18px] left-[12px] text-[36px] text-[#ffffff] font-bold;
+}
+.backdrop-color {
+	@apply absolute top-[70px] right-[8px] w-[112px] h-[52px] bg-[#14b8a6];
+}
+.backdrop-cover {
+	@apply absolute top-[12px] left-[12px] right-[12px] bottom-[12px] bg-[rgba(255,255,255,0.2)] items-center justify-center;
+}
+.transform-stage {
+	@apply relative w-[240px] h-[160px] items-center justify-center overflow-visible;
+}
+.transform-outline {
+	@apply absolute top-[40px] left-[64px] w-[112px] h-[80px] border border-dashed border-[#64748b];
+}
+.transform-subject {
+	@apply w-[112px] h-[80px] bg-[#2563eb] items-center justify-center;
+}
+.transition-stage {
+	@apply relative w-[240px] min-h-[220px] overflow-visible;
+}
+.transition-subject {
+	@apply relative w-[80px] h-[64px] m-[4px] p-[4px] left-0 top-0 right-0 bottom-0 bg-[#2563eb] border-4 border-solid border-[#2563eb] opacity-100 [transition:all_700ms_ease] items-center justify-center;
+	transform: translateX(0px);
+}
+.transition-changed {
+	@apply w-[120px] h-[84px] m-[20px] p-[12px] left-[12px] top-[12px] right-[12px] bottom-[12px] bg-[#0d9488] border-[#f59e0b] opacity-60;
+	transform: translateX(20px);
+}
+.animation-stage {
+	@apply relative w-[240px] h-[124px] items-start justify-center overflow-visible;
+}
+.animation-subject {
+	@apply w-[64px] h-[64px] rounded-[12px] bg-[#2563eb] items-center justify-center;
+	animation: demo-travel 2s ease-in-out infinite alternate;
+}
+.text-stage {
+	@apply w-[240px] min-h-[80px] p-[12px] bg-[#dce7f5] overflow-hidden;
+}
+.text-subject {
+	@apply text-[22px] leading-[32px] text-[#172033];
+}
+.control-row {
+	@apply flex-row px-[16px] pb-[16px];
+}
+.action-button {
+	@apply m-0 min-h-[44px] px-[16px] text-sm text-[#ffffff] bg-[#2563eb] rounded-[10px];
+}
+.secondary-button {
+	@apply ml-[12px] mr-0 min-h-[44px] px-[16px] text-sm text-ink bg-canvas rounded-[10px];
+}
+.detail-footer {
+	@apply mt-[24px] mb-[28px] text-sm text-muted text-center;
+}
+@keyframes demo-travel {
+	from {
+		transform: translateX(0px);
+	}
+	to {
+		transform: translateX(140px);
+	}
+}
+@keyframes demo-turn {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+/* #ifdef WEB */
+.composition-subject {
+	@apply w-[64px] h-[64px] bg-[#2563eb] items-center justify-center;
+	transform: translateX(20px);
+	animation: demo-travel 2s linear infinite alternate;
+}
+.timeline-scroller {
+	@apply w-[240px] h-[200px] overflow-auto bg-[#dce7f5];
+}
+.timeline-subject {
+	@apply w-[72px] h-[72px] bg-[#2563eb] items-center justify-center;
+	animation: demo-travel 1s linear both;
+	animation-timeline: view();
+}
+/* #endif */
+</style>

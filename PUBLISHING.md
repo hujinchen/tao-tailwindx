@@ -48,6 +48,10 @@ UNIAPPX_RELEASE_HOST_PARENT="$HOME/Desktop/tao-tailwindx-demos" pnpm run test:pa
 生成工程仅声明本地 tarball，内部依赖由包管理器安装；正式发布前即可运行。`demo-output/` 不参与 Git、格式检查或 npm 发布。
 生成宿主的 `package.json` 设置 `"type": "module"`，`vite.config.js` 使用顶部静态导入，与接入文档一致。
 
+示例首页提供八类 CSS 导航与搜索，110 项官方 CSS 属性通过 `pages/css/property?name=<属性名>` 分别查看，映射数据位于 `test/demo-template/pages/css/catalog.ts`。每项展示完整 Tailwind 写法、对应 CSS 和效果预览。维护示例时保留平台条件，并同步模板 README 中的支持边界；不能仅因官方目录存在该属性就将它加入所有端的演示。
+
+`test/demo-css.test.mjs` 检查六端示例 class 是否生成对应属性声明；设置上述 SDK 环境变量后，还检查两个演示页面的 App CSS 编译。完整工程编译和实际页面验收仍需另行执行。
+
 ## 发布到 npm
 
 更新 `package.json` 的版本与 `CHANGELOG.md`，完成上述检查后，在本项目目录执行：

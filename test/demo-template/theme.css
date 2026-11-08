@@ -1,11 +1,24 @@
 :root {
 	--brand: #2563eb;
 	--accent: #2563eb;
+	--demo-canvas: #f5f7fb;
+	--demo-surface: #ffffff;
+	--demo-ink: #172033;
+	--demo-muted: #526174;
+	--demo-line: #dce3ed;
+	--demo-size: 112px;
+	--demo-space: 16px;
+	height: 100%;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
 		--brand: #3d8fff;
 		--accent: #3d8fff;
+		--demo-canvas: #0b1220;
+		--demo-surface: #152033;
+		--demo-ink: #edf2fa;
+		--demo-muted: #b2bfd2;
+		--demo-line: #34445c;
 	}
 }

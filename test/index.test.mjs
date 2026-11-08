@@ -20,6 +20,18 @@ const hostFile = (file) => fileURLToPath(new URL(`./demo-template/${file}`, impo
 const temporaryParent = tmpdir()
 const require = createRequire(import.meta.url)
 
+/** 默认主题回归使用独立入口，避免示例自定义间距改变被验证的前提。 */
+async function defaultThemeEntry(t) {
+	const directory = await mkdtemp(join(temporaryParent, 'tailwind-default-theme-'))
+	t.after(() => rm(directory, { recursive: true, force: true }))
+	const entry = join(directory, 'tailwind.css')
+	await writeFile(
+		entry,
+		`@import ${JSON.stringify(require.resolve('tailwindcss/index.css'))} source(none);`
+	)
+	return entry
+}
+
 test('App 入口与 @apply 保留变量计算，只折叠已落到具体属性的 inline 值', async (t) => {
 	const directory = await mkdtemp(join(temporaryParent, 'tailwind-variable-calc-'))
 	t.after(() => rm(directory, { recursive: true, force: true }))
@@ -727,8 +739,8 @@ test('为内联 Vue 样式模块注入 Tailwind 引用', () => {
 	assert.match(result.code, /@reference \\"\/project\/tailwind\.css\\";/)
 })
 
-test('编译 Vue 样式模块中残留的 @apply 指令', async () => {
-	const reference = hostFile('tailwind.css')
+test('编译 Vue 样式模块中残留的 @apply 指令', async (t) => {
+	const reference = await defaultThemeEntry(t)
 	const plugins = uniAppXTailwind({ reference })
 	const referencePlugin = plugins.find((item) => item.name === 'uniappx-tailwind-reference')
 	const fallbackPlugin = plugins.find((item) => item.name === 'uniappx-tailwind-apply-fallback')
@@ -750,8 +762,8 @@ test('编译 Vue 样式模块中残留的 @apply 指令', async () => {
 	assert.match(result.code, /padding:\s*calc\(var\(--spacing, 0\.25rem\) \* 4\)/)
 })
 
-test('转换标准工具类时保留 @apply 的任意值', async () => {
-	const reference = hostFile('tailwind.css')
+test('转换标准工具类时保留 @apply 的任意值', async (t) => {
+	const reference = await defaultThemeEntry(t)
 	const plugins = uniAppXTailwind({ reference })
 	const referencePlugin = plugins.find((item) => item.name === 'uniappx-tailwind-reference')
 	const fallbackPlugin = plugins.find((item) => item.name === 'uniappx-tailwind-apply-fallback')
@@ -773,8 +785,8 @@ test('转换标准工具类时保留 @apply 的任意值', async () => {
 	assert.match(result.code, /font-size:\s*14px/)
 })
 
-test('@apply 工具类共用属性时保留任意值声明', async () => {
-	const reference = hostFile('tailwind.css')
+test('@apply 工具类共用属性时保留任意值声明', async (t) => {
+	const reference = await defaultThemeEntry(t)
 	const plugins = uniAppXTailwind({ reference })
 	const referencePlugin = plugins.find((item) => item.name === 'uniappx-tailwind-reference')
 	const fallbackPlugin = plugins.find((item) => item.name === 'uniappx-tailwind-apply-fallback')
