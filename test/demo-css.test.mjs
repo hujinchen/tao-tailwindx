@@ -28,7 +28,15 @@ test('官方 CSS 目录中的 110 项属性均可导航，示例 class 在六端
 		if (previous == null) delete process.env.UNI_PLATFORM
 		else process.env.UNI_PLATFORM = previous
 	})
-	const routes = JSON.parse(await readFile(fixture + 'pages.json', 'utf8')).pages
+	const pagesFile = fixture + 'pages.json'
+	// pages.json 保留 uni-app 条件注释，按 Web 分支预处理后核对公共路由。
+	const routes = JSON.parse(
+		filterConditions(
+			await readFile(pagesFile, 'utf8'),
+			createConditionContext('web'),
+			pagesFile
+		)
+	).pages
 	assert.ok(routes.some((page) => page.path === 'pages/css/property'))
 	for (const platform of [
 		'web',

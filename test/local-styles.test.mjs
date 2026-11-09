@@ -392,12 +392,15 @@ test('源码记录缓存命中时复用结果，签名变化后更新候选', as
 	})
 	const signatures = new Map([[fixture.page, 'first']])
 	const initial = await collectSourceCache([fixture.page], { signatures })
+	// 复用首次扫描返回的规范化键，避免 Windows 路径分隔符和大小写影响缓存断言。
+	const [recordKey] = initial.records.keys()
 	const cached = await collectSourceCache([fixture.page], {
 		sourceCache: initial,
 		signatures
 	})
 	assert.equal(cached.stylesChanged, false)
-	assert.equal(cached.records.get(fixture.page).candidates.has('p-4'), true)
+	assert.equal(cached.records.get(recordKey), initial.records.get(recordKey))
+	assert.equal(cached.records.get(recordKey).candidates.has('p-4'), true)
 
 	await writeFile(fixture.page, '<template><view class="p-8" /></template>')
 	signatures.set(fixture.page, 'second')
@@ -406,8 +409,9 @@ test('源码记录缓存命中时复用结果，签名变化后更新候选', as
 		signatures
 	})
 	assert.equal(changed.stylesChanged, true)
-	assert.equal(changed.records.get(fixture.page).candidates.has('p-8'), true)
-	assert.equal(changed.records.get(fixture.page).candidates.has('p-4'), false)
+	assert.notEqual(changed.records.get(recordKey), cached.records.get(recordKey))
+	assert.equal(changed.records.get(recordKey).candidates.has('p-8'), true)
+	assert.equal(changed.records.get(recordKey).candidates.has('p-4'), false)
 })
 
 test('脚本依赖识别运行时 import/re-export，跳过类型、注释、字符串和正则', () => {

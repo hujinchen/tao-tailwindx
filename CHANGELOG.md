@@ -2,6 +2,9 @@
 
 ## 未发布（2026-11-09）
 
+- `build`：按 npm 官方源最新稳定版同步升级 Tailwind CSS 与其 PostCSS 插件到 4.3.5、picomatch 到 ^4.0.7、PostCSS 到 ^8.5.32；postcss-scss 已是最新的 ^4.0.9，保持不变，并同步锁文件。
+- `fix`：示例路由检查先处理 uni-app 条件编译注释再解析 JSON；源码缓存测试复用扫描返回的规范化路径键，修复 Windows 路径查找失败，并验证缓存记录的复用与更新。
+- `test`：本次依赖升级与测试修复在 Windows 使用 HBuilder V 5.33 配套 SDK（5.33.2026102115-alpha）执行 249 项回归，全部通过，无失败或跳过。npm、pnpm 单包安装检查通过；本次修改文件格式检查通过，全量检查仍有 34 个原有文件不符合格式。未验证 macOS 软链接扫描及真机运行。
 - `docs`：统一 HBuilder V（HV）与 HBuilderX（HX）的支持、运行和 SDK 验证说明，补充两种 IDE 的 SDK 定位方式；测试名称、跳过提示与源码注释同步，保留实际验证所用 IDE 与 SDK 的历史记录。
 - `fix`：修复打包检查在 Windows 下误将 npm shell 启动文件交给 Node 执行、pnpm 启动失败和路径分隔符校验错误，保留 macOS 运行方式，并补充 PowerShell 用法。
 - `feat`：扩展示例模板为 110 项官方 CSS 属性、636 个 Tailwind 写法，提供八类导航、搜索、属性独立地址、代码与效果对照。
