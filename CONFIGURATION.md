@@ -11,7 +11,7 @@ uni-app x Vapor 对 CSS 有一些区别和限制：
 - 共享样式应尽量使用 class 选择器，不能依赖标签、后代、子级、兄弟或复杂伪选择器。
 - 部分 Tailwind v4 输出包含当前 5.31 Vapor 不支持的 `@property`、CSS cascade layer、
   `color-mix()` 和 oklab 颜色。
-- HBuilderX 5.31+ App Vapor 的 Android、iOS、HarmonyOS 已支持 `calc()`；表达式类型和属性范围仍有限制，见下文。
+- App Vapor 5.31+ 的 Android、iOS、HarmonyOS 已支持 `calc()`；表达式类型和属性范围仍有限制，见下文。
 - 原生端不适合直接使用 Tailwind 的 Preflight 和 `content` 声明。
 - Tailwind 的重要号 class，例如 `p-0!`，会生成包含转义符的 CSS selector，而 Vapor 对这类
   selector 的支持有限。
@@ -49,7 +49,7 @@ Android、App iOS、HarmonyOS Next 和其他 uni-app x 目标端。
 pnpm add -D tao-tailwindx
 ```
 
-Vite 与 uni-app 编译器由宿主工程或 IDE 提供。
+Vite 与 uni-app 编译器由宿主工程或 IDE 提供，支持 HBuilder V（HV）与 HBuilderX（HX）；使用目标 IDE 对应的配套 SDK。
 
 在 ESM Vite 配置中注册插件（`vite.config.mjs`，或设置 `"type": "module"` 后的 `vite.config.js`）：
 
@@ -203,7 +203,7 @@ uniAppXTailwind({
   从 0.2.0 升级需迁移依赖隐式全局的样式配置，详见策略文档。
 - `include`：Vapor CSS 清洗插件处理的额外文件匹配规则，默认匹配 `.css`、`.pcss` 和 `.postcss`。
 - `exclude`：排除规则，默认排除 `node_modules` 和 `unpackage`。
-- `utsRenameRetry`：是否为 HBuilderX 的 uts2js 滚动缓存重试并兜底 `rename`，所有平台默认 `false`。
+- `utsRenameRetry`：是否为 uni-app x SDK 的 uts2js 滚动缓存重试并兜底 `rename`，所有平台默认 `false`。
   Windows 遇到对应缓存改名问题时可显式设为 `true`，该选项会修改进程内文件系统行为。
 - `colorVariables`：`Array<string | RegExp>`，默认 `[]`。原生端显式选择需要生成 RGB 通道的自定义颜色变量，
   例如 `['--brand', /^--accent-/]`；字符串匹配完整变量名，正则匹配变量名。
@@ -270,7 +270,7 @@ export const themeValues: Map<string, string> = new Map<string, string>([
 
 ### Calc 静态折叠与单位
 
-HBuilderX 5.31+ App Vapor 的 Android、iOS、HarmonyOS 已支持 `calc()`。插件在 App 侧折叠
+App Vapor 5.31+ 的 Android、iOS、HarmonyOS 已支持 `calc()`。插件在 App 侧折叠
 Tailwind 生成的、可完全静态求值且保持属性语义的表达式，以减少运行时计算；这不是对“不支持 calc”的补丁。
 优化范围仅为 Tailwind 工具类和 `@apply` 展开结果，不是通用 CSS 优化器。同一入口或 style 中的手写
 CSS 声明及来源不明的声明不参与新增 calc 折叠，不能仅因文件经过 Tailwind 编译就把所有声明当作生成结果。
@@ -521,7 +521,7 @@ Node 单元测试覆盖了这三类变化：
 pnpm test
 ```
 
-`utsRenameRetry` 与 Tailwind 无关，只是修复热更新链路上的一个 Windows 问题：HBuilderX 的 `uts`
+`utsRenameRetry` 与 Tailwind 无关，只是修复热更新链路上的一个 Windows 问题：uni-app x SDK 的 `uts`
 插件在 `buildEnd` 里对 code、semantic、syntactic、types 四个滚动缓存依次执行
 `removeSync(<cache>/cache)` 再 `renameSync(<cache>/cache_, <cache>/cache)`。`removeSync` 只是
 `fs.rmSync(recursive, force)`，没有任何重试；Windows 上被删除的目录名在所有句柄关闭前仍处于
@@ -542,11 +542,11 @@ rename 因此抛出 `EPERM: operation not permitted`，整次构建以 `[plugin:
 
 ## 平台差异
 
-- `@media (prefers-color-scheme: light/dark)` 在 Web、小程序和 HBuilderX 5.25+ App Vapor 中保留；
+- `@media (prefers-color-scheme: light/dark)` 在 Web、小程序和 App Vapor 5.25+ 中保留；
   `sm:`、`md:`、`lg:` 等响应式媒体查询在原生端仍会移除。
 - App Vapor 5.31+ 的 Android、iOS、HarmonyOS 支持 `@keyframes` 和 `animation`；[官方 animation 表](https://doc.dcloud.net.cn/uni-app-x/css/animation.html)标明 Android/iOS 拍平节点从 5.31 支持，HarmonyOS 拍平节点不支持，具体属性值仍有差异。
 - App 将 Tailwind 来源关键帧中的 `transform: none` 转为等价的 `translateY(0)`：5.31 字节码会将前者编为 `null`，使 bounce 的中间帧无法参与原生变换插值。模板工具类与 `@apply` 使用相同规则，手写关键帧（包括同名关键帧）不参与；Web 和小程序保留原值。
-- App 对 Tailwind 生成的 `animation: var(--animate-*)` 内联最终静态 `@theme` 动画值，再由 HBuilderX 展开长属性，避免依赖基座对变量简写的运行时拆解。手写声明不参与；Web 和小程序保留变量引用及运行时覆盖语义。
+- App 对 Tailwind 生成的 `animation: var(--animate-*)` 内联最终静态 `@theme` 动画值，再由 uni-app x SDK 编译器展开长属性，避免依赖基座对变量简写的运行时拆解。手写声明不参与；Web 和小程序保留变量引用及运行时覆盖语义。
 - App 的静态主题动画内联后不能再通过覆盖对应 `--animate-*` 变量调整动画。包含 `var()` 的自定义主题动画、`animate-(--runtime-animation)` 和非主题 fallback 原样保留，不递归冻结运行时值；这些动态简写在基座上的运行支持需要单独验证。
 - App Vapor 5.31+ 的 `<text>` 支持 `word-break: normal / break-all`，三端拍平节点也支持；不依据语法列表推断 `keep-all`、`break-word` 可用，见[官方 word-break 表](https://doc.dcloud.net.cn/uni-app-x/css/word-break.html)。
 - `tailwind.optimize` 在所有平台固定为 `false`，即使调用方传入 `true` 也不启用等价样式改写。
@@ -587,6 +587,6 @@ App 样式入口处理和 uts2js 滚动缓存的 rename 重试与兜底。
 添加 `--npm` 可验证 npm 安装。
 示例只使用宿主相对路径，不链接本仓库的依赖。
 普通 Node 单测和发布冒烟检查不代替完整项目编译、设备运行或框架 E2E。
-配置 HBuilder V 配套 SDK 后，Node 回归还会执行真实 Vite watcher 和原生动画 CSS 编译检查；缺少 SDK 时相关测试会明确跳过。
+配置 HBuilder V 或 HBuilderX 对应的配套 SDK 后，Node 回归还会执行真实 Vite watcher 和原生动画 CSS 编译检查；缺少 SDK 时相关测试会明确跳过。SDK 路径配置见源码项目的 `PUBLISHING.md`，验证记录注明实际使用的 IDE 与 SDK 版本。
 
 Node 构建工具需要复用主题解析时，可从 `tao-tailwindx` 导入 `parseThemeValues(css)`；返回的 Map 键为 `模式:选择器:变量名`。

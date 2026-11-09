@@ -4,7 +4,9 @@
 
 ## 运行
 
-此工程通过随工程附带的 npm tarball 安装插件。解压后执行 `pnpm install`，再用 HBuilder V 打开工程运行。正式发布后也可以执行 `pnpm add -D tao-tailwindx`。
+此工程通过随工程附带的 npm tarball 安装插件。解压后执行 `pnpm install`，再用 HBuilder V（HV）或 HBuilderX（HX）打开工程运行。正式发布后也可以执行 `pnpm add -D tao-tailwindx`。
+
+使用目标 IDE 配套的 uni-app x 编译器 5.31+，App 启用 Vapor。
 
 源码仓库中先执行 `pnpm run test:package`，生成可运行的 `demo-output/demo-app/`。不要直接运行缺少 `package.json` 的模板目录。
 
@@ -24,7 +26,7 @@
 
 官方 CSS 目录包含仅 Web 支持的属性和受限枚举，不能将全部目录视为所有端都支持。滚动驱动动画还取决于浏览器对对应 CSS 的支持。
 
-当前 HBuilder V 5.33 配套 SDK 的原生 CSS 检查未保留 `lines`、`text-decoration-color`、`background-clip`、`letter-spacing: normal`、`color: currentColor`、`z-index: auto` 和角度渐变的有效声明。这些示例暂限制到 Web，并在属性说明中标出官方支持范围与当前编译边界。`lines` 在 Web 中用 `line-clamp-1` 到 `line-clamp-4` 工具类生成 `-webkit-line-clamp`，展示对应的多行截断效果。
+已有 HBuilder V 5.33 配套 SDK 的原生 CSS 检查未保留 `lines`、`text-decoration-color`、`background-clip`、`letter-spacing: normal`、`color: currentColor`、`z-index: auto` 和角度渐变的有效声明。这些示例暂限制到 Web，并在属性说明中标出官方支持范围与当前编译边界。`lines` 在 Web 中用 `line-clamp-1` 到 `line-clamp-4` 工具类生成 `-webkit-line-clamp`，展示对应的多行截断效果。该记录仅对应实测 SDK，其他 HV 或 HX SDK 版本需分别验证。
 
 Tailwind v4 的 `rotate-*`、`scale-*`、`translate-*` 生成独立的 CSS 属性；本示例使用 `[transform:rotate(20deg)]` 等任意属性语法对应官方支持的 `transform`。`text-[length:40rpx]` 与 `border-[length:12rpx]` 使用长度类型提示，避免被识别为颜色。
 

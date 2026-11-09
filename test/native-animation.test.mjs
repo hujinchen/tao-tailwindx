@@ -10,11 +10,11 @@ const require = createRequire(import.meta.url)
 const compilerPath = process.env.UNIAPPX_TEST_VAPOR_COMPILER
 
 test(
-	'HBuilderX 5.31 四种动画具有具体长属性，bounce 中点编译为非空单位变换',
+	'HV 或 HX 配套 SDK 的 App Vapor 四种动画具有具体长属性，bounce 中点编译为非空单位变换',
 	{
 		skip: compilerPath
 			? false
-			: 'Set UNIAPPX_TEST_VAPOR_COMPILER and NODE_PATH to the HBuilderX App compiler'
+			: '设置 UNIAPPX_TEST_VAPOR_COMPILER 和 NODE_PATH 为 HV 或 HX 对应的配套 SDK 路径'
 	},
 	async () => {
 		const compiler = require(compilerPath)

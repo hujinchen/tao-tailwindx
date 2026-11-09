@@ -30,7 +30,7 @@ pnpm run test:package --npm
 上述命令适用于 Windows PowerShell 与 macOS 终端。打包检查使用当前 Node 执行 npm 的 JavaScript 入口；pnpm 安装命令由系统 shell 启动，兼容 Windows 的 `.cmd` 与 macOS 的可执行入口。
 
 `pnpm test` 在没有对应编译器时会明确跳过 Vite watcher 与原生 CSS 编译检查；跳过不表示平台验证通过。
-完成完整检查时，先用 HBuilder V 打开测试宿主，使用该 IDE 配套 SDK，并设置以下环境变量后再执行 `pnpm test`：
+完成完整检查时，先用 HBuilder V（HV）或 HBuilderX（HX）打开测试宿主，使用目标 IDE 对应的配套 SDK，并设置以下环境变量后再执行 `pnpm test`：
 
 | 环境变量                      | SDK 中的目标                                                                                      |
 | ----------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -38,8 +38,14 @@ pnpm run test:package --npm
 | `UNIAPPX_TEST_VAPOR_COMPILER` | `uniapp-cli-vite/node_modules/@dcloudio/uni-cli-shared/lib/dom2/app/@vue/compiler-vapor-dom2`     |
 | `NODE_PATH`                   | `uniapp-cli-vite/node_modules` 与其 `@dcloudio/uni-cli-shared/lib/dom2/app`；用系统路径分隔符连接 |
 
-这些路径位于 SDK 的 `plugins/` 下。HBuilder V 使用 `code --locate-extension dcloud.hbuilderx-uniapp-sdk` 定位当前 SDK，避免写死扩展版本。
-发布检查以 `test/demo-template/` 为模板，将当前源码打包后安装到示例工程中。默认输出到固定目录 `demo-output/demo-app/`，命令结束时打印工程和 tarball 的绝对路径；用 HBuilder V 打开该工程即可运行示例。
+这些路径位于配套 SDK 的 `plugins/` 下，按实际使用的 IDE 定位：
+
+- HV：使用 HBuilder V 对应的 `code --locate-extension dcloud.hbuilderx-uniapp-sdk` 定位当前 SDK 扩展目录，再进入其 `plugins/`，避免写死扩展版本。
+- HX：Windows 使用 HBuilderX 安装目录下的 `plugins/`；macOS 使用 HBuilderX 应用包内的实际 `plugins/` 目录。
+
+`UNIAPPX_TEST_VITE_IMPORT`、`UNIAPPX_TEST_VAPOR_COMPILER` 与 `NODE_PATH` 必须指向同一套 SDK，不能混用不同 IDE 或 SDK 版本的模块。验证时记录实际使用的 IDE 与 SDK 版本；App 使用配套 uni-app x 编译器 5.31+，并启用 Vapor。
+
+发布检查以 `test/demo-template/` 为模板，将当前源码打包后安装到示例工程中。默认输出到固定目录 `demo-output/demo-app/`，命令结束时打印工程和 tarball 的绝对路径；用 HBuilder V 或 HBuilderX 打开该工程即可运行示例。
 每次运行会清空并重新生成该目录，包括已安装依赖和构建产物，确保使用本次打包的源码。需要保留的示例修改应放在 `test/demo-template/`，不要保存在生成目录中。
 输出父目录可以通过环境变量修改，目录不存在时自动创建；其下的工程目录名仍固定为 `demo-app`：
 

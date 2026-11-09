@@ -7,9 +7,9 @@ const rollingTarget = /[\\/]cache$/
 const sleepBuffer = new Int32Array(new SharedArrayBuffer(4))
 
 /**
- * 为 HBuilderX 的 uts2js 滚动缓存重试 `fs.renameSync`。
+ * 为 uni-app x SDK 的 uts2js 滚动缓存重试 `fs.renameSync`。
  *
- * HBuilderX 的 `uts` 插件在 `buildEnd` 里对 code、semantic、syntactic、types 四个滚动缓存依次执行
+ * uni-app x SDK 的 `uts` 插件在 `buildEnd` 里对 code、semantic、syntactic、types 四个滚动缓存依次执行
  * `removeSync(<cache>/cache)` 再 `renameSync(<cache>/cache_, <cache>/cache)`。`removeSync` 只是
  * `fs.rmSync(recursive, force)`，没有任何重试；Windows 上被删除的目录名在所有句柄关闭前仍处于
  * delete-pending 状态（文件监听器、杀毒软件扫描、并行运行的第二个构建都会延长这个窗口），紧随其后的

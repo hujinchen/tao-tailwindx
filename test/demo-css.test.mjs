@@ -71,10 +71,10 @@ test('官方 CSS 目录中的 110 项属性均可导航，示例 class 在六端
 	}
 })
 
-test('演示页面的 App CSS 可由 HBuilder V 配套 SDK 编译', async (t) => {
+test('演示页面的 App CSS 可由 HV 或 HX 配套 SDK 编译', async (t) => {
 	const compilerPath = process.env.UNIAPPX_TEST_VAPOR_COMPILER
 	if (!compilerPath) {
-		t.skip('设置 UNIAPPX_TEST_VAPOR_COMPILER 和 NODE_PATH 为 HBuilder V SDK 路径')
+		t.skip('设置 UNIAPPX_TEST_VAPOR_COMPILER 和 NODE_PATH 为 HV 或 HX 对应的配套 SDK 路径')
 		return
 	}
 	const compiler = createRequire(import.meta.url)(compilerPath)

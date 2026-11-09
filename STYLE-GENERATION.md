@@ -221,7 +221,7 @@ pnpm run test:package --npm
 ```
 
 发布检查以 `test/demo-template/` 为模板，在生成的 uni-app x 工程中安装实际打包的 `tao-tailwindx`，检查公开 JS / CSS 入口，以及 Web、Android、iOS、HarmonyOS、微信和支付宝平台配置下的插件样式处理。默认输出到固定目录 `demo-output/demo-app/`，每次运行清空并重新生成；可通过 `UNIAPPX_RELEASE_HOST_PARENT` 修改输出父目录。
-完整 Vite watcher 与原生动画 CSS 编译检查需要 HBuilder V 配套 SDK，配置方式见源码项目的 `PUBLISHING.md`；缺少编译器时相关测试会明确跳过。
+完整 Vite watcher 与原生动画 CSS 编译检查使用 HBuilder V（HV）或 HBuilderX（HX）对应的配套 SDK，配置方式见源码项目的 `PUBLISHING.md`；缺少编译器时相关测试会明确跳过，验证记录注明实际使用的 IDE 与 SDK 版本。
 这些检查不代表完整消费项目或设备运行验收通过。消费项目应按实际目录、组件隔离、主题配置与目标端编译并运行验证；发布版本的验证记录见[更新日志](./CHANGELOG.md)。
 
 主要实现入口：[候选与文件归属](./src/local-styles.mjs)、[脚本模块边](./src/script-imports.mjs)、[全局裁剪与 HMR](./src/index.mjs)、[绑定转换](./src/class-values.mjs)。局部生成与真实 Vite HMR 的回归位于源码项目的 `test/local-styles.test.mjs` 和 `test/dependencies.test.mjs`，测试文件不进入 npm 发布包。
@@ -267,7 +267,7 @@ uni-app x 编译器与运行时会生成用于组件关系、插槽和样式隔�
 
 ### SDK 源码索引
 
-以下路径相对于 HBuilder V 配套 SDK 的 `plugins/uniapp-cli-vite/node_modules/@dcloudio/`：
+以下路径相对于 HBuilder V 或 HBuilderX 对应配套 SDK 的 `plugins/uniapp-cli-vite/node_modules/@dcloudio/`，以实际使用的 SDK 版本为准：
 
 - `uni-mp-weixin/dist/uni.mp.esm.js`：`initVueIds`、`findVmByVueId`、`initDefaultProps`、`initVirtualHostProps`、`initLifetimes`。
 - `uni-mp-vue/dist-x/vue.runtime.esm.js`：`patchClassList`、`parseVirtualHostClass`。

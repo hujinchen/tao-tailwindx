@@ -2,6 +2,7 @@
 
 ## 未发布（2026-11-09）
 
+- `docs`：统一 HBuilder V（HV）与 HBuilderX（HX）的支持、运行和 SDK 验证说明，补充两种 IDE 的 SDK 定位方式；测试名称、跳过提示与源码注释同步，保留实际验证所用 IDE 与 SDK 的历史记录。
 - `fix`：修复打包检查在 Windows 下误将 npm shell 启动文件交给 Node 执行、pnpm 启动失败和路径分隔符校验错误，保留 macOS 运行方式，并补充 PowerShell 用法。
 - `feat`：扩展示例模板为 110 项官方 CSS 属性、636 个 Tailwind 写法，提供八类导航、搜索、属性独立地址、代码与效果对照。
 - `feat`：增加多行 Flex、边框与圆角、尺寸与间距、文本布局、事件穿透、可控制动画和 Web 滚动时间轴等实际预览，统一浅色与深色主题。
@@ -25,4 +26,4 @@
 
 使用 HBuilder V 5.33 配套 SDK 执行 247 项 Node 回归，全部通过，无失败或跳过，包含示例 Vite 配置加载、真实 Vite watcher/HMR 和原生动画 CSS 编译检查。npm、pnpm 的实际 tarball 单包安装、静态导入和六端插件样式处理检查通过。
 
-Node 回归与打包安装检查不代替设备验收。完整 Vite watcher 与原生 CSS 编译测试需要配置 HBuilder V SDK 路径，维护者可查看源码项目中的 PUBLISHING.md。
+Node 回归与打包安装检查不代替设备验收。完整 Vite watcher 与原生 CSS 编译测试使用 HBuilder V 或 HBuilderX 对应的配套 SDK，维护者可查看源码项目中的 PUBLISHING.md。上述记录仅对应实测的 HBuilder V 5.33 配套 SDK，不代表其他 HV 或 HX SDK 版本已完成验证。

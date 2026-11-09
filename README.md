@@ -10,7 +10,7 @@
 
 ## 环境要求
 
-- uni-app x，HBuilderX 5.31+；App 启用 Vapor。
+- uni-app x，HBuilderV 或 HBuilderX 5.31+；App 启用 Vapor。
 - Node.js 22.13+。
 
 ## 三步接入
@@ -167,7 +167,7 @@ tao-tailwindx/
 
 `test/`、`scripts/` 和作者用 `PUBLISHING.md` 不进入 npm 发布包。维护者可在源码项目中查看 PUBLISHING.md。
 
-在源码工程执行 `pnpm run test:package`，会以 `test/demo-template/` 为模板生成示例，并安装当前源码打包的插件。默认输出到固定目录 `demo-output/demo-app/`，用 HBuilder V 打开该工程即可运行。每次运行会清空并重新生成此目录；需要保留的示例修改应放在模板中。自定义输出位置见源码工程中的 `PUBLISHING.md`。
+在源码工程执行 `pnpm run test:package`，会以 `test/demo-template/` 为模板生成示例，并安装当前源码打包的插件。默认输出到固定目录 `demo-output/demo-app/`，用 HBuilder V 或 HBuilderX 打开该工程即可运行。每次运行会清空并重新生成此目录；需要保留的示例修改应放在模板中。自定义输出位置见源码工程中的 `PUBLISHING.md`。
 
 ## 常见问题
 

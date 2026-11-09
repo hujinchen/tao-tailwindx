@@ -180,7 +180,7 @@ test('real Vite watcher sends App style HMR for edits, additions and deletions',
 	} catch (error) {
 		if (error.code !== 'ERR_MODULE_NOT_FOUND' || process.env.UNIAPPX_TEST_VITE_IMPORT != null)
 			throw error
-		t.skip('Vite is unavailable; set UNIAPPX_TEST_VITE_IMPORT to a local Vite module')
+		t.skip('Vite 不可用；设置 UNIAPPX_TEST_VITE_IMPORT 为 HV 或 HX 对应配套 SDK 的 Vite 入口')
 		return
 	}
 	await fixture(async ({ directory, entry, id }) => {
@@ -278,7 +278,7 @@ test('real Vite HMR keeps generated .uvue style updates after Vue filters unchan
 	} catch (error) {
 		if (error.code !== 'ERR_MODULE_NOT_FOUND' || process.env.UNIAPPX_TEST_VITE_IMPORT != null)
 			throw error
-		t.skip('Vite is unavailable; set UNIAPPX_TEST_VITE_IMPORT to a local Vite module')
+		t.skip('Vite 不可用；设置 UNIAPPX_TEST_VITE_IMPORT 为 HV 或 HX 对应配套 SDK 的 Vite 入口')
 		return
 	}
 	await fixture(async ({ directory, entry }) => {
@@ -373,7 +373,7 @@ test('real Vite HMR keeps generated .uvue style updates after Vue filters unchan
 test('真实 Vite 的共享脚本 HMR 同时更新两个 SFC 的局部样式', async (t) => {
 	const viteImport = process.env.UNIAPPX_TEST_VITE_IMPORT
 	if (!viteImport) {
-		t.skip('Set UNIAPPX_TEST_VITE_IMPORT to a local Vite module')
+		t.skip('设置 UNIAPPX_TEST_VITE_IMPORT 为 HV 或 HX 对应配套 SDK 的 Vite 入口')
 		return
 	}
 	const { createServer } = await import(pathToFileURL(viteImport).href)

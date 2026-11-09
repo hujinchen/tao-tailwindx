@@ -6,10 +6,10 @@ import { join } from 'node:path'
 import { test } from 'node:test'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
-test('示例 ESM 配置可通过 uni() 注册 HBuilder V SDK 插件', async (t) => {
+test('示例 ESM 配置可通过 uni() 注册 HV 或 HX 配套 SDK 的插件', async (t) => {
 	const vitePath = process.env.UNIAPPX_TEST_VITE_IMPORT
 	if (!vitePath) {
-		t.skip('设置 UNIAPPX_TEST_VITE_IMPORT 为 HBuilder V SDK 的 Vite 入口')
+		t.skip('设置 UNIAPPX_TEST_VITE_IMPORT 为 HV 或 HX 对应配套 SDK 的 Vite 入口')
 		return
 	}
 	const directory = await mkdtemp(join(tmpdir(), 'tailwind-demo-config-'))

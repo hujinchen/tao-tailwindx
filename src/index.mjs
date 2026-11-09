@@ -32,7 +32,7 @@ import {
  * @param {boolean} [options.allowDarkVariantSelectors] 是否保留 Tailwind 官方 dark 变体选择器；默认 Web 和小程序开启。
  * @param {boolean} [options.debug=false] 是否输出插件调试日志。
  * @param {string} [options.entry] Tailwind CSS 入口的绝对路径；未配置时回退到 `reference`。
- * @param {boolean} [options.utsRenameRetry=false] 是否为 HBuilderX 的 uts2js 滚动缓存重试并兜底 rename；默认关闭。
+ * @param {boolean} [options.utsRenameRetry=false] 是否为 uni-app x SDK 的 uts2js 滚动缓存重试并兜底 rename；默认关闭。
  * @param {Array<string|RegExp>} [options.colorVariables=[]] 交给 CSS 清洗器识别为颜色的自定义变量名。
  * @param {{input: string|string[], output: string}} [options.themeValues] 可选主题数据导出，输入 CSS 路径与输出 TS 路径。
  * @param {Array<string|RegExp>} [options.include] Vapor CSS 清洗器需要处理的文件匹配规则。
