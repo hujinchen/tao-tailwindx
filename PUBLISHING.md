@@ -27,6 +27,8 @@ pnpm run test:package
 pnpm run test:package --npm
 ```
 
+上述命令适用于 Windows PowerShell 与 macOS 终端。打包检查使用当前 Node 执行 npm 的 JavaScript 入口；pnpm 安装命令由系统 shell 启动，兼容 Windows 的 `.cmd` 与 macOS 的可执行入口。
+
 `pnpm test` 在没有对应编译器时会明确跳过 Vite watcher 与原生 CSS 编译检查；跳过不表示平台验证通过。
 完成完整检查时，先用 HBuilder V 打开测试宿主，使用该 IDE 配套 SDK，并设置以下环境变量后再执行 `pnpm test`：
 
@@ -43,6 +45,13 @@ pnpm run test:package --npm
 
 ```bash
 UNIAPPX_RELEASE_HOST_PARENT="$HOME/Desktop/tao-tailwindx-demos" pnpm run test:package
+```
+
+Windows PowerShell 对应写法：
+
+```powershell
+$env:UNIAPPX_RELEASE_HOST_PARENT = "$env:USERPROFILE/Desktop/tao-tailwindx-demos"
+pnpm run test:package
 ```
 
 生成工程仅声明本地 tarball，内部依赖由包管理器安装；正式发布前即可运行。`demo-output/` 不参与 Git、格式检查或 npm 发布。

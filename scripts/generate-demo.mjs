@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict'
-import { execFileSync } from 'node:child_process'
+import { execFileSync, execSync } from 'node:child_process'
 import { cp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
-import { dirname, delimiter, resolve, join } from 'node:path'
+import { dirname, delimiter, resolve, join, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 const root = resolve(import.meta.dirname, '..')
@@ -16,14 +16,19 @@ const host = await realpath(hostPath)
 const packageRoot = root
 const metadata = JSON.parse(await readFile(join(packageRoot, 'package.json'), 'utf8'))
 const manager = process.argv.includes('--npm') ? 'npm' : 'pnpm'
-// npm 的 CLI 也由当前 Node/Helper 运行，避免 shebang 切换到另一个 Node。
-const npmCli = await realpath(
+const npmLauncher = await realpath(
 	execFileSync(process.platform === 'win32' ? 'where' : 'which', ['npm'], {
 		encoding: 'utf8'
 	})
 		.trim()
 		.split(/\r?\n/)[0]
 )
+// Windows 的 npm 是 shell 启动文件；macOS 的 npm 软链接直接指向 JS 入口。
+const npmCli =
+	process.platform === 'win32'
+		? join(dirname(npmLauncher), 'node_modules/npm/bin/npm-cli.js')
+		: npmLauncher
+// npm 的 CLI 由当前 Node/Helper 运行，避免 shebang 切换到另一个 Node。
 const npm = (args, cwd) =>
 	execFileSync(process.execPath, [npmCli, ...args], {
 		cwd,
@@ -69,12 +74,8 @@ await writeFile(join(host, 'package.json'), JSON.stringify(manifest, null, '\t')
 if (manager === 'npm')
 	npm(['install', '--ignore-scripts', '--package-lock=false', '--no-audit', '--no-fund'], host)
 else {
-	const pnpm = execFileSync(process.platform === 'win32' ? 'where' : 'which', ['pnpm'], {
-		encoding: 'utf8'
-	})
-		.trim()
-		.split(/\r?\n/)[0]
-	execFileSync(pnpm, ['install', '--ignore-scripts', '--no-frozen-lockfile'], {
+	// 固定命令交给系统 shell，兼容 Windows 的 .cmd 与 macOS 的可执行入口。
+	execSync('pnpm install --ignore-scripts --no-frozen-lockfile', {
 		cwd: host,
 		// 安装器与验收进程使用同一 Node 架构，避免 native optional dependency 不匹配。
 		env: { ...process.env, PATH: dirname(process.execPath) + delimiter + process.env.PATH },
@@ -84,7 +85,7 @@ else {
 
 const hostRequire = createRequire(join(host, 'package.json'))
 const installedEntry = hostRequire.resolve(metadata.name)
-assert.ok(installedEntry.startsWith(join(host, 'node_modules') + '/'))
+assert.ok(installedEntry.startsWith(join(host, 'node_modules') + sep))
 assert.deepEqual(Object.keys(manifest.devDependencies), [metadata.name])
 // 从安装后的宿主验证示例使用的静态导入，避免误用源码项目中的包。
 execFileSync(
