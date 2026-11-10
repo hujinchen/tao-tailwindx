@@ -75,11 +75,14 @@ await writeFile(join(host, 'package.json'), JSON.stringify(manifest, null, '\t')
 if (manager === 'npm')
 	npm(['install', '--ignore-scripts', '--package-lock=false', '--no-audit', '--no-fund'], host)
 else {
+	// 安装器与验收进程使用同一 Node 架构，避免 native optional dependency 不匹配。
+	const env = { ...process.env, PATH: dirname(process.execPath) + delimiter + process.env.PATH }
+	// 按宿主位置解析可用仓库并显式复用，避免跨盘切换警告和重复缓存。
+	const storeDir = execSync('pnpm store path', { cwd: host, env, encoding: 'utf8' }).trim()
 	// 固定命令交给系统 shell，兼容 Windows 的 .cmd 与 macOS 的可执行入口。
 	execSync('pnpm install --ignore-scripts --no-frozen-lockfile', {
 		cwd: host,
-		// 安装器与验收进程使用同一 Node 架构，避免 native optional dependency 不匹配。
-		env: { ...process.env, PATH: dirname(process.execPath) + delimiter + process.env.PATH },
+		env: { ...env, PNPM_CONFIG_STORE_DIR: storeDir },
 		stdio: 'inherit'
 	})
 }
