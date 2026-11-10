@@ -8,7 +8,7 @@
 
 使用目标 IDE 配套的 uni-app x 编译器 5.31+，App 启用 Vapor。
 
-源码仓库中先执行 `pnpm run test:package`，生成可运行的 `demo-output/demo-app/`。不要直接运行缺少 `package.json` 的模板目录。
+源码仓库中先执行 `pnpm run test:package`，生成可运行的 `demo-output/tailwind-uniappx-demo/`。不要直接运行缺少 `package.json` 的模板目录。
 
 ## 查看与维护
 
@@ -17,8 +17,10 @@
 - 每张卡片显示完整 Tailwind class、对应 CSS 值和可观察的效果。有限枚举值逐项演示；长度、颜色、时间、数字等无限值类型使用代表值，简写使用常见组合。
 - `pages/css/catalog.ts` 保存完整 class 字符串；插件可扫描这些静态候选，运行时在绑定处转换类名。不要拼接 `border-${value}` 等无法扫描的 class。
 - `pages/css/property.uvue` 提供多行 Flex、尺寸参照、事件穿透、文字截断、可重新播放的动画和独立滚动时间轴等实际场景。
+- 边框预览只补齐当前方向缺少的宽度、样式或颜色；单边示例不叠加其他方向的边框。预览对象使用主题底色和字色，避免蓝色边框与蓝色背景混在一起。
+- 组件属性遵循 uni-app x 文档；输入框不使用 `aria-label`，代码文本使用 `user-select` 支持选择和复制。
 - 布局样式复用 `@apply`，主题通过 CSS 变量同时提供浅色和深色模式；不下载额外字体或图片。
-- 此模板将 Tailwind `--spacing` 设置为 `1px`，所以 `p-16` 对应 `16px`，不是 Tailwind 默认间距尺度。
+- 此模板将 Tailwind `--spacing` 设置为 `1px`，间距、尺寸、定位和行高中的 px 值优先使用 `p-16`、`w-112`、`top-40`、`leading-32` 等数字工具类；字号、圆角、rpx、变量和计算值保留必要的任意值写法。
 
 ## 支持边界
 

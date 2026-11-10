@@ -61,7 +61,37 @@ test('官方 CSS 目录中的 110 项属性均可导航，示例 class 在六端
 				for (const selector of rule.selectors) rules.set(selector, rule)
 			})
 		}
+		// 从页面读取实际基础类，检查生成的声明不覆盖当前属性，也不引入其他方向的边框。
+		const borderClasses = result.code.match(/const borderPreviewClasses[^=]*=[\s\S]*?\n}/)
+		assert.ok(borderClasses)
+		const { borderPreviewClasses } = await import(
+			'data:text/javascript;base64,' +
+				Buffer.from(stripTypeScriptTypes('export ' + borderClasses[0])).toString('base64')
+		)
 		for (const demo of demos) {
+			if (demo.kind.startsWith('border')) {
+				const baseProperties = new Set()
+				for (const name of (borderPreviewClasses[demo.property] ?? '').split(/\s+/)) {
+					if (name.length === 0) continue
+					const rule = rules.get('.' + toSafeClassName(name))
+					assert.ok(rule, `${platform}: ${demo.property} 的基础类 ${name} 没有生成 CSS`)
+					rule.walkDecls((decl) => {
+						if (decl.prop.startsWith('border')) baseProperties.add(decl.prop)
+					})
+				}
+				const prefix = demo.property.replace(/-(color|style|width)$/, '')
+				const expected =
+					demo.kind === 'border'
+						? []
+						: ['width', 'style', 'color']
+								.filter((suffix) => demo.property !== `${prefix}-${suffix}`)
+								.map((suffix) => `${prefix}-${suffix}`)
+				assert.deepEqual(
+					[...baseProperties].sort(),
+					expected.sort(),
+					`${platform}: ${demo.property}`
+				)
+			}
 			const cssProperty = demo.property === 'lines' ? '-webkit-line-clamp' : demo.property
 			for (const sample of demo.cases) {
 				const declarations = []

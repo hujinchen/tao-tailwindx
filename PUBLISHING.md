@@ -35,11 +35,11 @@ Tailwind 与其 PostCSS 插件保持相同固定版本；升级时运行完整�
 
 ## 生成示例
 
-`pnpm run test:package` 将当前源码打包并安装到 `demo-output/demo-app/`，检查静态导入、六端样式与 `@apply`，最后打印工程和 tarball 路径。用 HV 或 HX 打开生成工程运行。
+`pnpm run test:package` 将当前源码打包并安装到 `demo-output/tailwind-uniappx-demo/`，检查静态导入、六端样式与 `@apply`，最后打印检查结果、示例工程和本地安装包路径，并说明安装包用途及后续验证步骤。用 HV 或 HX 打开生成工程运行。
 
 每次执行都会清空并重建工程目录，示例修改请放在 `test/demo-template/`，保留平台条件并同步模板 README。`demo-output/` 不参与 Git、格式检查或 npm 发布。
 
-可通过 `UNIAPPX_RELEASE_HOST_PARENT` 修改输出父目录，工程名仍为 `demo-app`：
+可通过 `UNIAPPX_RELEASE_HOST_PARENT` 修改输出父目录，工程名仍为 `tailwind-uniappx-demo`：
 
 ```bash
 UNIAPPX_RELEASE_HOST_PARENT="$HOME/Desktop/tao-tailwindx-demos" pnpm run test:package

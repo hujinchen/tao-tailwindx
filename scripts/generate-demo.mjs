@@ -7,8 +7,9 @@ import { pathToFileURL } from 'node:url'
 
 const root = resolve(import.meta.dirname, '..')
 const parent = resolve(process.env.UNIAPPX_RELEASE_HOST_PARENT ?? join(root, 'demo-output'))
+const demoName = 'tailwind-uniappx-demo'
 await mkdir(parent, { recursive: true })
-const hostPath = join(parent, 'demo-app')
+const hostPath = join(parent, demoName)
 // 重建生成目录，避免同版本 tarball 的安装缓存和旧构建文件影响检查。
 await rm(hostPath, { recursive: true, force: true })
 await mkdir(hostPath)
@@ -62,7 +63,7 @@ assert.ok(
 )
 const tarball = join(host, packed[0].filename)
 const manifest = {
-	name: 'tao-tailwindx-demo',
+	name: demoName,
 	version: metadata.version,
 	type: 'module',
 	private: true,
@@ -158,6 +159,9 @@ try {
 	if (previousPlatform == null) delete process.env.UNI_PLATFORM
 	else process.env.UNI_PLATFORM = previousPlatform
 }
-console.log(`${manager} 单包安装及公开入口 Node 检查通过：${host}`)
-console.log(`产物：${tarball}`)
-console.log('检查覆盖静态导入与插件样式处理；完整项目编译与真机运行需另行验证。')
+console.log(`\n本地插件包安装成功（${manager}）：${metadata.name}@${metadata.version}`)
+console.log('检查通过：插件导入、六端样式生成与 @apply 转换（Node 环境）。')
+console.log(`示例工程：${host}`)
+console.log(`本地安装包：${tarball}`)
+console.log('安装包用途：发布前安装到业务项目中验收。')
+console.log('下一步：用 HBuilder V 或 HBuilderX 打开示例工程，验证完整编译与真机运行。')

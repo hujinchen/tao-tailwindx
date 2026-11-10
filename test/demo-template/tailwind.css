@@ -3,12 +3,6 @@
 @import './platform.css';
 
 @theme inline {
-	--color-brand: var(--brand);
-	--color-canvas: var(--demo-canvas);
-	--color-surface: var(--demo-surface);
-	--color-ink: var(--demo-ink);
-	--color-muted: var(--demo-muted);
-	--color-line: var(--demo-line);
 	--spacing: 1px;
 	--text-sm: 14px;
 	--text-sm--line-height: 22px;
@@ -16,6 +10,12 @@
 	--text-base--line-height: 26px;
 	--text-lg: 18px;
 	--text-lg--line-height: 28px;
+	--color-brand: var(--brand);
+	--color-canvas: var(--demo-canvas);
+	--color-surface: var(--demo-surface);
+	--color-ink: var(--demo-ink);
+	--color-muted: var(--demo-muted);
+	--color-line: var(--demo-line);
 }
 
 @source './App.uvue';

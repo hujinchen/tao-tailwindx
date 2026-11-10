@@ -176,7 +176,7 @@ export const cssDemos: CssDemo[] = [
 		cases: [
 			{ value: 'auto', className: 'basis-auto', note: '' },
 			{ value: '64px', className: 'basis-64', note: '' },
-			{ value: '96px', className: 'basis-[96px]', note: '' },
+			{ value: '96px', className: 'basis-96', note: '' },
 			{ value: '120rpx', className: 'basis-[120rpx]', note: '' },
 			{ value: '50%', className: 'basis-1/2', note: '' },
 			// #ifdef WEB
@@ -237,7 +237,7 @@ export const cssDemos: CssDemo[] = [
 		cases: [
 			{ value: '0px', className: 'top-0', note: '' },
 			{ value: '24px', className: 'top-24', note: '' },
-			{ value: '40px', className: 'top-[40px]', note: '' },
+			{ value: '40px', className: 'top-40', note: '' },
 			{ value: '48rpx', className: 'top-[48rpx]', note: '' },
 			{ value: '25%', className: 'top-1/4', note: '' },
 			{ value: '-12px', className: '-top-12', note: '' },
@@ -254,7 +254,7 @@ export const cssDemos: CssDemo[] = [
 		cases: [
 			{ value: '0px', className: 'right-0', note: '' },
 			{ value: '24px', className: 'right-24', note: '' },
-			{ value: '40px', className: 'right-[40px]', note: '' },
+			{ value: '40px', className: 'right-40', note: '' },
 			{ value: '48rpx', className: 'right-[48rpx]', note: '' },
 			{ value: '25%', className: 'right-1/4', note: '' },
 			{ value: '-12px', className: '-right-12', note: '' },
@@ -271,7 +271,7 @@ export const cssDemos: CssDemo[] = [
 		cases: [
 			{ value: '0px', className: 'bottom-0', note: '' },
 			{ value: '24px', className: 'bottom-24', note: '' },
-			{ value: '40px', className: 'bottom-[40px]', note: '' },
+			{ value: '40px', className: 'bottom-40', note: '' },
 			{ value: '48rpx', className: 'bottom-[48rpx]', note: '' },
 			{ value: '25%', className: 'bottom-1/4', note: '' },
 			{ value: '-12px', className: '-bottom-12', note: '' },
@@ -288,7 +288,7 @@ export const cssDemos: CssDemo[] = [
 		cases: [
 			{ value: '0px', className: 'left-0', note: '' },
 			{ value: '24px', className: 'left-24', note: '' },
-			{ value: '40px', className: 'left-[40px]', note: '' },
+			{ value: '40px', className: 'left-40', note: '' },
 			{ value: '48rpx', className: 'left-[48rpx]', note: '' },
 			{ value: '25%', className: 'left-1/4', note: '' },
 			{ value: '-12px', className: '-left-12', note: '' },
@@ -368,7 +368,7 @@ export const cssDemos: CssDemo[] = [
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
 			{ value: '64px', className: 'w-64', note: '' },
-			{ value: '112px', className: 'w-[112px]', note: '' },
+			{ value: '112px', className: 'w-112', note: '' },
 			{ value: '160rpx', className: 'w-[160rpx]', note: '' },
 			{ value: '50%', className: 'w-1/2', note: '' },
 			{ value: '100%', className: 'w-full', note: '' },
@@ -395,7 +395,7 @@ export const cssDemos: CssDemo[] = [
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
 			{ value: '64px', className: 'h-64', note: '' },
-			{ value: '112px', className: 'h-[112px]', note: '' },
+			{ value: '112px', className: 'h-112', note: '' },
 			{ value: '160rpx', className: 'h-[160rpx]', note: '' },
 			{ value: '50%', className: 'h-1/2', note: '' },
 			{ value: '100%', className: 'h-full', note: '' },
@@ -422,7 +422,7 @@ export const cssDemos: CssDemo[] = [
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
 			{ value: '64px', className: 'min-w-64', note: '' },
-			{ value: '112px', className: 'min-w-[112px]', note: '' },
+			{ value: '112px', className: 'min-w-112', note: '' },
 			{ value: '160rpx', className: 'min-w-[160rpx]', note: '' },
 			// #ifdef WEB
 			{ value: 'fit-content', className: '[min-width:fit-content]', note: '仅 Web 演示' },
@@ -447,7 +447,7 @@ export const cssDemos: CssDemo[] = [
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
 			{ value: '64px', className: 'max-w-64', note: '' },
-			{ value: '112px', className: 'max-w-[112px]', note: '' },
+			{ value: '112px', className: 'max-w-112', note: '' },
 			{ value: '160rpx', className: 'max-w-[160rpx]', note: '' },
 			// #ifdef WEB
 			{ value: 'fit-content', className: '[max-width:fit-content]', note: '仅 Web 演示' },
@@ -472,7 +472,7 @@ export const cssDemos: CssDemo[] = [
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
 			{ value: '64px', className: 'min-h-64', note: '' },
-			{ value: '112px', className: 'min-h-[112px]', note: '' },
+			{ value: '112px', className: 'min-h-112', note: '' },
 			{ value: '160rpx', className: 'min-h-[160rpx]', note: '' },
 			// #ifdef WEB
 			{ value: 'fit-content', className: '[min-height:fit-content]', note: '仅 Web 演示' },
@@ -497,7 +497,7 @@ export const cssDemos: CssDemo[] = [
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
 			{ value: '64px', className: 'max-h-64', note: '' },
-			{ value: '112px', className: 'max-h-[112px]', note: '' },
+			{ value: '112px', className: 'max-h-112', note: '' },
 			{ value: '160rpx', className: 'max-h-[160rpx]', note: '' },
 			// #ifdef WEB
 			{ value: 'fit-content', className: '[max-height:fit-content]', note: '仅 Web 演示' },
@@ -524,7 +524,7 @@ export const cssDemos: CssDemo[] = [
 			{ value: '0px', className: 'm-0', note: '' },
 			{ value: '8px', className: 'm-8', note: '' },
 			{ value: '24px', className: 'm-24', note: '' },
-			{ value: '18px', className: 'm-[18px]', note: '' },
+			{ value: '18px', className: 'm-18', note: '' },
 			{ value: '32rpx', className: 'm-[32rpx]', note: '' },
 			{ value: 'var(--demo-space)', className: 'm-(--demo-space)', note: '' },
 			{ value: '8px 24px', className: '[margin:8px_24px]', note: '' },
@@ -545,7 +545,7 @@ export const cssDemos: CssDemo[] = [
 			{ value: '0px', className: 'mt-0', note: '' },
 			{ value: '8px', className: 'mt-8', note: '' },
 			{ value: '24px', className: 'mt-24', note: '' },
-			{ value: '18px', className: 'mt-[18px]', note: '' },
+			{ value: '18px', className: 'mt-18', note: '' },
 			{ value: '32rpx', className: 'mt-[32rpx]', note: '' },
 			{ value: 'var(--demo-space)', className: 'mt-(--demo-space)', note: '' },
 			{ value: '-8px', className: '-mt-8', note: '' },
@@ -563,7 +563,7 @@ export const cssDemos: CssDemo[] = [
 			{ value: '0px', className: 'mr-0', note: '' },
 			{ value: '8px', className: 'mr-8', note: '' },
 			{ value: '24px', className: 'mr-24', note: '' },
-			{ value: '18px', className: 'mr-[18px]', note: '' },
+			{ value: '18px', className: 'mr-18', note: '' },
 			{ value: '32rpx', className: 'mr-[32rpx]', note: '' },
 			{ value: 'var(--demo-space)', className: 'mr-(--demo-space)', note: '' },
 			{ value: '-8px', className: '-mr-8', note: '' },
@@ -581,7 +581,7 @@ export const cssDemos: CssDemo[] = [
 			{ value: '0px', className: 'mb-0', note: '' },
 			{ value: '8px', className: 'mb-8', note: '' },
 			{ value: '24px', className: 'mb-24', note: '' },
-			{ value: '18px', className: 'mb-[18px]', note: '' },
+			{ value: '18px', className: 'mb-18', note: '' },
 			{ value: '32rpx', className: 'mb-[32rpx]', note: '' },
 			{ value: 'var(--demo-space)', className: 'mb-(--demo-space)', note: '' },
 			{ value: '-8px', className: '-mb-8', note: '' },
@@ -599,7 +599,7 @@ export const cssDemos: CssDemo[] = [
 			{ value: '0px', className: 'ml-0', note: '' },
 			{ value: '8px', className: 'ml-8', note: '' },
 			{ value: '24px', className: 'ml-24', note: '' },
-			{ value: '18px', className: 'ml-[18px]', note: '' },
+			{ value: '18px', className: 'ml-18', note: '' },
 			{ value: '32rpx', className: 'ml-[32rpx]', note: '' },
 			{ value: 'var(--demo-space)', className: 'ml-(--demo-space)', note: '' },
 			{ value: '-8px', className: '-ml-8', note: '' },
@@ -617,7 +617,7 @@ export const cssDemos: CssDemo[] = [
 			{ value: '0px', className: 'p-0', note: '' },
 			{ value: '8px', className: 'p-8', note: '' },
 			{ value: '24px', className: 'p-24', note: '' },
-			{ value: '18px', className: 'p-[18px]', note: '' },
+			{ value: '18px', className: 'p-18', note: '' },
 			{ value: '32rpx', className: 'p-[32rpx]', note: '' },
 			{ value: 'var(--demo-space)', className: 'p-(--demo-space)', note: '' },
 			{ value: '8px 24px', className: '[padding:8px_24px]', note: '' },
@@ -636,7 +636,7 @@ export const cssDemos: CssDemo[] = [
 			{ value: '0px', className: 'pt-0', note: '' },
 			{ value: '8px', className: 'pt-8', note: '' },
 			{ value: '24px', className: 'pt-24', note: '' },
-			{ value: '18px', className: 'pt-[18px]', note: '' },
+			{ value: '18px', className: 'pt-18', note: '' },
 			{ value: '32rpx', className: 'pt-[32rpx]', note: '' },
 			{ value: 'var(--demo-space)', className: 'pt-(--demo-space)', note: '' }
 		]
@@ -652,7 +652,7 @@ export const cssDemos: CssDemo[] = [
 			{ value: '0px', className: 'pr-0', note: '' },
 			{ value: '8px', className: 'pr-8', note: '' },
 			{ value: '24px', className: 'pr-24', note: '' },
-			{ value: '18px', className: 'pr-[18px]', note: '' },
+			{ value: '18px', className: 'pr-18', note: '' },
 			{ value: '32rpx', className: 'pr-[32rpx]', note: '' },
 			{ value: 'var(--demo-space)', className: 'pr-(--demo-space)', note: '' }
 		]
@@ -668,7 +668,7 @@ export const cssDemos: CssDemo[] = [
 			{ value: '0px', className: 'pb-0', note: '' },
 			{ value: '8px', className: 'pb-8', note: '' },
 			{ value: '24px', className: 'pb-24', note: '' },
-			{ value: '18px', className: 'pb-[18px]', note: '' },
+			{ value: '18px', className: 'pb-18', note: '' },
 			{ value: '32rpx', className: 'pb-[32rpx]', note: '' },
 			{ value: 'var(--demo-space)', className: 'pb-(--demo-space)', note: '' }
 		]
@@ -684,7 +684,7 @@ export const cssDemos: CssDemo[] = [
 			{ value: '0px', className: 'pl-0', note: '' },
 			{ value: '8px', className: 'pl-8', note: '' },
 			{ value: '24px', className: 'pl-24', note: '' },
-			{ value: '18px', className: 'pl-[18px]', note: '' },
+			{ value: '18px', className: 'pl-18', note: '' },
 			{ value: '32rpx', className: 'pl-[32rpx]', note: '' },
 			{ value: 'var(--demo-space)', className: 'pl-(--demo-space)', note: '' }
 		]
@@ -1431,9 +1431,9 @@ export const cssDemos: CssDemo[] = [
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
 			{ value: 'normal', className: '[line-height:normal]', note: '' },
-			{ value: '20px', className: 'leading-[20px]', note: '' },
-			{ value: '32px', className: 'leading-[32px]', note: '' },
-			{ value: '48px', className: 'leading-[48px]', note: '' },
+			{ value: '20px', className: 'leading-20', note: '' },
+			{ value: '32px', className: 'leading-32', note: '' },
+			{ value: '48px', className: 'leading-48', note: '' },
 			{ value: '64rpx', className: 'leading-[64rpx]', note: '' }
 		]
 	},

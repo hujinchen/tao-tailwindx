@@ -15,9 +15,11 @@
 
 ## 三步接入
 
+先准备 uni-app x 工程，可通过 HBuilder V 或 HBuilderX 新建；HBuilderX CLI 的项目创建与发行支持见[官方项目说明](https://doc.dcloud.net.cn/uni-app-x/project.html)。uni-app x 目前仅支持在项目根目录组织源码，以下配置按 `App.uvue`、`manifest.json` 和 `pages.json` 位于根目录的结构编写。
+
 ### 1. 安装一个包
 
-在宿主包含 `package.json` 的目录执行：
+在 uni-app x 项目根目录（`App.uvue` 所在目录）执行。若没有 `package.json`，先执行 `pnpm init`（或 `npm init -y`）；已有文件直接保留：
 
 ```bash
 pnpm add -D tao-tailwindx
@@ -28,7 +30,7 @@ Tailwind CSS 等构建依赖随插件自动安装。
 
 ### 2. 注册 Vite 插件
 
-在项目的 Vite 配置中注册，**必须放在 uni 插件前面**。使用 `vite.config.mjs`，或在项目 `package.json` 中设置 `"type": "module"` 后使用 `vite.config.js`：
+在项目根目录新建或修改 Vite 配置，注册插件时**必须放在 uni 插件前面**。使用 `vite.config.mjs`，或在项目 `package.json` 中设置 `"type": "module"` 后使用 `vite.config.js`：
 
 ```js
 import { defineConfig } from 'vite'
@@ -44,7 +46,7 @@ export default defineConfig({
 })
 ```
 
-CLI 项目只需把 `entry` 调整为 `./src/tailwind.css`，包名导入不变。
+`entry` 指向项目根目录的 `tailwind.css`，与后续 `App.uvue` 导入的入口一致。
 已有 Vite 配置只需合并导入和插件注册，保留项目的其他配置。
 
 `uniAppXTailwind()` 返回插件数组，Vite 支持直接嵌套使用。
@@ -167,7 +169,7 @@ tao-tailwindx/
 
 `test/`、`scripts/` 和作者用 `PUBLISHING.md` 不进入 npm 发布包。维护者可在源码项目中查看 PUBLISHING.md。
 
-在源码工程执行 `pnpm run test:package`，会以 `test/demo-template/` 为模板生成示例，并安装当前源码打包的插件。默认输出到固定目录 `demo-output/demo-app/`，用 HBuilder V 或 HBuilderX 打开该工程即可运行。每次运行会清空并重新生成此目录；需要保留的示例修改应放在模板中。自定义输出位置见源码工程中的 `PUBLISHING.md`。
+在源码工程执行 `pnpm run test:package`，会以 `test/demo-template/` 为模板生成示例，并安装当前源码打包的插件。默认输出到固定目录 `demo-output/tailwind-uniappx-demo/`，用 HBuilder V 或 HBuilderX 打开该工程即可运行。每次运行会清空并重新生成此目录；需要保留的示例修改应放在模板中。自定义输出位置见源码工程中的 `PUBLISHING.md`。
 
 ## 常见问题
 

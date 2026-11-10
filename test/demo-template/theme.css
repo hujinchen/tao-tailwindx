@@ -1,6 +1,6 @@
 :root {
 	--brand: #2563eb;
-	--accent: #2563eb;
+	--accent: #1d4ed8;
 	--demo-canvas: #f5f7fb;
 	--demo-surface: #ffffff;
 	--demo-ink: #172033;
@@ -13,8 +13,8 @@
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--brand: #3d8fff;
-		--accent: #3d8fff;
+		--brand: #3b82f6;
+		--accent: #60a5fa;
 		--demo-canvas: #0b1220;
 		--demo-surface: #152033;
 		--demo-ink: #edf2fa;

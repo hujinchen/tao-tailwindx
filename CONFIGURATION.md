@@ -21,7 +21,7 @@ uniAppXTailwind({
 })
 ```
 
-CLI 项目按实际目录调整入口，例如 `./src/tailwind.css`。插件返回的数组可直接放入 Vite 的 `plugins`，无需展开。Node 构建入口只在构建配置中导入。
+以上配置放在 uni-app x 项目根目录，`tailwind.css` 与 `App.uvue` 同级。插件返回的数组可直接放入 Vite 的 `plugins`，无需展开。Node 构建入口只在构建配置中导入。
 
 Tailwind 入口使用 `tao-tailwindx/tailwind.css`，由 `App.uvue` 导入同一个入口；插件只替换匹配 `entry` 的导入，保留其他导入和手写样式。公共 CSS、脚本及 SFC 按当前平台执行条件编译，未启用分支不参与依赖收集。
 

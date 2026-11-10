@@ -1,5 +1,15 @@
 # 更新日志
 
+## 未发布
+
+### 调整
+
+- 生成示例工程的目录名与 `package.json` 包名统一为 `tailwind-uniappx-demo`，默认输出路径为 `demo-output/tailwind-uniappx-demo/`。
+
+### 文档
+
+- 修正接入说明中沿用普通 uni-app CLI 的 `src/` 目录写法，统一按 uni-app x 项目根目录配置入口，补充项目准备、`package.json` 初始化与 Vite 配置创建步骤。
+
 ## 0.4.0（2026-11-09）
 
 ### 调整

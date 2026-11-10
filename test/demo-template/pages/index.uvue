@@ -2,7 +2,7 @@
 	<scroll-view class="h-full bg-canvas" direction="vertical">
 		<view class="home-shell">
 			<view class="home-hero">
-				<view class="hero-mark p-[12px]">
+				<view class="hero-mark p-12">
 					<text class="text-lg text-[#2563eb]">CSS → Tailwind</text>
 				</view>
 				<text class="hero-title">让每个写法，</text>
@@ -29,7 +29,6 @@
 					v-model="query"
 					class="search-input"
 					placeholder="例如 align-content、圆角、动画"
-					aria-label="搜索 CSS 属性或用法"
 				/>
 				<text class="text-sm text-muted">
 					每项包含写法、效果与使用条件。端差异请看属性页说明。
@@ -100,43 +99,43 @@ const groups = computed(() => {
 
 <style>
 .home-shell {
-	@apply mx-auto w-full max-w-[880px] p-[20px];
+	@apply mx-auto w-full max-w-880 p-20;
 }
 .home-hero {
-	@apply rounded-[24px] bg-[#142238] p-[24px];
+	@apply rounded-[24px] bg-[#142238] p-24;
 }
 .hero-mark {
-	@apply self-start rounded-[12px] bg-[#ffffff] mb-[20px];
+	@apply self-start rounded-[12px] bg-[#ffffff] mb-20;
 }
 .hero-title {
-	@apply text-[30px] leading-[42px] font-bold text-[#ffffff];
+	@apply text-[30px] leading-42 font-bold text-[#ffffff];
 }
 .hero-description {
-	@apply mt-[12px] text-[15px] leading-[24px] text-[#c0ccdf];
+	@apply mt-12 text-[15px] leading-24 text-[#c0ccdf];
 }
 .hero-stats {
-	@apply flex-row mt-[28px];
+	@apply flex-row mt-28;
 }
 .stat-item {
 	@apply flex-1;
 }
 .stat-number {
-	@apply text-[28px] leading-[36px] font-bold text-[#65e4c1];
+	@apply text-[28px] leading-36 font-bold text-[#65e4c1];
 }
 .stat-label {
-	@apply mt-[4px] text-sm text-[#c0ccdf];
+	@apply mt-4 text-sm text-[#c0ccdf];
 }
 .search-card {
-	@apply mt-[20px] p-[20px] rounded-[20px] bg-surface border border-solid border-line;
+	@apply mt-20 p-20 rounded-[20px] bg-surface border border-solid border-line;
 }
 .search-input {
-	@apply my-[12px] h-[48px] px-[14px] text-base text-ink bg-canvas rounded-[12px] border border-solid border-line;
+	@apply my-12 h-48 px-14 text-base text-ink bg-canvas rounded-[12px] border border-solid border-line;
 }
 .category-section {
-	@apply mt-[28px];
+	@apply mt-28;
 }
 .category-heading {
-	@apply flex-row items-center justify-between mb-[12px] px-[4px];
+	@apply flex-row items-center justify-between mb-12 px-4;
 }
 .category-title {
 	@apply text-lg text-ink font-bold;
@@ -148,27 +147,24 @@ const groups = computed(() => {
 	@apply rounded-[18px] overflow-hidden bg-surface border border-solid border-line;
 }
 .property-link {
-	@apply flex-row items-center min-h-[76px] px-[18px] py-[14px] border-b border-solid border-line;
+	@apply flex-row items-center min-h-76 px-18 py-14 border-b border-solid border-line;
 }
 .property-link-pressed {
 	@apply bg-canvas;
 }
 .property-name {
-	@apply text-base text-ink font-medium mb-[3px];
+	@apply text-base text-ink font-medium mb-3;
 }
 .property-badge {
-	@apply ml-[8px] px-[10px] py-[5px] rounded-[8px] bg-canvas text-sm text-muted;
+	@apply ml-8 px-10 py-5 rounded-[8px] bg-canvas text-sm text-muted;
 }
 .property-arrow {
-	@apply ml-[12px] text-[26px] text-muted;
+	@apply ml-12 text-[26px] text-muted;
 }
 .empty-hint {
-	@apply text-base text-muted text-center py-[40px];
+	@apply text-base text-muted text-center py-40;
 }
 .footer-note {
-	@apply text-sm text-muted text-center my-[28px];
-}
-.host-label {
-	@apply flex-row items-center p-4;
+	@apply text-sm text-muted text-center my-28;
 }
 </style>
