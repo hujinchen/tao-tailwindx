@@ -130,7 +130,7 @@ uniAppXTailwind({
 | `themeValues`          | 关闭    | 按指定 CSS 文件导出主题变量数据                      |
 | `debug`                | `false` | 输出构建诊断信息                                     |
 
-所有选项、默认值和处理边界见[配置与工作原理](./CONFIGURATION.md)。
+所有选项、默认值和处理边界见[配置与使用说明](./CONFIGURATION.md)。
 
 ## 局部样式与公共样式
 
@@ -146,7 +146,7 @@ uniAppXTailwind({
 运行时拼接的 `'p-' + size` 不能推导出完整候选，应改为有限的完整类名映射，或显式声明候选。
 
 自定义 class 属性通过 `customAttributes` 声明；普通 `class` 和 `hover-class` 无需额外配置。类名转换后，样式仍需遵守组件的样式隔离与 `externalClasses` 契约。
-详细规则见[样式生成、隔离与迁移指南](./STYLE-GENERATION.md)。
+详细规则见[样式生成与隔离](./STYLE-GENERATION.md)。
 
 ## 插件结构
 
@@ -157,8 +157,8 @@ tao-tailwindx/
 ├── tailwind.css          # 公开 CSS 入口，加载内部 Tailwind 依赖
 ├── src/                  # 构建处理与按需注入的 class 辅助代码
 ├── README.md             # 快速接入
-├── CONFIGURATION.md      # 完整配置、工作原理和平台边界
-├── STYLE-GENERATION.md   # 局部与全局归属、隔离和迁移规则
+├── CONFIGURATION.md      # 配置、使用方式和平台边界
+├── STYLE-GENERATION.md   # 局部与全局归属、隔离规则
 ├── LICENSE               # MIT 许可
 ├── CHANGELOG.md          # 版本更新日志
 ├── test/                 # 插件回归；demo-template/ 为示例工程模板

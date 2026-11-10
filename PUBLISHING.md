@@ -1,24 +1,10 @@
 # Tao Tailwind X 开发与发布
 
-源码直接使用 ESM，无需额外打包。
-本文件供维护者使用，不进入 npm 发布包。
+维护者使用，本文不进入 npm 发布包。源码为 ESM，无需构建。
 
-## 项目结构
+## 发布前检查
 
-- `index.mjs`：公开的 Vite 插件入口，以及 Node 构建用主题解析导出。
-- `tailwind.css`：公开 CSS 入口，在包内解析 Tailwind 依赖。
-- `src/`：编译、扫描、class 转换、CSS 适配与主题导出实现。
-- `test/`：Node 回归；`test/demo-template/` 是 uni-app x 示例工程模板。
-- `scripts/generate-demo.mjs`：实际打包插件，在生成的示例工程中检查安装、静态导入、六端样式与 `@apply`。
-- `README.md`、`CONFIGURATION.md`、`STYLE-GENERATION.md`：用户接入与配置说明。
-- `CHANGELOG.md`、`LICENSE`：版本记录与 MIT 许可。
-
-## 日常迭代
-
-使用 Node.js 22.13+，在本项目目录执行：
-
-Tailwind 与其 PostCSS 插件固定为 4.3.5。升级时同时修改两项版本，并运行完整回归与 npm、pnpm 安装检查。
-项目曾因 4.3.5 在 macOS 软链接扫描目录中重复返回路径而固定为 4.3.3；本次升级后仍需在 macOS 验证该问题，Windows 回归不能替代该平台检查。
+使用 Node.js 22.13+，在项目根目录执行：
 
 ```bash
 pnpm install
@@ -28,10 +14,11 @@ pnpm run test:package
 pnpm run test:package --npm
 ```
 
-上述命令适用于 Windows PowerShell 与 macOS 终端。打包检查使用当前 Node 执行 npm 的 JavaScript 入口；pnpm 安装命令由系统 shell 启动，兼容 Windows 的 `.cmd` 与 macOS 的可执行入口。
+Tailwind 与其 PostCSS 插件保持相同固定版本；升级时运行完整检查，并在 macOS 验证软链接目录扫描，Windows 回归不能替代该检查。
 
-`pnpm test` 在没有对应编译器时会明确跳过 Vite watcher 与原生 CSS 编译检查；跳过不表示平台验证通过。
-完成完整检查时，先用 HBuilder V（HV）或 HBuilderX（HX）打开测试宿主，使用目标 IDE 对应的配套 SDK，并设置以下环境变量后再执行 `pnpm test`：
+### SDK 配置
+
+完整 Vite watcher 与原生 CSS 检查需要 HBuilder V（HV）或 HBuilderX（HX）的配套 SDK。设置以下环境变量后执行 `pnpm test`：
 
 | 环境变量                      | SDK 中的目标                                                                                      |
 | ----------------------------- | ------------------------------------------------------------------------------------------------- |
@@ -39,16 +26,20 @@ pnpm run test:package --npm
 | `UNIAPPX_TEST_VAPOR_COMPILER` | `uniapp-cli-vite/node_modules/@dcloudio/uni-cli-shared/lib/dom2/app/@vue/compiler-vapor-dom2`     |
 | `NODE_PATH`                   | `uniapp-cli-vite/node_modules` 与其 `@dcloudio/uni-cli-shared/lib/dom2/app`；用系统路径分隔符连接 |
 
-这些路径位于配套 SDK 的 `plugins/` 下，按实际使用的 IDE 定位：
+以上路径相对于 SDK 的 `plugins/` 目录：
 
-- HV：使用 HBuilder V 对应的 `code --locate-extension dcloud.hbuilderx-uniapp-sdk` 定位当前 SDK 扩展目录，再进入其 `plugins/`，避免写死扩展版本。
-- HX：Windows 使用 HBuilderX 安装目录下的 `plugins/`；macOS 使用 HBuilderX 应用包内的实际 `plugins/` 目录。
+- HV：运行对应的 `code --locate-extension dcloud.hbuilderx-uniapp-sdk`，使用返回目录下的 `plugins/`。
+- HX：使用安装目录中的 `plugins/`；macOS 在应用包内定位。
 
-`UNIAPPX_TEST_VITE_IMPORT`、`UNIAPPX_TEST_VAPOR_COMPILER` 与 `NODE_PATH` 必须指向同一套 SDK，不能混用不同 IDE 或 SDK 版本的模块。验证时记录实际使用的 IDE 与 SDK 版本；App 使用配套 uni-app x 编译器 5.31+，并启用 Vapor。
+三个变量必须指向同一套 SDK。记录实测 IDE、SDK 版本与跳过项；缺少 SDK 时跳过的测试不算通过。App 使用配套 uni-app x 编译器 5.31+，启用 Vapor；完整工程编译和设备运行需另行验收。
 
-发布检查以 `test/demo-template/` 为模板，将当前源码打包后安装到示例工程中。默认输出到固定目录 `demo-output/demo-app/`，命令结束时打印工程和 tarball 的绝对路径；用 HBuilder V 或 HBuilderX 打开该工程即可运行示例。
-每次运行会清空并重新生成该目录，包括已安装依赖和构建产物，确保使用本次打包的源码。需要保留的示例修改应放在 `test/demo-template/`，不要保存在生成目录中。
-输出父目录可以通过环境变量修改，目录不存在时自动创建；其下的工程目录名仍固定为 `demo-app`：
+## 生成示例
+
+`pnpm run test:package` 将当前源码打包并安装到 `demo-output/demo-app/`，检查静态导入、六端样式与 `@apply`，最后打印工程和 tarball 路径。用 HV 或 HX 打开生成工程运行。
+
+每次执行都会清空并重建工程目录，示例修改请放在 `test/demo-template/`，保留平台条件并同步模板 README。`demo-output/` 不参与 Git、格式检查或 npm 发布。
+
+可通过 `UNIAPPX_RELEASE_HOST_PARENT` 修改输出父目录，工程名仍为 `demo-app`：
 
 ```bash
 UNIAPPX_RELEASE_HOST_PARENT="$HOME/Desktop/tao-tailwindx-demos" pnpm run test:package
@@ -61,34 +52,34 @@ $env:UNIAPPX_RELEASE_HOST_PARENT = "$env:USERPROFILE/Desktop/tao-tailwindx-demos
 pnpm run test:package
 ```
 
-生成工程仅声明本地 tarball，内部依赖由包管理器安装；正式发布前即可运行。`demo-output/` 不参与 Git、格式检查或 npm 发布。
-生成宿主的 `package.json` 设置 `"type": "module"`，`vite.config.js` 使用顶部静态导入，与接入文档一致。
-
-示例首页提供八类 CSS 导航与搜索，110 项官方 CSS 属性通过 `pages/css/property?name=<属性名>` 分别查看，映射数据位于 `test/demo-template/pages/css/catalog.ts`。每项展示完整 Tailwind 写法、对应 CSS 和效果预览。维护示例时保留平台条件，并同步模板 README 中的支持边界；不能仅因官方目录存在该属性就将它加入所有端的演示。
-
-`test/demo-css.test.mjs` 检查六端示例 class 是否生成对应属性声明；设置上述 SDK 环境变量后，还检查两个演示页面的 App CSS 编译。完整工程编译和实际页面验收仍需另行执行。
-
 ## 发布到 npm
 
-更新 `package.json` 的版本与 `CHANGELOG.md`，完成上述检查后，在本项目目录执行：
+更新 `package.json` 版本与 `CHANGELOG.md`，完成检查并取得用户明确授权后发布。已发布版本不能覆盖。
+
+先确认 registry 为官方源；以下设置会保存，默认源已正确时无需重复设置：
+
+```bash
+npm config get registry
+npm config set registry https://registry.npmjs.org/
+```
+
+确认输出为 `https://registry.npmjs.org/` 后登录并预检：
 
 ```bash
 npm login
+npm whoami
 npm publish --dry-run
+```
+
+`npm whoami` 返回用户名即登录成功。核对 dry-run 的包名、版本和文件列表，发布内容由 `package.json.files` 控制，再执行：
+
+```bash
 npm publish --access public
 npm view tao-tailwindx@<版本> version
 ```
 
-核对 dry-run 的文件列表、名称与版本。`files` 只包含入口、核心源码、用户文档、许可和更新日志，测试、脚本、依赖目录及本地配置不进入发布包。
-账号必须启用 npm 发布要求的二步验证。邮箱登录验证码不等于账号已启用 2FA；出现相关 `E403` 时，由账号持有人在 npm 官方设置页绑定安全密钥，并自行保存恢复码，再继续发布。
-已发布的版本不能覆盖，后续更新必须递增版本。有真实公开仓库后再填写 `repository`，不要填示例地址。
-发布需要用户明确授权；认证时由用户在官方页面完成二次验证。
-
-`npm publish` 返回成功后，仍需确认提交版本实际可安装。npm 可能先显示 `0.0.0-stage` 和 “Temporary Holding Version”，表示正式版本正在审核；此时等待审核放行，不重复发布相同版本，也不要把业务依赖切换为占位版本。
-
 ## 在业务项目验收
 
-正式发布后，业务项目执行 `pnpm add -D tao-tailwindx@<版本>`，Vite 与 CSS 都通过包名接入。
-发布前，可以在本项目执行 `npm pack`，再到业务项目执行 `pnpm add -D /绝对路径/tao-tailwindx-<版本>.tgz` 验证安装；验证完成后将依赖声明恢复为正式 npm 版本。
-需要边改边联调时，临时执行 `pnpm link /绝对路径/tao-tailwindx`；这种开发链接不用于正式分发，验收仍使用实际 tarball。
+发布前用生成的 tarball 验收：`pnpm add -D /绝对路径/tao-tailwindx-<版本>.tgz`。发布后改为 `pnpm add -D tao-tailwindx@<版本>`，Vite 与 CSS 按 [README.md](README.md) 通过包名接入。
+
 Git 初始化、暂存、提交与推送由维护者自行处理。
