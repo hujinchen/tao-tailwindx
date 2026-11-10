@@ -874,9 +874,9 @@ test('Web 和 App 保留主题变量及配色方案媒体查询', async () => {
 				'App.uvue?vue&type=style&index=0&lang.css'
 			)
 
-			assert.match(result.code, /--brand:\s*#[\da-f]{6}/i)
+			assert.match(result.code, /--brand:\s*#2563eb/)
 			assert.match(result.code, /@media\s*\(prefers-color-scheme:\s*dark\)/)
-			assert.match(result.code, /--brand:\s*#3d8fff/)
+			assert.match(result.code, /--brand:\s*#3b82f6/)
 			assert.doesNotMatch(result.code, /(?:constant|env)\(safe-area-inset-/)
 		}
 	} finally {

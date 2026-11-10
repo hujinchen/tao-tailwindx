@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises'
 import { stripTypeScriptTypes, createRequire } from 'node:module'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
+import { runInNewContext } from 'node:vm'
 import postcss from 'postcss'
 import { uniAppXTailwind } from '../src/index.mjs'
 import { toSafeClassName } from '../src/class-name.mjs'
@@ -21,6 +22,67 @@ async function readCatalog(platform) {
 	return (await import('data:text/javascript;base64,' + Buffer.from(code).toString('base64')))
 		.cssDemos
 }
+
+test('六端均可通过官方说明入口导航，并且只加载对应属性的 DCloud 文档', async () => {
+	const pagesFile = fixture + 'pages.json'
+	const propertyFile = fixture + 'pages/css/property.uvue'
+	const webviewFile = fixture + 'pages/webview.uvue'
+	const [pagesSource, propertySource, webviewSource] = await Promise.all([
+		readFile(pagesFile, 'utf8'),
+		readFile(propertyFile, 'utf8'),
+		readFile(webviewFile, 'utf8')
+	])
+	for (const platform of [
+		'web',
+		'app-android',
+		'app-ios',
+		'app-harmony',
+		'mp-weixin',
+		'mp-alipay'
+	]) {
+		const context = createConditionContext(platform)
+		// 原生端移除 Web 配置后仍有尾逗号，按 pages.json 的 JSONC 规则读取。
+		const routes = JSON.parse(
+			filterConditions(pagesSource, context, pagesFile).replace(/,\s*([}\]])/g, '$1')
+		).pages
+		const route = routes.find((page) => page.path === 'pages/webview')
+		const property = filterConditions(propertySource, context, propertyFile)
+		const link = property.match(/:url="([^"]+)"\s+class="official-link"/)
+		assert.equal(route?.style.navigationStyle, 'default', platform)
+		assert.ok(link, platform)
+		assert.match(property, /查看 DCloud 官方说明/)
+		assert.match(webviewSource, /<web-view\b[\s\S]*?:src="url"/)
+		const script = webviewSource.match(/<script[^>]*>([\s\S]*?)<\/script>/)[1]
+		let load
+		const titles = []
+		const notices = []
+		const url = runInNewContext(
+			stripTypeScriptTypes(script.replace(/^import .*$/gm, '') + '\nurl'),
+			{
+				ref: (value) => ({ value }),
+				cssDemos: await readCatalog(platform),
+				onLoad: (callback) => (load = callback),
+				uni: {
+					setNavigationBarTitle: ({ title }) => titles.push(title),
+					showToast: ({ title }) => notices.push(title)
+				}
+			}
+		)
+		for (const name of ['https://example.com', '../index']) {
+			load({ name })
+			assert.equal(url.value, '', platform)
+		}
+		assert.equal(notices.length, 2)
+		for (const name of ['align-content', 'animation-fill-mode']) {
+			const destination = runInNewContext(link[1], { demo: { property: name } })
+			const target = new URL(destination, 'https://demo.example')
+			assert.equal(target.pathname, '/' + route.path)
+			load({ name: target.searchParams.get('name') })
+			assert.equal(url.value, `https://doc.dcloud.net.cn/uni-app-x/css/${name}.html`)
+			assert.ok(titles.at(-1).includes(name))
+		}
+	}
+})
 
 test('官方 CSS 目录中的 110 项属性均可导航，示例 class 在六端生成对应声明', async (t) => {
 	const previous = process.env.UNI_PLATFORM

@@ -9,16 +9,13 @@
 				<view class="support-note">
 					<text class="text-sm text-muted">{{ demo.support }}</text>
 				</view>
-				<!-- #ifdef WEB -->
-				<a
-					:href="'https://doc.dcloud.net.cn/uni-app-x/css/' + demo.property + '.html'"
-					target="_blank"
-					rel="noopener noreferrer"
+				<navigator
+					:url="'/pages/webview?name=' + demo.property"
 					class="official-link"
+					hover-class="official-link-pressed"
 				>
-					查看 DCloud 官方说明 ↗
-				</a>
-				<!-- #endif -->
+					<text class="text-sm leading-24 text-brand">查看 DCloud 官方说明 ↗</text>
+				</navigator>
 			</view>
 			<view v-if="demo.cases.length === 0" class="notice-card">
 				<text class="text-lg text-ink font-bold">当前端不支持这个属性</text>
@@ -490,10 +487,10 @@ function previewText(value: string): string {
 	@apply mt-16 p-12 rounded-[12px] bg-surface border border-solid border-line;
 }
 .official-link {
-	color: var(--brand);
-	font-size: 14px;
-	line-height: 24px;
-	margin-top: 12px;
+	@apply mt-12 min-h-48 justify-center self-start;
+}
+.official-link-pressed {
+	@apply opacity-70;
 }
 .notice-card {
 	@apply p-24 bg-surface rounded-[20px] border border-solid border-line;

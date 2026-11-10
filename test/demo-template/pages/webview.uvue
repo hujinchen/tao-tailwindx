@@ -1,0 +1,23 @@
+<template>
+	<web-view v-if="url.length > 0" :src="url" />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { cssDemos } from './css/catalog'
+
+const url = ref('')
+
+/** 只打开示例目录中的官方 CSS 文档，避免路由参数指定任意网页。 */
+onLoad((options) => {
+	const demo = cssDemos.find((item) => item.property === options['name'])
+	if (demo == null) {
+		uni.showToast({ title: '未找到该 CSS 属性', icon: 'none' })
+		return
+	}
+
+	url.value = 'https://doc.dcloud.net.cn/uni-app-x/css/' + demo.property + '.html'
+	uni.setNavigationBarTitle({ title: demo.property + ' · DCloud 官方说明' })
+})
+</script>

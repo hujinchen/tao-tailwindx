@@ -14,6 +14,7 @@
 
 - 首页支持按 CSS 属性名、中文用途或分类搜索。
 - 每个属性都有独立的页面地址，例如 `/pages/css/property?name=align-content`。共用一个预览页面，避免复制 110 份布局和交互代码。
+- 各端点击“查看 DCloud 官方说明 ↗”后，统一通过 `/pages/webview?name=align-content` 打开对应的官方文档；独立页面保留默认导航栏用于返回。小程序加载仍受平台域名、账号类型与调试设置限制，微信端参见 [web-view 官方说明](https://developers.weixin.qq.com/miniprogram/dev/component/web-view.html)。
 - 每张卡片显示完整 Tailwind class、对应 CSS 值和可观察的效果。有限枚举值逐项演示；长度、颜色、时间、数字等无限值类型使用代表值，简写使用常见组合。
 - `pages/css/catalog.ts` 保存完整 class 字符串；插件可扫描这些静态候选，运行时在绑定处转换类名。不要拼接 `border-${value}` 等无法扫描的 class。
 - `pages/css/property.uvue` 提供多行 Flex、尺寸参照、事件穿透、文字截断、可重新播放的动画和独立滚动时间轴等实际场景。

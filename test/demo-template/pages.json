@@ -1,6 +1,13 @@
 {
 	"pages": [
 		{ "path": "pages/index", "style": { "navigationBarTitleText": "Tao Tailwind X" } },
+		{
+			"path": "pages/webview",
+			"style": {
+				"navigationBarTitleText": "DCloud 官方说明",
+				"navigationStyle": "default"
+			}
+		},
 		{ "path": "pages/css/property", "style": { "navigationBarTitleText": "CSS 用法演示" } }
 	],
 	"globalStyle": {

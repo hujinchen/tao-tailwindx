@@ -5,6 +5,7 @@
 ### 调整
 
 - 生成示例工程的目录名与 `package.json` 包名统一为 `tailwind-uniappx-demo`，默认输出路径为 `demo-output/tailwind-uniappx-demo/`。
+- CSS 示例的官方说明入口改为各端统一通过独立 `web-view` 页面打开；小程序加载仍受平台域名与调试设置限制。
 
 ### 文档
 
