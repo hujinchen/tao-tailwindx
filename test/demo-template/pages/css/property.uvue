@@ -23,8 +23,20 @@
 					可在支持的平台打开该属性页查看示例，支持范围见上方说明。
 				</text>
 			</view>
+			<view v-else class="case-search">
+				<text class="text-base font-bold text-ink">查找 Tailwind 写法</text>
+				<input
+					v-model="caseQuery"
+					class="case-search-input"
+					placeholder="例如 red-500、shadow-lg、变量"
+				/>
+				<text class="text-sm text-muted">
+					匹配 {{ filteredCases.length }} / {{ demo.cases.length }} 例，已展示
+					{{ visibleCases.length }} 例
+				</text>
+			</view>
 			<view
-				v-for="(sample, index) in demo.cases"
+				v-for="(sample, index) in visibleCases"
 				:key="sample.className"
 				class="example-card"
 			>
@@ -38,8 +50,13 @@
 					<text class="code-label">TAILWIND CLASS</text>
 					<text class="code-text" user-select>{{ sample.className }}</text>
 					<text class="css-text" user-select>
-						{{ demo.property === 'lines' ? '-webkit-line-clamp' : demo.property }}:
-						{{ sample.value }};
+						{{
+							sample.css ??
+							(demo.property === 'lines' ? '-webkit-line-clamp' : demo.property) +
+								': ' +
+								sample.value +
+								';'
+						}}
 					</text>
 				</view>
 				<text v-if="sample.note.length > 0" class="case-note">{{ sample.note }}</text>
@@ -231,7 +248,7 @@
 								demo.kind === 'constraint'
 									? demo.property.startsWith('min')
 										? 'w-40 h-40'
-										: 'w-200 h-180'
+										: 'w-220 h-180'
 									: ''
 							]"
 						>
@@ -291,12 +308,19 @@
 								sample.className,
 								demo.kind === 'clip' ? 'clip-subject' : '',
 								demo.kind.startsWith('border') ? 'bg-surface' : '',
+								demo.kind === 'shadow' ? 'bg-[#ffffff]' : '',
 								borderPreviewClasses[demo.property] ?? ''
 							]"
 						>
 							<text
 								class="item-label"
-								:class="demo.kind.startsWith('border') ? 'text-ink' : ''"
+								:class="
+									demo.kind.startsWith('border')
+										? 'text-ink'
+										: demo.kind === 'shadow'
+											? 'text-[#172033]'
+											: ''
+								"
 							>
 								Tailwind
 							</text>
@@ -366,6 +390,18 @@
 						<view class="h-220"></view>
 					</view>
 					<!-- #endif -->
+					<view v-else-if="demo.property === 'color'" class="color-stage">
+						<view class="color-background bg-[#ffffff]">
+							<text class="color-sample" :class="sample.className">
+								Tailwind · 浅底
+							</text>
+						</view>
+						<view class="color-background bg-[#142238]">
+							<text class="color-sample" :class="sample.className">
+								Tailwind · 深底
+							</text>
+						</view>
+					</view>
 					<view v-else class="text-stage">
 						<text
 							class="text-subject"
@@ -395,6 +431,19 @@
 					<button class="secondary-button" @click="replay">重新播放</button>
 				</view>
 			</view>
+			<button
+				v-if="visibleCases.length < filteredCases.length"
+				class="action-button"
+				@click="visibleCount += 12"
+			>
+				继续展示 12 例
+			</button>
+			<text
+				v-if="demo.cases.length > 0 && filteredCases.length === 0"
+				class="detail-description"
+			>
+				没有找到对应写法，换个关键词试试。
+			</text>
 			<text v-if="demo.kind === 'pointer'" class="tap-feedback">{{ tapMessage }}</text>
 			<text class="detail-footer">
 				观察对象使用当前工具类。示例值不代表所有设备的最终表现。
@@ -404,11 +453,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { cssDemos } from './catalog'
 
 const demo = ref(cssDemos[0])
+const caseQuery = ref('')
+const visibleCount = ref(12)
+// 默认只创建一批预览节点，其他写法可搜索或分批展示，控制首次渲染开销。
+const filteredCases = computed(() => {
+	const keyword = caseQuery.value.trim().toLowerCase()
+	return demo.value.cases.filter((sample) =>
+		(sample.className + ' ' + sample.value + ' ' + sample.note).toLowerCase().includes(keyword)
+	)
+})
+const visibleCases = computed(() => filteredCases.value.slice(0, visibleCount.value))
+watch(caseQuery, () => {
+	visibleCount.value = 12
+})
 const changed = ref(false)
 const running = ref(false)
 const replayKey = ref(0)
@@ -495,6 +557,12 @@ function previewText(value: string): string {
 .notice-card {
 	@apply p-24 bg-surface rounded-[20px] border border-solid border-line;
 }
+.case-search {
+	@apply mb-20 p-16 rounded-[16px] bg-surface border border-solid border-line;
+}
+.case-search-input {
+	@apply my-12 h-48 px-12 text-base text-ink bg-canvas rounded-[12px] border border-solid border-line;
+}
 .example-card {
 	@apply mb-20 rounded-[20px] bg-surface border border-solid border-line overflow-hidden;
 }
@@ -568,7 +636,7 @@ function previewText(value: string): string {
 	@apply top-88 right-16 z-100 bg-[#2563eb] p-16 rounded-[12px];
 }
 .fixed-close {
-	@apply mt-8 h-44 text-sm;
+	@apply mt-8 h-44 text-sm flex items-center justify-center;
 }
 /* #ifdef WEB */
 .sticky-scroller {
@@ -594,7 +662,7 @@ function previewText(value: string): string {
 	@apply relative w-240 h-100;
 }
 .pointer-button {
-	@apply absolute top-0 left-0 w-240 h-100 bg-[#64748b] text-[#ffffff];
+	@apply absolute top-0 left-0 w-240 h-100 bg-[#64748b] text-[#ffffff] flex items-center justify-center;
 }
 .pointer-cover {
 	@apply absolute top-12 left-12 w-216 h-76 bg-[#2563eb] items-center justify-center;
@@ -603,7 +671,7 @@ function previewText(value: string): string {
 	@apply p-16 text-base text-brand;
 }
 .size-stage {
-	@apply w-240 h-200 bg-[#dce7f5] items-start overflow-visible;
+	@apply w-full max-w-240 h-200 bg-[#dce7f5] items-start overflow-visible;
 }
 .size-subject {
 	@apply w-92 h-64 shrink-0 bg-[#2563eb] items-center justify-center;
@@ -665,10 +733,16 @@ function previewText(value: string): string {
 .transition-subject {
 	@apply relative w-80 h-64 m-4 p-4 left-0 top-0 right-0 bottom-0 bg-[#2563eb] border-4 border-solid border-[#2563eb] opacity-100 [transition:all_700ms_ease] items-center justify-center;
 	transform: translateX(0px);
+	/* #ifdef WEB */
+	box-shadow: 0 0 #0000;
+	/* #endif */
 }
 .transition-changed {
 	@apply w-120 h-84 m-20 p-12 left-12 top-12 right-12 bottom-12 bg-[#0d9488] border-[#f59e0b] opacity-60;
 	transform: translateX(20px);
+	/* #ifdef WEB */
+	box-shadow: 0 6px 12px rgba(15, 23, 42, 0.3);
+	/* #endif */
 }
 .animation-stage {
 	@apply relative w-240 h-124 items-start justify-center overflow-visible;
@@ -680,6 +754,15 @@ function previewText(value: string): string {
 .text-stage {
 	@apply w-240 min-h-80 p-12 bg-[#dce7f5] overflow-hidden;
 }
+.color-stage {
+	@apply w-240;
+}
+.color-background {
+	@apply p-12 min-h-64 justify-center;
+}
+.color-sample {
+	@apply text-[22px] leading-32;
+}
 .text-subject {
 	@apply text-[22px] leading-32 text-[#172033];
 }
@@ -687,10 +770,10 @@ function previewText(value: string): string {
 	@apply flex-row px-16 pb-16;
 }
 .action-button {
-	@apply m-0 min-h-44 px-16 text-sm text-[#ffffff] bg-[#2563eb] rounded-[10px];
+	@apply m-0 min-h-44 px-16 text-sm text-[#ffffff] bg-[#2563eb] rounded-[10px] flex items-center justify-center;
 }
 .secondary-button {
-	@apply ml-12 mr-0 min-h-44 px-16 text-sm text-ink bg-canvas rounded-[10px];
+	@apply ml-12 mr-0 min-h-44 px-16 text-sm text-ink bg-canvas rounded-[10px] flex items-center justify-center;
 }
 .detail-footer {
 	@apply mt-24 mb-28 text-sm text-muted text-center;

@@ -1,5 +1,5 @@
 /** 官方 CSS 属性与可直接扫描的完整 Tailwind class；不要动态拼接工具类。 */
-export type CssCase = { value: string; className: string; note: string }
+export type CssCase = { value: string; className: string; note: string; css?: string }
 export type CssDemo = {
 	property: string
 	title: string
@@ -129,6 +129,9 @@ export const cssDemos: CssDemo[] = [
 		description: '蓝色子项与灰色参照项共享一行；观察伸展与收缩。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '2', className: 'flex-2', note: '数字 flex 简写' },
+			{ value: '50%', className: 'flex-1/2', note: '分数表示 flex-basis' },
+			{ value: 'var(--demo-flex)', className: 'flex-(--demo-flex)', note: '弹性简写变量' },
 			{ value: '1 1 0%', className: 'flex-1', note: '' },
 			{ value: '1 1 auto', className: 'flex-auto', note: '' },
 			{ value: '0 1 auto', className: 'flex-initial', note: '' },
@@ -144,6 +147,7 @@ export const cssDemos: CssDemo[] = [
 		description: '三个子项初始宽度相同，蓝色子项使用当前增长系数，其他项固定为 1。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: 'var(--demo-grow)', className: 'grow-(--demo-grow)', note: '增长系数变量' },
 			{ value: '0', className: 'grow-0', note: '' },
 			{ value: '1', className: 'grow', note: '' },
 			{ value: '2', className: 'grow-2', note: '' },
@@ -159,6 +163,11 @@ export const cssDemos: CssDemo[] = [
 		description: '三个子项的初始总宽度超过容器，蓝色子项使用当前收缩系数。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: 'var(--demo-shrink)',
+				className: 'shrink-(--demo-shrink)',
+				note: '收缩系数变量'
+			},
 			{ value: '0', className: 'shrink-0', note: '' },
 			{ value: '1', className: 'shrink', note: '' },
 			{ value: '2', className: 'shrink-2', note: '' },
@@ -174,6 +183,7 @@ export const cssDemos: CssDemo[] = [
 		description: '蓝色子项禁止伸缩，观察 px、rpx 与百分比的基础尺寸。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: 'var(--demo-size)', className: 'basis-(--demo-size)', note: '基础尺寸变量' },
 			{ value: 'auto', className: 'basis-auto', note: '' },
 			{ value: '64px', className: 'basis-64', note: '' },
 			{ value: '96px', className: 'basis-96', note: '' },
@@ -216,14 +226,14 @@ export const cssDemos: CssDemo[] = [
 		description: 'relative、absolute 在预览框内演示；fixed 可通过按钮显示并关闭。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
-			{ value: 'relative', className: '[position:relative]', note: '' },
-			{ value: 'absolute', className: '[position:absolute]', note: '' },
-			{ value: 'fixed', className: '[position:fixed]', note: '' },
+			{ value: 'relative', className: 'relative', note: '' },
+			{ value: 'absolute', className: 'absolute', note: '' },
+			{ value: 'fixed', className: 'fixed', note: '' },
 			// #ifdef WEB
-			{ value: 'static', className: '[position:static]', note: '仅 Web 演示' },
+			{ value: 'static', className: 'static', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'sticky', className: '[position:sticky]', note: '仅 Web 演示' }
+			{ value: 'sticky', className: 'sticky', note: '仅 Web 演示' }
 			// #endif
 		]
 	},
@@ -235,6 +245,9 @@ export const cssDemos: CssDemo[] = [
 		description: '蓝色元素使用 absolute；虚线框是其定位参照容器。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'top-px', note: '' },
+			{ value: 'var(--demo-space)', className: 'top-(--demo-space)', note: '偏移变量' },
+			{ value: '-8rpx', className: '-top-[8rpx]', note: '负任意值' },
 			{ value: '0px', className: 'top-0', note: '' },
 			{ value: '24px', className: 'top-24', note: '' },
 			{ value: '40px', className: 'top-40', note: '' },
@@ -252,6 +265,9 @@ export const cssDemos: CssDemo[] = [
 		description: '蓝色元素使用 absolute；虚线框是其定位参照容器。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'right-px', note: '' },
+			{ value: 'var(--demo-space)', className: 'right-(--demo-space)', note: '偏移变量' },
+			{ value: '-8rpx', className: '-right-[8rpx]', note: '负任意值' },
 			{ value: '0px', className: 'right-0', note: '' },
 			{ value: '24px', className: 'right-24', note: '' },
 			{ value: '40px', className: 'right-40', note: '' },
@@ -269,6 +285,9 @@ export const cssDemos: CssDemo[] = [
 		description: '蓝色元素使用 absolute；虚线框是其定位参照容器。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'bottom-px', note: '' },
+			{ value: 'var(--demo-space)', className: 'bottom-(--demo-space)', note: '偏移变量' },
+			{ value: '-8rpx', className: '-bottom-[8rpx]', note: '负任意值' },
 			{ value: '0px', className: 'bottom-0', note: '' },
 			{ value: '24px', className: 'bottom-24', note: '' },
 			{ value: '40px', className: 'bottom-40', note: '' },
@@ -286,6 +305,9 @@ export const cssDemos: CssDemo[] = [
 		description: '蓝色元素使用 absolute；虚线框是其定位参照容器。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'left-px', note: '' },
+			{ value: 'var(--demo-space)', className: 'left-(--demo-space)', note: '偏移变量' },
+			{ value: '-8rpx', className: '-left-[8rpx]', note: '负任意值' },
 			{ value: '0px', className: 'left-0', note: '' },
 			{ value: '24px', className: 'left-24', note: '' },
 			{ value: '40px', className: 'left-40', note: '' },
@@ -303,6 +325,7 @@ export const cssDemos: CssDemo[] = [
 		description: '蓝色与灰色方块重叠，灰色方块的 z-index 为 10。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: 'var(--demo-layer)', className: 'z-(--demo-layer)', note: '层级变量' },
 			// #ifdef WEB
 			{ value: 'auto', className: 'z-auto', note: '' },
 			// #endif
@@ -367,6 +390,55 @@ export const cssDemos: CssDemo[] = [
 		description: '浅色区域提供明确的父级宽高；auto 按内容或父级布局计算。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: '160px',
+				className: 'w-3xs',
+				note: '模板自定义命名尺寸；其他等级使用相同语法'
+			},
+			{
+				value: '200px',
+				className: 'w-2xs',
+				note: '模板自定义命名尺寸；其他等级使用相同语法'
+			},
+			{ value: '1px', className: 'w-px', note: '固定 1px，不受 --spacing 影响' },
+			{
+				value: '1.5px',
+				className: 'w-1.5',
+				note: '数字工具类支持小数，本模板 --spacing 为 1px'
+			},
+			{ value: '33.3333333333%', className: 'w-1/3', note: '任意分数，无需枚举全部分母' },
+			{ value: '66.6666666667%', className: 'w-2/3', note: '' },
+			{ value: '75%', className: 'w-3/4', note: '' },
+			{
+				value: '64px',
+				className: 'size-64',
+				note: '同时设置宽高',
+				css: 'width: 64px;\nheight: 64px;'
+			},
+			{
+				value: '50%',
+				className: 'size-1/2',
+				note: '同时设置宽高百分比',
+				css: 'width: 50%;\nheight: 50%;'
+			},
+			{
+				value: '100%',
+				className: 'size-full',
+				note: '填满有明确尺寸的父容器',
+				css: 'width: 100%;\nheight: 100%;'
+			},
+			{
+				value: 'var(--demo-size)',
+				className: 'size-(--demo-size)',
+				note: '宽高共享一个变量',
+				css: 'width: var(--demo-size);\nheight: var(--demo-size);'
+			},
+			{
+				value: '80rpx',
+				className: 'size-[80rpx]',
+				note: '宽高任意值',
+				css: 'width: 80rpx;\nheight: 80rpx;'
+			},
 			{ value: '64px', className: 'w-64', note: '' },
 			{ value: '112px', className: 'w-112', note: '' },
 			{ value: '160rpx', className: 'w-[160rpx]', note: '' },
@@ -394,6 +466,45 @@ export const cssDemos: CssDemo[] = [
 		description: '浅色区域提供明确的父级宽高；auto 按内容或父级布局计算。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'h-px', note: '固定 1px，不受 --spacing 影响' },
+			{
+				value: '1.5px',
+				className: 'h-1.5',
+				note: '数字工具类支持小数，本模板 --spacing 为 1px'
+			},
+			{ value: '33.3333333333%', className: 'h-1/3', note: '任意分数，无需枚举全部分母' },
+			{ value: '66.6666666667%', className: 'h-2/3', note: '' },
+			{ value: '75%', className: 'h-3/4', note: '' },
+			{
+				value: '64px',
+				className: 'size-64',
+				note: '同时设置宽高',
+				css: 'width: 64px;\nheight: 64px;'
+			},
+			{
+				value: '50%',
+				className: 'size-1/2',
+				note: '同时设置宽高百分比',
+				css: 'width: 50%;\nheight: 50%;'
+			},
+			{
+				value: '100%',
+				className: 'size-full',
+				note: '填满有明确尺寸的父容器',
+				css: 'width: 100%;\nheight: 100%;'
+			},
+			{
+				value: 'var(--demo-size)',
+				className: 'size-(--demo-size)',
+				note: '宽高共享一个变量',
+				css: 'width: var(--demo-size);\nheight: var(--demo-size);'
+			},
+			{
+				value: '80rpx',
+				className: 'size-[80rpx]',
+				note: '宽高任意值',
+				css: 'width: 80rpx;\nheight: 80rpx;'
+			},
 			{ value: '64px', className: 'h-64', note: '' },
 			{ value: '112px', className: 'h-112', note: '' },
 			{ value: '160rpx', className: 'h-[160rpx]', note: '' },
@@ -421,20 +532,46 @@ export const cssDemos: CssDemo[] = [
 		description: '最小尺寸使用小于限制值的基础尺寸，最大尺寸使用大于限制值的基础尺寸。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '0px', className: 'min-w-0', note: '' },
+			// #ifdef WEB
+			{
+				value: '100%',
+				className: 'min-w-full',
+				note: '仅 Web；App min/max 尺寸只支持数字和 px'
+			},
+			// #endif
+			// #ifdef WEB
+			{
+				value: '50%',
+				className: 'min-w-1/2',
+				note: '仅 Web；App min/max 尺寸只支持数字和 px'
+			},
+			// #endif
+			{ value: 'var(--demo-size)', className: 'min-w-(--demo-size)', note: '约束尺寸变量' },
+			{
+				value: '160px',
+				className: 'min-w-3xs',
+				note: '模板自定义命名尺寸；其他等级使用相同语法'
+			},
+			{
+				value: '200px',
+				className: 'min-w-2xs',
+				note: '模板自定义命名尺寸；其他等级使用相同语法'
+			},
 			{ value: '64px', className: 'min-w-64', note: '' },
 			{ value: '112px', className: 'min-w-112', note: '' },
 			{ value: '160rpx', className: 'min-w-[160rpx]', note: '' },
 			// #ifdef WEB
-			{ value: 'fit-content', className: '[min-width:fit-content]', note: '仅 Web 演示' },
+			{ value: 'fit-content', className: 'min-w-fit', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'min-content', className: '[min-width:min-content]', note: '仅 Web 演示' },
+			{ value: 'min-content', className: 'min-w-min', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'max-content', className: '[min-width:max-content]', note: '仅 Web 演示' },
+			{ value: 'max-content', className: 'min-w-max', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'auto', className: '[min-width:auto]', note: '仅 Web 演示' }
+			{ value: 'auto', className: 'min-w-auto', note: '仅 Web 演示' }
 			// #endif
 		]
 	},
@@ -446,20 +583,46 @@ export const cssDemos: CssDemo[] = [
 		description: '最小尺寸使用小于限制值的基础尺寸，最大尺寸使用大于限制值的基础尺寸。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '0px', className: 'max-w-0', note: '' },
+			// #ifdef WEB
+			{
+				value: '100%',
+				className: 'max-w-full',
+				note: '仅 Web；App min/max 尺寸只支持数字和 px'
+			},
+			// #endif
+			// #ifdef WEB
+			{
+				value: '50%',
+				className: 'max-w-1/2',
+				note: '仅 Web；App min/max 尺寸只支持数字和 px'
+			},
+			// #endif
+			{ value: 'var(--demo-size)', className: 'max-w-(--demo-size)', note: '约束尺寸变量' },
+			{
+				value: '160px',
+				className: 'max-w-3xs',
+				note: '模板自定义命名尺寸；其他等级使用相同语法'
+			},
+			{
+				value: '200px',
+				className: 'max-w-2xs',
+				note: '模板自定义命名尺寸；其他等级使用相同语法'
+			},
 			{ value: '64px', className: 'max-w-64', note: '' },
 			{ value: '112px', className: 'max-w-112', note: '' },
 			{ value: '160rpx', className: 'max-w-[160rpx]', note: '' },
 			// #ifdef WEB
-			{ value: 'fit-content', className: '[max-width:fit-content]', note: '仅 Web 演示' },
+			{ value: 'fit-content', className: 'max-w-fit', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'min-content', className: '[max-width:min-content]', note: '仅 Web 演示' },
+			{ value: 'min-content', className: 'max-w-min', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'max-content', className: '[max-width:max-content]', note: '仅 Web 演示' },
+			{ value: 'max-content', className: 'max-w-max', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'none', className: '[max-width:none]', note: '仅 Web 演示' }
+			{ value: 'none', className: 'max-w-none', note: '仅 Web 演示' }
 			// #endif
 		]
 	},
@@ -471,20 +634,36 @@ export const cssDemos: CssDemo[] = [
 		description: '最小尺寸使用小于限制值的基础尺寸，最大尺寸使用大于限制值的基础尺寸。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '0px', className: 'min-h-0', note: '' },
+			// #ifdef WEB
+			{
+				value: '100%',
+				className: 'min-h-full',
+				note: '仅 Web；App min/max 尺寸只支持数字和 px'
+			},
+			// #endif
+			// #ifdef WEB
+			{
+				value: '50%',
+				className: 'min-h-1/2',
+				note: '仅 Web；App min/max 尺寸只支持数字和 px'
+			},
+			// #endif
+			{ value: 'var(--demo-size)', className: 'min-h-(--demo-size)', note: '约束尺寸变量' },
 			{ value: '64px', className: 'min-h-64', note: '' },
 			{ value: '112px', className: 'min-h-112', note: '' },
 			{ value: '160rpx', className: 'min-h-[160rpx]', note: '' },
 			// #ifdef WEB
-			{ value: 'fit-content', className: '[min-height:fit-content]', note: '仅 Web 演示' },
+			{ value: 'fit-content', className: 'min-h-fit', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'min-content', className: '[min-height:min-content]', note: '仅 Web 演示' },
+			{ value: 'min-content', className: 'min-h-min', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'max-content', className: '[min-height:max-content]', note: '仅 Web 演示' },
+			{ value: 'max-content', className: 'min-h-max', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'auto', className: '[min-height:auto]', note: '仅 Web 演示' }
+			{ value: 'auto', className: 'min-h-auto', note: '仅 Web 演示' }
 			// #endif
 		]
 	},
@@ -496,20 +675,36 @@ export const cssDemos: CssDemo[] = [
 		description: '最小尺寸使用小于限制值的基础尺寸，最大尺寸使用大于限制值的基础尺寸。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '0px', className: 'max-h-0', note: '' },
+			// #ifdef WEB
+			{
+				value: '100%',
+				className: 'max-h-full',
+				note: '仅 Web；App min/max 尺寸只支持数字和 px'
+			},
+			// #endif
+			// #ifdef WEB
+			{
+				value: '50%',
+				className: 'max-h-1/2',
+				note: '仅 Web；App min/max 尺寸只支持数字和 px'
+			},
+			// #endif
+			{ value: 'var(--demo-size)', className: 'max-h-(--demo-size)', note: '约束尺寸变量' },
 			{ value: '64px', className: 'max-h-64', note: '' },
 			{ value: '112px', className: 'max-h-112', note: '' },
 			{ value: '160rpx', className: 'max-h-[160rpx]', note: '' },
 			// #ifdef WEB
-			{ value: 'fit-content', className: '[max-height:fit-content]', note: '仅 Web 演示' },
+			{ value: 'fit-content', className: 'max-h-fit', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'min-content', className: '[max-height:min-content]', note: '仅 Web 演示' },
+			{ value: 'min-content', className: 'max-h-min', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'max-content', className: '[max-height:max-content]', note: '仅 Web 演示' },
+			{ value: 'max-content', className: 'max-h-max', note: '仅 Web 演示' },
 			// #endif
 			// #ifdef WEB
-			{ value: 'none', className: '[max-height:none]', note: '仅 Web 演示' }
+			{ value: 'none', className: 'max-h-none', note: '仅 Web 演示' }
 			// #endif
 		]
 	},
@@ -521,6 +716,21 @@ export const cssDemos: CssDemo[] = [
 		description: '浅色区域标记空间，蓝色区域标记内容。auto 观察可分配的剩余空间。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: '8px 24px',
+				className: 'my-8 mx-24',
+				note: '双轴工具类；App 转为上下、左右物理属性',
+				css: 'margin-block: 8px;\nmargin-inline: 24px;'
+			},
+			{
+				value: 'auto',
+				className: 'mx-auto',
+				note: '左右居中；App 转为 margin-left/right',
+				css: 'margin-inline: auto;'
+			},
+			{ value: '-8px', className: '-mx-8', note: '双轴负间距', css: 'margin-inline: -8px;' },
+			{ value: '1px', className: 'm-px', note: '固定 1px' },
+			{ value: '1.5px', className: 'm-1.5', note: '小数间距' },
 			{ value: '0px', className: 'm-0', note: '' },
 			{ value: '8px', className: 'm-8', note: '' },
 			{ value: '24px', className: 'm-24', note: '' },
@@ -542,6 +752,8 @@ export const cssDemos: CssDemo[] = [
 		description: '浅色区域标记空间，蓝色区域标记内容。auto 观察可分配的剩余空间。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'mt-px', note: '固定 1px' },
+			{ value: '1.5px', className: 'mt-1.5', note: '小数间距' },
 			{ value: '0px', className: 'mt-0', note: '' },
 			{ value: '8px', className: 'mt-8', note: '' },
 			{ value: '24px', className: 'mt-24', note: '' },
@@ -560,6 +772,8 @@ export const cssDemos: CssDemo[] = [
 		description: '浅色区域标记空间，蓝色区域标记内容。auto 观察可分配的剩余空间。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'mr-px', note: '固定 1px' },
+			{ value: '1.5px', className: 'mr-1.5', note: '小数间距' },
 			{ value: '0px', className: 'mr-0', note: '' },
 			{ value: '8px', className: 'mr-8', note: '' },
 			{ value: '24px', className: 'mr-24', note: '' },
@@ -578,6 +792,8 @@ export const cssDemos: CssDemo[] = [
 		description: '浅色区域标记空间，蓝色区域标记内容。auto 观察可分配的剩余空间。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'mb-px', note: '固定 1px' },
+			{ value: '1.5px', className: 'mb-1.5', note: '小数间距' },
 			{ value: '0px', className: 'mb-0', note: '' },
 			{ value: '8px', className: 'mb-8', note: '' },
 			{ value: '24px', className: 'mb-24', note: '' },
@@ -596,6 +812,8 @@ export const cssDemos: CssDemo[] = [
 		description: '浅色区域标记空间，蓝色区域标记内容。auto 观察可分配的剩余空间。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'ml-px', note: '固定 1px' },
+			{ value: '1.5px', className: 'ml-1.5', note: '小数间距' },
 			{ value: '0px', className: 'ml-0', note: '' },
 			{ value: '8px', className: 'ml-8', note: '' },
 			{ value: '24px', className: 'ml-24', note: '' },
@@ -614,6 +832,26 @@ export const cssDemos: CssDemo[] = [
 		description: '浅色区域标记空间，蓝色区域标记内容。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: '8px 24px',
+				className: 'py-8 px-24',
+				note: '双轴工具类；App 转为上下、左右物理属性',
+				css: 'padding-block: 8px;\npadding-inline: 24px;'
+			},
+			{
+				value: 'var(--demo-space)',
+				className: 'px-(--demo-space)',
+				note: '双轴变量',
+				css: 'padding-inline: var(--demo-space);'
+			},
+			{
+				value: '24rpx',
+				className: 'py-[24rpx]',
+				note: '双轴任意值',
+				css: 'padding-block: 24rpx;'
+			},
+			{ value: '1px', className: 'p-px', note: '固定 1px' },
+			{ value: '1.5px', className: 'p-1.5', note: '小数间距' },
 			{ value: '0px', className: 'p-0', note: '' },
 			{ value: '8px', className: 'p-8', note: '' },
 			{ value: '24px', className: 'p-24', note: '' },
@@ -633,6 +871,8 @@ export const cssDemos: CssDemo[] = [
 		description: '浅色区域标记空间，蓝色区域标记内容。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'pt-px', note: '固定 1px' },
+			{ value: '1.5px', className: 'pt-1.5', note: '小数间距' },
 			{ value: '0px', className: 'pt-0', note: '' },
 			{ value: '8px', className: 'pt-8', note: '' },
 			{ value: '24px', className: 'pt-24', note: '' },
@@ -649,6 +889,8 @@ export const cssDemos: CssDemo[] = [
 		description: '浅色区域标记空间，蓝色区域标记内容。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'pr-px', note: '固定 1px' },
+			{ value: '1.5px', className: 'pr-1.5', note: '小数间距' },
 			{ value: '0px', className: 'pr-0', note: '' },
 			{ value: '8px', className: 'pr-8', note: '' },
 			{ value: '24px', className: 'pr-24', note: '' },
@@ -665,6 +907,8 @@ export const cssDemos: CssDemo[] = [
 		description: '浅色区域标记空间，蓝色区域标记内容。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'pb-px', note: '固定 1px' },
+			{ value: '1.5px', className: 'pb-1.5', note: '小数间距' },
 			{ value: '0px', className: 'pb-0', note: '' },
 			{ value: '8px', className: 'pb-8', note: '' },
 			{ value: '24px', className: 'pb-24', note: '' },
@@ -681,6 +925,8 @@ export const cssDemos: CssDemo[] = [
 		description: '浅色区域标记空间，蓝色区域标记内容。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'pl-px', note: '固定 1px' },
+			{ value: '1.5px', className: 'pl-1.5', note: '小数间距' },
 			{ value: '0px', className: 'pl-0', note: '' },
 			{ value: '8px', className: 'pl-8', note: '' },
 			{ value: '24px', className: 'pl-24', note: '' },
@@ -694,9 +940,57 @@ export const cssDemos: CssDemo[] = [
 		title: '背景颜色',
 		kind: 'paint',
 		category: '背景与效果',
-		description: '展示十六进制、RGB、透明色及主题变量；透明色会透出下方背景。',
+		description:
+			'用 red-500、blue-500 演示命名颜色，色阶可换为 50–950；补充 /透明度、任意值和变量。主题 oklch 在 App 由插件转为 sRGB；透明色会透出下方背景。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: 'oklch(63.7% 0.237 25.331)',
+				className: 'bg-red-500',
+				note: '命名颜色；色阶可换为 50–950'
+			},
+			{
+				value: 'oklch(62.3% 0.214 259.815)',
+				className: 'bg-blue-500',
+				note: '命名颜色；色阶可换为 50–950'
+			},
+			{
+				value: 'var(--color-red-500) !important',
+				className: 'bg-red-500!',
+				note: 'Tailwind v4 使用后缀 ! 提高声明优先级'
+			},
+			// #ifdef WEB
+			{
+				value: 'inherit',
+				className: 'bg-inherit',
+				note: '仅 Web；当前 App SDK 未保留继承色关键字'
+			},
+			{
+				value: 'currentColor',
+				className: 'bg-current',
+				note: '仅 Web；当前 App SDK 未保留 currentColor'
+			},
+			// #endif
+			{
+				value: 'color-mix(in oklab, var(--color-red-500) 50%, transparent)',
+				className: 'bg-red-500/50',
+				note: '/50 只改变当前颜色透明度'
+			},
+			{
+				value: 'color-mix(in oklab, var(--color-red-500) 35%, transparent)',
+				className: 'bg-red-500/[35%]',
+				note: '方括号透明度修饰符'
+			},
+			{
+				value: 'color-mix(in oklab, #2563eb 50%, transparent)',
+				className: 'bg-[#2563eb]/50',
+				note: '任意颜色也可以附加透明度'
+			},
+			{
+				value: 'var(--accent)',
+				className: 'bg-(color:--accent)',
+				note: '颜色类型提示；括号是 var() 的简写'
+			},
 			{ value: '#2563eb', className: 'bg-[#2563eb]', note: '' },
 			{ value: '#0d9488', className: 'bg-[#0d9488]', note: '' },
 			{ value: 'rgb(234,88,12)', className: 'bg-[rgb(234,88,12)]', note: '' },
@@ -711,9 +1005,71 @@ export const cssDemos: CssDemo[] = [
 		title: '文字颜色',
 		kind: 'text',
 		category: '背景与效果',
-		description: '展示十六进制、RGB、透明色及主题变量；透明色会透出下方背景。',
+		description:
+			'用 red-500、blue-500 演示命名颜色，色阶可换为 50–950；补充 /透明度、任意值和变量。主题 oklch 在 App 由插件转为 sRGB；文字同时在浅底和深底预览，便于比较。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: 'oklch(63.7% 0.237 25.331)',
+				className: 'text-red-500',
+				note: '命名颜色；色阶可换为 50–950'
+			},
+			{
+				value: 'oklch(62.3% 0.214 259.815)',
+				className: 'text-blue-500',
+				note: '命名颜色；色阶可换为 50–950'
+			},
+			// #ifdef WEB
+			{
+				value: 'var(--color-blue-400)',
+				className: 'dark:text-blue-400',
+				note: '系统深色模式下生效；当前示例只在 Web 演示 dark 变体'
+			},
+			// #endif
+			{
+				value: 'var(--color-red-500) !important',
+				className: 'text-red-500!',
+				note: 'Tailwind v4 使用后缀 ! 提高声明优先级'
+			},
+			// #ifdef WEB
+			{
+				value: 'inherit',
+				className: 'text-inherit',
+				note: '仅 Web；当前 App SDK 未保留继承色关键字'
+			},
+			// #endif
+			// #ifdef WEB
+			{
+				value: 'var(--color-red-500)',
+				className: 'md:text-red-500',
+				note: '视口达到默认 md 断点 48rem 后生效；App 会过滤该媒体查询'
+			},
+			{
+				value: 'var(--color-blue-500)',
+				className: '[&]:text-blue-500',
+				note: '任意变体，& 表示当前元素'
+			},
+			// #endif
+			{
+				value: 'color-mix(in oklab, var(--color-red-500) 50%, transparent)',
+				className: 'text-red-500/50',
+				note: '/50 只改变当前颜色透明度'
+			},
+			{
+				value: 'color-mix(in oklab, var(--color-red-500) 35%, transparent)',
+				className: 'text-red-500/[35%]',
+				note: '方括号透明度修饰符'
+			},
+			{
+				value: 'color-mix(in oklab, #2563eb 50%, transparent)',
+				className: 'text-[#2563eb]/50',
+				note: '任意颜色也可以附加透明度'
+			},
+			{
+				value: 'var(--accent)',
+				className: 'text-(color:--accent)',
+				note: '颜色类型提示；括号是 var() 的简写'
+			},
 			{ value: '#2563eb', className: 'text-[#2563eb]', note: '' },
 			{ value: '#0d9488', className: 'text-[#0d9488]', note: '' },
 			{ value: 'rgb(234,88,12)', className: 'text-[rgb(234,88,12)]', note: '' },
@@ -780,6 +1136,69 @@ export const cssDemos: CssDemo[] = [
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
 			{
+				value: 'var(--demo-gradient)',
+				className: 'bg-(image:--demo-gradient)',
+				note: '图片类型提示，变量值使用已支持的线性渐变'
+			},
+			// #ifdef WEB
+			{
+				value: 'linear-gradient(to top, var(--color-blue-500), var(--color-teal-500))',
+				className: 'bg-linear-to-t from-blue-500 to-teal-500',
+				note: '方向 + from/to 色标；App 尚未适配渐变组合变量'
+			},
+			{
+				value: 'linear-gradient(to top right, var(--color-blue-500), var(--color-teal-500))',
+				className: 'bg-linear-to-tr from-blue-500 to-teal-500',
+				note: '方向 + from/to 色标；App 尚未适配渐变组合变量'
+			},
+			{
+				value: 'linear-gradient(to right, var(--color-blue-500), var(--color-teal-500))',
+				className: 'bg-linear-to-r from-blue-500 to-teal-500',
+				note: '方向 + from/to 色标；App 尚未适配渐变组合变量'
+			},
+			{
+				value: 'linear-gradient(to bottom right, var(--color-blue-500), var(--color-teal-500))',
+				className: 'bg-linear-to-br from-blue-500 to-teal-500',
+				note: '方向 + from/to 色标；App 尚未适配渐变组合变量'
+			},
+			{
+				value: 'linear-gradient(to bottom, var(--color-blue-500), var(--color-teal-500))',
+				className: 'bg-linear-to-b from-blue-500 to-teal-500',
+				note: '方向 + from/to 色标；App 尚未适配渐变组合变量'
+			},
+			{
+				value: 'linear-gradient(to bottom left, var(--color-blue-500), var(--color-teal-500))',
+				className: 'bg-linear-to-bl from-blue-500 to-teal-500',
+				note: '方向 + from/to 色标；App 尚未适配渐变组合变量'
+			},
+			{
+				value: 'linear-gradient(to left, var(--color-blue-500), var(--color-teal-500))',
+				className: 'bg-linear-to-l from-blue-500 to-teal-500',
+				note: '方向 + from/to 色标；App 尚未适配渐变组合变量'
+			},
+			{
+				value: 'linear-gradient(to top left, var(--color-blue-500), var(--color-teal-500))',
+				className: 'bg-linear-to-tl from-blue-500 to-teal-500',
+				note: '方向 + from/to 色标；App 尚未适配渐变组合变量'
+			},
+			{
+				value: 'linear-gradient(to right, var(--color-blue-500), var(--color-purple-500), var(--color-teal-500))',
+				className: 'bg-linear-to-r from-blue-500 via-purple-500 to-teal-500',
+				note: '三色渐变'
+			},
+			{
+				value: 'linear-gradient(to right, var(--color-blue-500) 10%, var(--color-purple-500) 50%, var(--color-teal-500) 90%)',
+				className:
+					'bg-linear-to-r from-blue-500 from-10% via-purple-500 via-50% to-teal-500 to-90%',
+				note: '色标位置'
+			},
+			{
+				value: 'linear-gradient(45deg in srgb, var(--color-blue-500), var(--color-teal-500))',
+				className: 'bg-linear-45/srgb from-blue-500 to-teal-500',
+				note: '角度与颜色空间修饰符'
+			},
+			// #endif
+			{
 				value: 'linear-gradient(to right,#2563eb,#14b8a6)',
 				className: 'bg-[linear-gradient(to_right,#2563eb,#14b8a6)]',
 				note: ''
@@ -831,6 +1250,12 @@ export const cssDemos: CssDemo[] = [
 		description: '透明度同时作用于蓝色背景和文字。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '0.35', className: 'opacity-35', note: '数字透明度不需要任意值' },
+			{
+				value: 'var(--demo-opacity)',
+				className: 'opacity-(--demo-opacity)',
+				note: '整体透明度变量'
+			},
 			{ value: '0.0', className: 'opacity-0', note: '' },
 			{ value: '0.25', className: 'opacity-25', note: '' },
 			{ value: '0.5', className: 'opacity-50', note: '' },
@@ -844,9 +1269,103 @@ export const cssDemos: CssDemo[] = [
 		title: '盒子阴影',
 		kind: 'shadow',
 		category: '背景与效果',
-		description: '使用具体的阴影值，避免多层阴影变量掩盖效果。',
-		support: 'Web / Android / iOS / HarmonyOS',
+		description:
+			'命名尺寸、任意值和变量阴影；颜色、/透明度、inset 与 ring 组合目前只在 Web 演示。预览使用不透明底色，避免 iOS 透明背景差异。',
+		support:
+			'Web / Android / iOS / HarmonyOS；HarmonyOS 不支持 inset 和扩散半径；App 尚未适配部分 Tailwind 阴影组合',
 		cases: [
+			// #ifdef WEB
+			{
+				value: '0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5)',
+				className: 'shadow-lg/50',
+				note: '阴影透明度；App 转换未支持相对颜色语法'
+			},
+			{
+				value: '0 10px 15px -3px color-mix(in oklab, var(--color-blue-500) 50%, transparent), 0 4px 6px -4px color-mix(in oklab, var(--color-blue-500) 50%, transparent)',
+				className: 'shadow-lg shadow-blue-500/50',
+				note: '颜色类须搭配阴影尺寸；App 当前会使用默认阴影色'
+			},
+			{
+				value: '0 10px 15px -3px var(--accent), 0 4px 6px -4px var(--accent)',
+				className: 'shadow-lg shadow-(color:--accent)',
+				note: '阴影颜色变量；App 当前会使用默认阴影色'
+			},
+			{
+				value: 'inset 0 1px rgb(0 0 0 / 0.05)',
+				className: 'inset-shadow-2xs',
+				note: 'App 尚未适配阴影组合变量；HarmonyOS 不支持 inset'
+			},
+			{
+				value: 'inset 0 1px 1px rgb(0 0 0 / 0.05)',
+				className: 'inset-shadow-xs',
+				note: 'App 尚未适配阴影组合变量；HarmonyOS 不支持 inset'
+			},
+			{
+				value: 'inset 0 2px 4px rgb(0 0 0 / 0.05)',
+				className: 'inset-shadow-sm',
+				note: 'App 尚未适配阴影组合变量；HarmonyOS 不支持 inset'
+			},
+			{
+				value: 'inset 0 2px 4px color-mix(in oklab, var(--color-blue-500) 50%, transparent)',
+				className: 'inset-shadow-sm inset-shadow-blue-500/50',
+				note: '内阴影颜色'
+			},
+			{ value: 'inset 0 0 #0000', className: 'inset-shadow-none', note: '移除内阴影' },
+			{
+				value: '0 0 0 2px var(--color-blue-500)',
+				className: 'ring-2 ring-blue-500',
+				note: 'ring 通过 box-shadow 实现，不占用边框空间；App 尚未适配组合变量'
+			},
+			{
+				value: '0 0 0 4px color-mix(in oklab, var(--color-blue-500) 50%, transparent)',
+				className: 'ring-4 ring-blue-500/50',
+				note: 'ring 宽度与颜色透明度'
+			},
+			{
+				value: 'inset 0 0 0 2px var(--color-blue-500)',
+				className: 'inset-ring-2 inset-ring-blue-500',
+				note: '内环；App 尚未适配组合变量'
+			},
+			{
+				value: '0 0 0 2px var(--color-blue-500), 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+				className: 'shadow-lg ring-2 ring-blue-500',
+				note: '外阴影与 ring 组合'
+			},
+			// #endif
+			// #ifndef APP-HARMONY
+			{
+				value: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+				className: 'shadow-sm',
+				note: '包含扩散半径，HarmonyOS 不支持'
+			},
+			{
+				value: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+				className: 'shadow-md',
+				note: '包含扩散半径，HarmonyOS 不支持'
+			},
+			{
+				value: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+				className: 'shadow-lg',
+				note: '包含扩散半径，HarmonyOS 不支持'
+			},
+			{
+				value: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+				className: 'shadow-xl',
+				note: '包含扩散半径，HarmonyOS 不支持'
+			},
+			{
+				value: '0 25px 50px -12px rgb(0 0 0 / 0.25)',
+				className: 'shadow-2xl',
+				note: '包含扩散半径，HarmonyOS 不支持'
+			},
+			// #endif
+			{ value: '0 1px rgb(0 0 0 / 0.05)', className: 'shadow-2xs', note: '命名外阴影' },
+			{ value: '0 1px 2px 0 rgb(0 0 0 / 0.05)', className: 'shadow-xs', note: '命名外阴影' },
+			{
+				value: 'var(--demo-shadow)',
+				className: 'shadow-(--demo-shadow)',
+				note: '自定义阴影变量；不包含扩散半径'
+			},
 			{
 				value: '0 4px 12px rgba(15,23,42,0.16)',
 				className: 'shadow-[0_4px_12px_rgba(15,23,42,0.16)]',
@@ -859,11 +1378,11 @@ export const cssDemos: CssDemo[] = [
 				note: ''
 			},
 			{ value: 'none', className: 'shadow-none', note: '' },
-			// #ifdef WEB
+			// #ifndef APP-HARMONY
 			{
 				value: 'inset 0 0 12px rgba(15,23,42,0.3)',
 				className: 'shadow-[inset_0_0_12px_rgba(15,23,42,0.3)]',
-				note: '仅 Web 演示'
+				note: '任意值内阴影；HarmonyOS 不支持 inset'
 			}
 			// #endif
 		]
@@ -877,6 +1396,25 @@ export const cssDemos: CssDemo[] = [
 			'半透明覆盖层后方放置彩色文字与色块，便于观察 blur。不对演示元素设置 flatten。',
 		support: 'Web / App Vapor 5.25+；部分值存在端差异',
 		cases: [
+			{ value: 'blur(4px)', className: 'backdrop-blur-xs', note: '命名背景模糊' },
+			{ value: 'blur(8px)', className: 'backdrop-blur-sm', note: '命名背景模糊' },
+			{ value: 'blur(12px)', className: 'backdrop-blur-md', note: '命名背景模糊' },
+			{ value: 'blur(16px)', className: 'backdrop-blur-lg', note: '命名背景模糊' },
+			{ value: 'blur(24px)', className: 'backdrop-blur-xl', note: '命名背景模糊' },
+			{ value: 'blur(40px)', className: 'backdrop-blur-2xl', note: '命名背景模糊' },
+			{ value: 'blur(64px)', className: 'backdrop-blur-3xl', note: '命名背景模糊' },
+			// #ifdef WEB
+			{
+				value: 'blur(0)',
+				className: 'backdrop-blur-none',
+				note: '移除背景模糊；App 使用下方 [backdrop-filter:none]'
+			},
+			// #endif
+			{
+				value: 'blur(var(--demo-blur))',
+				className: 'backdrop-blur-(--demo-blur)',
+				note: '模糊半径变量'
+			},
 			{ value: 'blur(0px)', className: 'backdrop-blur-[0px]', note: '' },
 			{ value: 'blur(4px)', className: 'backdrop-blur-[4px]', note: '' },
 			{ value: 'blur(12px)', className: 'backdrop-blur-[12px]', note: '' },
@@ -902,9 +1440,57 @@ export const cssDemos: CssDemo[] = [
 		title: '四边边框颜色',
 		kind: 'border-color',
 		category: '边框与圆角',
-		description: '先声明实线边框宽度，再替换当前边框颜色。',
+		description:
+			'先声明实线边框宽度，用 red-500、blue-500 演示命名颜色；色阶可换为 50–950，补充 /透明度和变量，主题 oklch 在 App 由插件转为 sRGB。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: 'oklch(63.7% 0.237 25.331)',
+				className: 'border-red-500',
+				note: '命名颜色；色阶可换为 50–950'
+			},
+			{
+				value: 'oklch(62.3% 0.214 259.815)',
+				className: 'border-blue-500',
+				note: '命名颜色；色阶可换为 50–950'
+			},
+			{
+				value: 'var(--color-red-500) !important',
+				className: 'border-red-500!',
+				note: 'Tailwind v4 使用后缀 ! 提高声明优先级'
+			},
+			// #ifdef WEB
+			{
+				value: 'inherit',
+				className: 'border-inherit',
+				note: '仅 Web；当前 App SDK 未保留继承色关键字'
+			},
+			{
+				value: 'currentColor',
+				className: 'border-current',
+				note: '仅 Web；当前 App SDK 未保留 currentColor'
+			},
+			// #endif
+			{
+				value: 'color-mix(in oklab, var(--color-red-500) 50%, transparent)',
+				className: 'border-red-500/50',
+				note: '/50 只改变当前颜色透明度'
+			},
+			{
+				value: 'color-mix(in oklab, var(--color-red-500) 35%, transparent)',
+				className: 'border-red-500/[35%]',
+				note: '方括号透明度修饰符'
+			},
+			{
+				value: 'color-mix(in oklab, #2563eb 50%, transparent)',
+				className: 'border-[#2563eb]/50',
+				note: '任意颜色也可以附加透明度'
+			},
+			{
+				value: 'var(--accent)',
+				className: 'border-(color:--accent)',
+				note: '颜色类型提示；括号是 var() 的简写'
+			},
 			{ value: '#2563eb', className: 'border-[#2563eb]', note: '' },
 			{ value: '#0d9488', className: 'border-[#0d9488]', note: '' },
 			{ value: 'rgba(234,88,12,0.5)', className: 'border-[rgba(234,88,12,0.5)]', note: '' },
@@ -936,6 +1522,13 @@ export const cssDemos: CssDemo[] = [
 		description: '颜色与样式固定；thin、medium、thick 使用官方枚举写法。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'border', note: '省略数字的默认边框宽度' },
+			{ value: '2px', className: 'border-2', note: '' },
+			{
+				value: 'var(--demo-border)',
+				className: 'border-(length:--demo-border)',
+				note: '长度类型提示，避免识别为颜色'
+			},
 			{ value: '0px', className: 'border-0', note: '' },
 			{ value: '1px', className: 'border-1', note: '' },
 			{ value: '4px', className: 'border-4', note: '' },
@@ -968,6 +1561,21 @@ export const cssDemos: CssDemo[] = [
 		description: '先声明实线边框宽度，再替换当前边框颜色。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: 'oklch(63.7% 0.237 25.331)',
+				className: 'border-t-red-500',
+				note: '单边命名颜色，色板与 border-color 相同'
+			},
+			{
+				value: 'color-mix(in oklab, var(--color-blue-500) 50%, transparent)',
+				className: 'border-t-blue-500/50',
+				note: '单边颜色透明度'
+			},
+			{
+				value: 'var(--accent)',
+				className: 'border-t-(color:--accent)',
+				note: '单边颜色变量'
+			},
 			{ value: '#2563eb', className: 'border-t-[#2563eb]', note: '' },
 			{ value: '#0d9488', className: 'border-t-[#0d9488]', note: '' },
 			{ value: 'rgba(234,88,12,0.5)', className: 'border-t-[rgba(234,88,12,0.5)]', note: '' },
@@ -999,6 +1607,13 @@ export const cssDemos: CssDemo[] = [
 		description: '颜色与样式固定；thin、medium、thick 使用官方枚举写法。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'border-t', note: '省略数字的默认边框宽度' },
+			{ value: '2px', className: 'border-t-2', note: '' },
+			{
+				value: 'var(--demo-border)',
+				className: 'border-t-(length:--demo-border)',
+				note: '长度类型提示，避免识别为颜色'
+			},
 			{ value: '0px', className: 'border-t-0', note: '' },
 			{ value: '1px', className: 'border-t-1', note: '' },
 			{ value: '4px', className: 'border-t-4', note: '' },
@@ -1039,6 +1654,21 @@ export const cssDemos: CssDemo[] = [
 		description: '先声明实线边框宽度，再替换当前边框颜色。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: 'oklch(63.7% 0.237 25.331)',
+				className: 'border-r-red-500',
+				note: '单边命名颜色，色板与 border-color 相同'
+			},
+			{
+				value: 'color-mix(in oklab, var(--color-blue-500) 50%, transparent)',
+				className: 'border-r-blue-500/50',
+				note: '单边颜色透明度'
+			},
+			{
+				value: 'var(--accent)',
+				className: 'border-r-(color:--accent)',
+				note: '单边颜色变量'
+			},
 			{ value: '#2563eb', className: 'border-r-[#2563eb]', note: '' },
 			{ value: '#0d9488', className: 'border-r-[#0d9488]', note: '' },
 			{ value: 'rgba(234,88,12,0.5)', className: 'border-r-[rgba(234,88,12,0.5)]', note: '' },
@@ -1070,6 +1700,13 @@ export const cssDemos: CssDemo[] = [
 		description: '颜色与样式固定；thin、medium、thick 使用官方枚举写法。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'border-r', note: '省略数字的默认边框宽度' },
+			{ value: '2px', className: 'border-r-2', note: '' },
+			{
+				value: 'var(--demo-border)',
+				className: 'border-r-(length:--demo-border)',
+				note: '长度类型提示，避免识别为颜色'
+			},
 			{ value: '0px', className: 'border-r-0', note: '' },
 			{ value: '1px', className: 'border-r-1', note: '' },
 			{ value: '4px', className: 'border-r-4', note: '' },
@@ -1114,6 +1751,21 @@ export const cssDemos: CssDemo[] = [
 		description: '先声明实线边框宽度，再替换当前边框颜色。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: 'oklch(63.7% 0.237 25.331)',
+				className: 'border-b-red-500',
+				note: '单边命名颜色，色板与 border-color 相同'
+			},
+			{
+				value: 'color-mix(in oklab, var(--color-blue-500) 50%, transparent)',
+				className: 'border-b-blue-500/50',
+				note: '单边颜色透明度'
+			},
+			{
+				value: 'var(--accent)',
+				className: 'border-b-(color:--accent)',
+				note: '单边颜色变量'
+			},
 			{ value: '#2563eb', className: 'border-b-[#2563eb]', note: '' },
 			{ value: '#0d9488', className: 'border-b-[#0d9488]', note: '' },
 			{ value: 'rgba(234,88,12,0.5)', className: 'border-b-[rgba(234,88,12,0.5)]', note: '' },
@@ -1145,6 +1797,13 @@ export const cssDemos: CssDemo[] = [
 		description: '颜色与样式固定；thin、medium、thick 使用官方枚举写法。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'border-b', note: '省略数字的默认边框宽度' },
+			{ value: '2px', className: 'border-b-2', note: '' },
+			{
+				value: 'var(--demo-border)',
+				className: 'border-b-(length:--demo-border)',
+				note: '长度类型提示，避免识别为颜色'
+			},
 			{ value: '0px', className: 'border-b-0', note: '' },
 			{ value: '1px', className: 'border-b-1', note: '' },
 			{ value: '4px', className: 'border-b-4', note: '' },
@@ -1185,6 +1844,21 @@ export const cssDemos: CssDemo[] = [
 		description: '先声明实线边框宽度，再替换当前边框颜色。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: 'oklch(63.7% 0.237 25.331)',
+				className: 'border-l-red-500',
+				note: '单边命名颜色，色板与 border-color 相同'
+			},
+			{
+				value: 'color-mix(in oklab, var(--color-blue-500) 50%, transparent)',
+				className: 'border-l-blue-500/50',
+				note: '单边颜色透明度'
+			},
+			{
+				value: 'var(--accent)',
+				className: 'border-l-(color:--accent)',
+				note: '单边颜色变量'
+			},
 			{ value: '#2563eb', className: 'border-l-[#2563eb]', note: '' },
 			{ value: '#0d9488', className: 'border-l-[#0d9488]', note: '' },
 			{ value: 'rgba(234,88,12,0.5)', className: 'border-l-[rgba(234,88,12,0.5)]', note: '' },
@@ -1216,6 +1890,13 @@ export const cssDemos: CssDemo[] = [
 		description: '颜色与样式固定；thin、medium、thick 使用官方枚举写法。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1px', className: 'border-l', note: '省略数字的默认边框宽度' },
+			{ value: '2px', className: 'border-l-2', note: '' },
+			{
+				value: 'var(--demo-border)',
+				className: 'border-l-(length:--demo-border)',
+				note: '长度类型提示，避免识别为颜色'
+			},
 			{ value: '0px', className: 'border-l-0', note: '' },
 			{ value: '1px', className: 'border-l-1', note: '' },
 			{ value: '4px', className: 'border-l-4', note: '' },
@@ -1234,6 +1915,59 @@ export const cssDemos: CssDemo[] = [
 		description: '可分别设置四角，百分比圆角依赖元素的实际尺寸。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: '8px',
+				className: 'rounded-t-lg',
+				note: '上方两个角',
+				css: 'border-top-left-radius: 8px;\nborder-top-right-radius: 8px;'
+			},
+			{
+				value: '8px',
+				className: 'rounded-r-lg',
+				note: '右方两个角',
+				css: 'border-top-right-radius: 8px;\nborder-bottom-right-radius: 8px;'
+			},
+			{
+				value: '8px',
+				className: 'rounded-b-lg',
+				note: '下方两个角',
+				css: 'border-bottom-left-radius: 8px;\nborder-bottom-right-radius: 8px;'
+			},
+			{
+				value: '8px',
+				className: 'rounded-l-lg',
+				note: '左方两个角',
+				css: 'border-top-left-radius: 8px;\nborder-bottom-left-radius: 8px;'
+			},
+			{
+				value: '2px',
+				className: 'rounded-xs',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '4px',
+				className: 'rounded-sm',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '6px',
+				className: 'rounded-md',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{ value: '8px', className: 'rounded-lg', note: '示例主题以 px 定义命名圆角' },
+			{
+				value: '12px',
+				className: 'rounded-xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{ value: '16px', className: 'rounded-2xl', note: '示例主题以 px 定义命名圆角' },
+			{
+				value: '24px',
+				className: 'rounded-3xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{ value: '32px', className: 'rounded-4xl', note: '示例主题以 px 定义命名圆角' },
+			{ value: 'var(--demo-radius)', className: 'rounded-(--demo-radius)', note: '圆角变量' },
 			{ value: '0px', className: 'rounded-none', note: '' },
 			{ value: '8px', className: 'rounded-[8px]', note: '' },
 			{ value: '24px', className: 'rounded-[24px]', note: '' },
@@ -1256,6 +1990,51 @@ export const cssDemos: CssDemo[] = [
 		description: '仅改变当前角，其余三个角保持直角。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: '2px',
+				className: 'rounded-tl-xs',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '4px',
+				className: 'rounded-tl-sm',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '6px',
+				className: 'rounded-tl-md',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '8px',
+				className: 'rounded-tl-lg',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '12px',
+				className: 'rounded-tl-xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '16px',
+				className: 'rounded-tl-2xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '24px',
+				className: 'rounded-tl-3xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '32px',
+				className: 'rounded-tl-4xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: 'var(--demo-radius)',
+				className: 'rounded-tl-(--demo-radius)',
+				note: '圆角变量'
+			},
 			{ value: '0px', className: 'rounded-tl-none', note: '' },
 			{ value: '16px', className: 'rounded-tl-[16px]', note: '' },
 			{ value: '32px', className: 'rounded-tl-[32px]', note: '' },
@@ -1271,6 +2050,51 @@ export const cssDemos: CssDemo[] = [
 		description: '仅改变当前角，其余三个角保持直角。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: '2px',
+				className: 'rounded-tr-xs',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '4px',
+				className: 'rounded-tr-sm',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '6px',
+				className: 'rounded-tr-md',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '8px',
+				className: 'rounded-tr-lg',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '12px',
+				className: 'rounded-tr-xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '16px',
+				className: 'rounded-tr-2xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '24px',
+				className: 'rounded-tr-3xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '32px',
+				className: 'rounded-tr-4xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: 'var(--demo-radius)',
+				className: 'rounded-tr-(--demo-radius)',
+				note: '圆角变量'
+			},
 			{ value: '0px', className: 'rounded-tr-none', note: '' },
 			{ value: '16px', className: 'rounded-tr-[16px]', note: '' },
 			{ value: '32px', className: 'rounded-tr-[32px]', note: '' },
@@ -1286,6 +2110,51 @@ export const cssDemos: CssDemo[] = [
 		description: '仅改变当前角，其余三个角保持直角。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: '2px',
+				className: 'rounded-br-xs',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '4px',
+				className: 'rounded-br-sm',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '6px',
+				className: 'rounded-br-md',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '8px',
+				className: 'rounded-br-lg',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '12px',
+				className: 'rounded-br-xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '16px',
+				className: 'rounded-br-2xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '24px',
+				className: 'rounded-br-3xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '32px',
+				className: 'rounded-br-4xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: 'var(--demo-radius)',
+				className: 'rounded-br-(--demo-radius)',
+				note: '圆角变量'
+			},
 			{ value: '0px', className: 'rounded-br-none', note: '' },
 			{ value: '16px', className: 'rounded-br-[16px]', note: '' },
 			{ value: '32px', className: 'rounded-br-[32px]', note: '' },
@@ -1301,6 +2170,51 @@ export const cssDemos: CssDemo[] = [
 		description: '仅改变当前角，其余三个角保持直角。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: '2px',
+				className: 'rounded-bl-xs',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '4px',
+				className: 'rounded-bl-sm',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '6px',
+				className: 'rounded-bl-md',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '8px',
+				className: 'rounded-bl-lg',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '12px',
+				className: 'rounded-bl-xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '16px',
+				className: 'rounded-bl-2xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '24px',
+				className: 'rounded-bl-3xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: '32px',
+				className: 'rounded-bl-4xl',
+				note: '示例主题以 px 定义命名圆角'
+			},
+			{
+				value: 'var(--demo-radius)',
+				className: 'rounded-bl-(--demo-radius)',
+				note: '圆角变量'
+			},
 			{ value: '0px', className: 'rounded-bl-none', note: '' },
 			{ value: '16px', className: 'rounded-bl-[16px]', note: '' },
 			{ value: '32px', className: 'rounded-bl-[32px]', note: '' },
@@ -1316,6 +2230,19 @@ export const cssDemos: CssDemo[] = [
 		description: '系统字体族的实际外观取决于设备；uni-icon 单独显示内置图标字符。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: 'sans-serif',
+				className: 'font-sans',
+				note: '模板自定义通用字体族，避免多字体列表差异'
+			},
+			{ value: 'serif', className: 'font-serif', note: '模板自定义通用字体族' },
+			{ value: 'monospace', className: 'font-mono', note: '模板自定义通用字体族' },
+			{ value: 'uni-icon', className: 'font-icon', note: '通过 @theme 新增命名字体工具类' },
+			{
+				value: 'var(--demo-font)',
+				className: 'font-(family-name:--demo-font)',
+				note: '字体族类型提示'
+			},
 			{ value: 'sans-serif', className: '[font-family:sans-serif]', note: '' },
 			{ value: 'serif', className: '[font-family:serif]', note: '' },
 			{ value: 'monospace', className: '[font-family:monospace]', note: '' },
@@ -1332,9 +2259,31 @@ export const cssDemos: CssDemo[] = [
 		description: '固定数值与任意值均可展示；字号关键字按 Web 字体规范演示。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
-			{ value: '14px', className: 'text-sm', note: '' },
-			{ value: '16px', className: 'text-base', note: '' },
-			{ value: '18px', className: 'text-lg', note: '' },
+			{ value: '14px', className: 'text-sm', note: '命名字号；其他等级使用相同语法' },
+			{ value: '18px', className: 'text-lg', note: '命名字号；其他等级使用相同语法' },
+			{
+				value: 'var(--demo-font-size)',
+				className: 'text-(length:--demo-font-size)',
+				note: '长度类型提示'
+			},
+			{
+				value: '16px',
+				className: 'text-base/24',
+				note: '字号 / 行高；本模板 spacing = 1px',
+				css: 'font-size: 16px;\nline-height: 24px;'
+			},
+			{
+				value: '16px',
+				className: 'text-base/[1.8]',
+				note: '字号 / 无单位行高',
+				css: 'font-size: 16px;\nline-height: 1.8;'
+			},
+			{
+				value: '16px',
+				className: 'text-base/(--demo-leading)',
+				note: '字号 / 行高变量',
+				css: 'font-size: 16px;\nline-height: var(--demo-leading);'
+			},
 			{ value: '24px', className: 'text-[24px]', note: '' },
 			{ value: '40rpx', className: 'text-[length:40rpx]', note: '' },
 			// #ifdef WEB
@@ -1392,6 +2341,12 @@ export const cssDemos: CssDemo[] = [
 		description: '字重以系统字体实际提供的字形为准。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '650', className: 'font-[650]', note: '自定义数字字重使用任意值语法' },
+			{
+				value: 'var(--demo-weight)',
+				className: 'font-(weight:--demo-weight)',
+				note: '字重类型提示'
+			},
 			{ value: 'normal', className: 'font-normal', note: '' },
 			{ value: 'bold', className: 'font-bold', note: '' },
 			{ value: '100', className: 'font-thin', note: '' },
@@ -1414,6 +2369,53 @@ export const cssDemos: CssDemo[] = [
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
 			// #ifdef WEB
+			{
+				value: '-0.05em',
+				className: 'tracking-tighter',
+				note: '默认 em 相对单位仅 Web 支持；App 使用下方 px 或变量写法'
+			},
+			// #endif
+			// #ifdef WEB
+			{
+				value: '-0.025em',
+				className: 'tracking-tight',
+				note: '默认 em 相对单位仅 Web 支持；App 使用下方 px 或变量写法'
+			},
+			// #endif
+			// #ifdef WEB
+			{
+				value: '0em',
+				className: 'tracking-normal',
+				note: '默认 em 相对单位仅 Web 支持；App 使用下方 px 或变量写法'
+			},
+			// #endif
+			// #ifdef WEB
+			{
+				value: '0.025em',
+				className: 'tracking-wide',
+				note: '默认 em 相对单位仅 Web 支持；App 使用下方 px 或变量写法'
+			},
+			// #endif
+			// #ifdef WEB
+			{
+				value: '0.05em',
+				className: 'tracking-wider',
+				note: '默认 em 相对单位仅 Web 支持；App 使用下方 px 或变量写法'
+			},
+			// #endif
+			// #ifdef WEB
+			{
+				value: '0.1em',
+				className: 'tracking-widest',
+				note: '默认 em 相对单位仅 Web 支持；App 使用下方 px 或变量写法'
+			},
+			// #endif
+			{
+				value: 'var(--demo-tracking)',
+				className: 'tracking-(--demo-tracking)',
+				note: '字间距变量'
+			},
+			// #ifdef WEB
 			{ value: 'normal', className: '[letter-spacing:normal]', note: '' },
 			// #endif
 			{ value: '-1px', className: 'tracking-[-1px]', note: '' },
@@ -1430,6 +2432,31 @@ export const cssDemos: CssDemo[] = [
 		description: '至少展示三行文字，观察行与行之间的间距。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '1', className: 'leading-none', note: '无单位，行高等于字号' },
+			{
+				value: 'var(--demo-leading)',
+				className: 'leading-(--demo-leading)',
+				note: '行高变量'
+			},
+			{ value: '1.8', className: 'leading-[1.8]', note: '无单位倍数行高' },
+			{
+				value: '24px',
+				className: 'text-base/24',
+				note: '字号 / 数字行高',
+				css: 'font-size: 16px;\nline-height: 24px;'
+			},
+			{
+				value: '1.8',
+				className: 'text-base/[1.8]',
+				note: '字号 / 任意行高',
+				css: 'font-size: 16px;\nline-height: 1.8;'
+			},
+			{
+				value: 'var(--demo-leading)',
+				className: 'text-base/(--demo-leading)',
+				note: '字号 / 行高变量',
+				css: 'font-size: 16px;\nline-height: var(--demo-leading);'
+			},
 			{ value: 'normal', className: '[line-height:normal]', note: '' },
 			{ value: '20px', className: 'leading-20', note: '' },
 			{ value: '32px', className: 'leading-32', note: '' },
@@ -1525,6 +2552,12 @@ export const cssDemos: CssDemo[] = [
 		description: '同时设置固定宽度、overflow-hidden 和 whitespace-nowrap。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: 'ellipsis',
+				className: 'truncate',
+				note: '同时生成 overflow、text-overflow 和 white-space',
+				css: 'overflow: hidden;\ntext-overflow: ellipsis;\nwhite-space: nowrap;'
+			},
 			{ value: 'clip', className: 'text-clip', note: '' },
 			{ value: 'ellipsis', className: 'text-ellipsis', note: '' }
 		]
@@ -1537,6 +2570,39 @@ export const cssDemos: CssDemo[] = [
 		description: '阴影应用到文字本身，分别观察偏移、模糊与无阴影。',
 		support: 'Web / App 4.61+',
 		cases: [
+			// #ifdef WEB
+			{
+				value: '0px 1px 0px rgb(0 0 0 / 0.15)',
+				className: 'text-shadow-2xs',
+				note: 'App 尚未适配文字阴影颜色变量回退'
+			},
+			{
+				value: '0px 1px 1px rgb(0 0 0 / 0.2)',
+				className: 'text-shadow-xs',
+				note: 'App 尚未适配文字阴影颜色变量回退'
+			},
+			{
+				value: '0px 1px 0px rgb(0 0 0 / 0.075), 0px 1px 1px rgb(0 0 0 / 0.075), 0px 2px 2px rgb(0 0 0 / 0.075)',
+				className: 'text-shadow-sm',
+				note: 'App 尚未适配文字阴影颜色变量回退'
+			},
+			{
+				value: '0px 1px 1px rgb(0 0 0 / 0.1), 0px 1px 2px rgb(0 0 0 / 0.1), 0px 2px 4px rgb(0 0 0 / 0.1)',
+				className: 'text-shadow-md',
+				note: 'App 尚未适配文字阴影颜色变量回退'
+			},
+			{
+				value: '0px 1px 2px rgb(0 0 0 / 0.1), 0px 3px 2px rgb(0 0 0 / 0.1), 0px 4px 8px rgb(0 0 0 / 0.1)',
+				className: 'text-shadow-lg',
+				note: 'App 尚未适配文字阴影颜色变量回退'
+			},
+			// #endif
+			{ value: 'none', className: 'text-shadow-none', note: '移除文字阴影' },
+			{
+				value: 'var(--demo-text-shadow)',
+				className: 'text-shadow-(--demo-text-shadow)',
+				note: '文字阴影变量'
+			},
 			{ value: '2px 2px 0 #94a3b8', className: '[text-shadow:2px_2px_0_#94a3b8]', note: '' },
 			{
 				value: '0 2px 6px rgba(37,99,235,0.5)',
@@ -1685,6 +2751,16 @@ export const cssDemos: CssDemo[] = [
 			'虚线框是原始位置。Tailwind v4 的 rotate/scale/translate 工具类生成独立 CSS 属性，原生端改用 [transform:...]。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{
+				value: 'var(--demo-transform)',
+				className: 'transform-(--demo-transform)',
+				note: '变换变量'
+			},
+			{
+				value: 'rotate(20deg) scale(1.1)',
+				className: 'transform-[rotate(20deg)_scale(1.1)]',
+				note: 'Tailwind transform 任意值组合'
+			},
 			{ value: 'rotate(20deg)', className: '[transform:rotate(20deg)]', note: '' },
 			{ value: 'rotateX(35deg)', className: '[transform:rotateX(35deg)]', note: '' },
 			{ value: 'rotateY(35deg)', className: '[transform:rotateY(35deg)]', note: '' },
@@ -1758,6 +2834,12 @@ export const cssDemos: CssDemo[] = [
 		description: '点击同一个按钮触发过渡，比较变化所需时间。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: '300ms', className: 'duration-300', note: '' },
+			{
+				value: 'var(--demo-duration)',
+				className: 'duration-(--demo-duration)',
+				note: '时长变量'
+			},
 			{ value: '0ms', className: 'duration-0', note: '' },
 			{ value: '150ms', className: 'duration-150', note: '' },
 			{ value: '700ms', className: 'duration-700', note: '' },
@@ -1772,6 +2854,7 @@ export const cssDemos: CssDemo[] = [
 		description: '点击后先等待延迟，再开始相同的过渡。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: 'var(--demo-delay)', className: 'delay-(--demo-delay)', note: '延迟变量' },
 			{ value: '0ms', className: 'delay-0', note: '' },
 			{ value: '300ms', className: 'delay-300', note: '' },
 			{ value: '1s', className: 'delay-[1s]', note: '' },
@@ -1787,6 +2870,29 @@ export const cssDemos: CssDemo[] = [
 			'点击切换时同步改变尺寸、边距、颜色、边框、透明度与变换；只有指定属性会平滑过渡。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			// #ifdef WEB
+			{
+				value: 'color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to',
+				className: 'transition-colors',
+				note: '默认列表包含 App 不支持的属性'
+			},
+			{
+				value: 'transform, translate, scale, rotate',
+				className: 'transition-transform',
+				note: '默认列表包含独立变换属性，仅 Web 演示'
+			},
+			{
+				value: 'box-shadow',
+				className: 'transition-shadow',
+				note: 'App 官方过渡枚举未列出 box-shadow'
+			},
+			// #endif
+			{ value: 'opacity', className: 'transition-opacity', note: '命名透明度过渡' },
+			{
+				value: 'width, height',
+				className: 'transition-[width,height]',
+				note: '多个指定属性'
+			},
 			{ value: 'all', className: 'transition-all', note: '' },
 			{ value: 'none', className: 'transition-none', note: '' },
 			{ value: 'width', className: 'transition-[width]', note: '' },
@@ -1805,7 +2911,6 @@ export const cssDemos: CssDemo[] = [
 			{ value: 'padding-right', className: 'transition-[padding-right]', note: '' },
 			{ value: 'padding-top', className: 'transition-[padding-top]', note: '' },
 			{ value: 'padding-bottom', className: 'transition-[padding-bottom]', note: '' },
-			{ value: 'opacity', className: 'transition-[opacity]', note: '' },
 			{ value: 'background-color', className: 'transition-[background-color]', note: '' },
 			{ value: 'border-color', className: 'transition-[border-color]', note: '' },
 			{ value: 'border-top-color', className: 'transition-[border-top-color]', note: '' },
@@ -1816,7 +2921,7 @@ export const cssDemos: CssDemo[] = [
 			},
 			{ value: 'border-left-color', className: 'transition-[border-left-color]', note: '' },
 			{ value: 'border-right-color', className: 'transition-[border-right-color]', note: '' },
-			{ value: 'transform', className: 'transition-[transform]', note: '' }
+			{ value: 'transform', className: '[transition-property:transform]', note: '' }
 		]
 	},
 	{
@@ -1827,6 +2932,7 @@ export const cssDemos: CssDemo[] = [
 		description: '点击后观察同样时长的运动如何加速和减速。',
 		support: 'Web / Android / iOS / HarmonyOS',
 		cases: [
+			{ value: 'var(--demo-ease)', className: 'ease-(--demo-ease)', note: '速度曲线变量' },
 			{ value: 'ease', className: 'ease-[ease]', note: '' },
 			{ value: 'linear', className: 'ease-linear', note: '' },
 			{ value: 'ease-in', className: 'ease-in', note: '' },
@@ -1848,6 +2954,11 @@ export const cssDemos: CssDemo[] = [
 			'点击开始或暂停，观察旋转、扩散、脉冲、跳动与水平移动。App 需要 Vapor 5.31+，不设置 flatten。',
 		support: 'Web / App Vapor 5.31+',
 		cases: [
+			{
+				value: 'var(--demo-animation)',
+				className: 'animate-(--demo-animation)',
+				note: '动画简写变量，引用页面内的 demo-travel 关键帧'
+			},
 			{ value: 'spin 1s linear infinite', className: 'animate-spin', note: '' },
 			{
 				value: 'ping 1s cubic-bezier(0,0,0.2,1) infinite',

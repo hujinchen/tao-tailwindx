@@ -2,8 +2,14 @@
 
 ## 未发布
 
+### 修复
+
+- 修复 Web 样式隔离 v2 下 App 的主题根被附加组件作用域，导致 CSS 变量与默认颜色失效的问题。
+
 ### 调整
 
+- 扩充 CSS 示例中的 Tailwind 写法，以少量代表值演示命名颜色、容器尺寸和字号，补充透明度、阴影与圆角等级、尺寸和间距组合、字号与行高及变量简写；增加工具类搜索和分批预览，统一操作按钮文字居中，标明 App 与 HarmonyOS 的适用边界。
+- 补充 npm 包的 GitHub 仓库信息，发布新版本后包页面可显示 Repository 链接。
 - 生成示例工程的目录名与 `package.json` 包名统一为 `tailwind-uniappx-demo`，默认输出路径为 `demo-output/tailwind-uniappx-demo/`。
 - CSS 示例的官方说明入口改为各端统一通过独立 `web-view` 页面打开；小程序加载仍受平台域名与调试设置限制。
 

@@ -8,6 +8,27 @@
 	--demo-line: #dce3ed;
 	--demo-size: 112px;
 	--demo-space: 16px;
+	--demo-border: 4px;
+	--demo-radius: 16px;
+	--demo-font-size: 24px;
+	--demo-font: serif;
+	--demo-leading: 32px;
+	--demo-weight: 650;
+	--demo-tracking: 2px;
+	--demo-flex: 2 1 80px;
+	--demo-grow: 2;
+	--demo-shrink: 2;
+	--demo-opacity: 0.65;
+	--demo-blur: 8px;
+	--demo-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+	--demo-text-shadow: 0 2px 6px rgba(37, 99, 235, 0.5);
+	--demo-gradient: linear-gradient(to right, #2563eb, #14b8a6);
+	--demo-duration: 900ms;
+	--demo-delay: 300ms;
+	--demo-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--demo-animation: demo-travel 2s ease-in-out infinite alternate;
+	--demo-transform: translateX(16px) rotate(20deg);
+	--demo-layer: 30;
 	height: 100%;
 }
 

@@ -20,6 +20,47 @@ const hostFile = (file) => fileURLToPath(new URL(`./demo-template/${file}`, impo
 const temporaryParent = tmpdir()
 const require = createRequire(import.meta.url)
 
+test('Web App 样式隔离下主题根保持全局，普通工具类继续由 Vue 隔离', async (t) => {
+	const entry = await defaultThemeEntry(t)
+	await writeFile(
+		entry,
+		`@import ${JSON.stringify(require.resolve('tailwindcss/index.css'))} source(none);
+@source inline("text-red-500");
+:root { --demo-ink: #172033; }
+@media (prefers-color-scheme: dark) { :root { --demo-ink: #edf2fa; } }`
+	)
+	const previousPlatform = process.env.UNI_PLATFORM
+	t.after(() => {
+		if (previousPlatform == null) delete process.env.UNI_PLATFORM
+		else process.env.UNI_PLATFORM = previousPlatform
+	})
+	for (const platform of ['web', 'app-android']) {
+		process.env.UNI_PLATFORM = platform
+		const app = uniAppXTailwind({ entry }).find(
+			(plugin) => plugin.name === 'uniappx-tailwind-app-style'
+		)
+		for (const scoped of ['', '&scoped=abc123']) {
+			const id =
+				entry.replace('tailwind.css', 'App.uvue') +
+				'?vue&type=style&index=0' +
+				scoped +
+				'&lang.css'
+			const output = await app.transform("@import './tailwind.css';", id)
+			const root = postcss.parse(output.code)
+			const rootSelector =
+				platform === 'web' ? (scoped.length > 0 ? ':global(:root)' : ':root') : 'page'
+			const variables = []
+			root.walkRules(rootSelector, (rule) => {
+				rule.walkDecls('--demo-ink', (decl) => variables.push(decl.value))
+			})
+			assert.deepEqual(variables, ['#172033', '#edf2fa'])
+			assert.ok(root.nodes.some((rule) => rule.selector === '.text-red-500'))
+			if (platform !== 'web' || scoped.length === 0)
+				assert.doesNotMatch(output.code, /:global/)
+		}
+	}
+})
+
 /** 默认主题回归使用独立入口，避免示例自定义间距改变被验证的前提。 */
 async function defaultThemeEntry(t) {
 	const directory = await mkdtemp(join(temporaryParent, 'tailwind-default-theme-'))

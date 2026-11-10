@@ -24,11 +24,11 @@
 				</view>
 			</view>
 			<view class="search-card">
-				<text class="text-(--accent) font-bold">查找一个 CSS 属性</text>
+				<text class="text-(--accent) font-bold">查找 CSS 属性或 Tailwind 写法</text>
 				<input
 					v-model="query"
 					class="search-input"
-					placeholder="例如 align-content、圆角、动画"
+					placeholder="例如 text-red-500、shadow-lg、圆角"
 				/>
 				<text class="text-sm text-muted">
 					每项包含写法、效果与使用条件。端差异请看属性页说明。
@@ -90,7 +90,12 @@ const groups = computed(() => {
 			items: cssDemos.filter(
 				(demo) =>
 					demo.category === title &&
-					(demo.property + demo.title + demo.category).toLowerCase().includes(keyword)
+					((demo.property + demo.title + demo.category).toLowerCase().includes(keyword) ||
+						demo.cases.some((sample) =>
+							(sample.className + ' ' + sample.value + ' ' + sample.note)
+								.toLowerCase()
+								.includes(keyword)
+						))
 			)
 		}))
 		.filter((group) => group.items.length > 0)

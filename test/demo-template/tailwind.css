@@ -4,12 +4,29 @@
 
 @theme inline {
 	--spacing: 1px;
+	/* App 不支持 rem，命名尺寸按 Web 默认 1rem = 16px 显式定义为 px。 */
 	--text-sm: 14px;
 	--text-sm--line-height: 22px;
 	--text-base: 16px;
 	--text-base--line-height: 26px;
 	--text-lg: 18px;
 	--text-lg--line-height: 28px;
+	--radius-xs: 2px;
+	--radius-sm: 4px;
+	--radius-md: 6px;
+	--radius-lg: 8px;
+	--radius-xl: 12px;
+	--radius-2xl: 16px;
+	--radius-3xl: 24px;
+	--radius-4xl: 32px;
+	/* 命名容器尺寸选用手机预览的代表值，业务项目可按需设置。 */
+	--container-3xs: 160px;
+	--container-2xs: 200px;
+	/* 使用 uni-app x 的通用字体族，避免默认多字体回退列表的端差异。 */
+	--font-sans: sans-serif;
+	--font-serif: serif;
+	--font-mono: monospace;
+	--font-icon: uni-icon;
 	--color-brand: var(--brand);
 	--color-canvas: var(--demo-canvas);
 	--color-surface: var(--demo-surface);

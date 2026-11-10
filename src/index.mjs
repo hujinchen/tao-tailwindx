@@ -355,6 +355,12 @@ export function uniAppXTailwind(options = {}) {
 				output.walkAtRules('import', (node) => {
 					if (isEntryImport(node)) node.replaceWith(postcss.parse(compiled.css).nodes)
 				})
+				// Web 样式隔离 v2 会给 App 加 scoped，主题根必须避开组件作用域。
+				if (isWebPlatform && new URLSearchParams(id.split('?')[1]).has('scoped')) {
+					output.walkRules(':root', (rule) => {
+						rule.selector = ':global(:root)'
+					})
+				}
 				const result = {
 					code: output.toString(),
 					map: null
