@@ -1,6 +1,6 @@
 {
 	"name": "tao-tailwindx",
-	"version": "0.4.0",
+	"version": "0.5.0",
 	"author": "hujinchen",
 	"repository": {
 		"type": "git",
@@ -40,6 +40,7 @@
 		"uni-app-x",
 		"vapor",
 		"vite",
+		"postcss",
 		"样式构建"
 	],
 	"license": "MIT",

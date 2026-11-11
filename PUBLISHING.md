@@ -54,8 +54,6 @@ pnpm run test:package
 
 ## 发布到 npm
 
-npm 包页面右侧的 Repository 链接来自 `package.json` 的 `repository` 字段。发布前核对仓库地址；字段变更随新版本发布后更新到 npm 页面。
-
 更新 `package.json` 版本与 `CHANGELOG.md`，完成检查并取得用户明确授权后发布。已发布版本不能覆盖。
 
 先确认 registry 为官方源；以下设置会保存，默认源已正确时无需重复设置：
