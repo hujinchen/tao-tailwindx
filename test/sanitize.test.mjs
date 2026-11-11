@@ -238,6 +238,27 @@ test('Web 保留变量、颜色函数、逻辑属性、媒体查询及特性查�
 	assert.equal(sanitize(css, { nativeCss: false, preserveMedia: true }).toString(), css)
 })
 
+test('App 边框宽度工具类保留 solid 默认值与其他 class 的样式覆盖', () => {
+	const css = `@property --tw-border-style { syntax: "*"; inherits: false; initial-value: solid; }
+.border-t-4 { border-top-style: var(--tw-border-style); border-top-width: 4px; }
+.border-dashed { --tw-border-style: dashed; border-style: dashed; }
+.custom { border-left-style: var(--tw-border-style, dotted); border-right-style: var(--custom-style); }`
+	const root = sanitize(css)
+	assert.equal(
+		root.nodes.some((node) => node.type === 'atrule'),
+		false
+	)
+	assert.equal(root.first.first.value, 'var(--tw-border-style, solid)')
+	assert.equal(root.first.last.value, '4px')
+	assert.equal(root.nodes[1].first.value, 'dashed')
+	assert.equal(root.nodes[1].last.value, 'dashed')
+	assert.equal(root.last.first.value, 'var(--tw-border-style, dotted)')
+	assert.equal(root.last.last.value, 'var(--custom-style)')
+	// 重复清洗不叠加默认值，Web 继续使用 Tailwind 原生的 @property 注册。
+	assert.equal(sanitize(root).toString(), root.toString())
+	assert.equal(sanitize(css, { nativeCss: false }).toString(), css)
+})
+
 test('字重变量保留根、主题和媒体作用域，不以内联常量覆盖运行时引用', () => {
 	const css = `page { --font-weight-bold: 700; }
 .light { --font-weight-bold: 500; }

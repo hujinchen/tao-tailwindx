@@ -1,3 +1,17 @@
+@theme {
+	/* App 在编译时展开静态主题动画，避免原生编译器错误拆解整个简写变量。 */
+	--animate-demo: demo-slide 2s ease-in-out infinite alternate;
+	/* 与主题一起生成全局关键帧，避免页面作用域改名后匹配不到动画名称。 */
+	@keyframes demo-slide {
+		from {
+			transform: translateX(0px);
+		}
+		to {
+			transform: translateX(120px);
+		}
+	}
+}
+
 :root {
 	--brand: #2563eb;
 	--accent: #1d4ed8;
@@ -26,7 +40,6 @@
 	--demo-duration: 900ms;
 	--demo-delay: 300ms;
 	--demo-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-	--demo-animation: demo-travel 2s ease-in-out infinite alternate;
 	--demo-transform: translateX(16px) rotate(20deg);
 	--demo-layer: 30;
 	height: 100%;

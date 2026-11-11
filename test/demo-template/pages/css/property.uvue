@@ -115,10 +115,7 @@
 							<text class="item-label">{{ n }}</text>
 						</view>
 					</view>
-					<view
-						v-else-if="['flex', 'grow', 'shrink', 'basis'].includes(demo.kind)"
-						class="flex-stage"
-					>
+					<view v-else-if="isFlexPreview" class="flex-stage">
 						<view
 							class="flex-reference"
 							:class="
@@ -287,21 +284,7 @@
 							<text class="item-label">半透明覆盖层</text>
 						</view>
 					</view>
-					<view
-						v-else-if="
-							[
-								'paint',
-								'shadow',
-								'clip',
-								'border',
-								'border-color',
-								'border-style',
-								'border-width',
-								'radius'
-							].includes(demo.kind)
-						"
-						class="paint-stage"
-					>
+					<view v-else-if="isPaintPreview" class="paint-stage">
 						<view
 							class="paint-subject"
 							:class="[
@@ -458,6 +441,25 @@ import { onLoad } from '@dcloudio/uni-app'
 import { cssDemos } from './catalog'
 
 const demo = ref(cssDemos[0])
+// TODO: 待后续官方修复该bug后再删除对应描述。
+// HX SDK 5.33、5.34 在不加载本插件时也会误判换行开头的条件；计算属性避免格式化触发该问题。
+const isFlexPreview = computed(() => {
+	const kind = demo.value.kind
+	return kind === 'flex' || kind === 'grow' || kind === 'shrink' || kind === 'basis'
+})
+const isPaintPreview = computed(() => {
+	const kind = demo.value.kind
+	return (
+		kind === 'paint' ||
+		kind === 'shadow' ||
+		kind === 'clip' ||
+		kind === 'border' ||
+		kind === 'border-color' ||
+		kind === 'border-style' ||
+		kind === 'border-width' ||
+		kind === 'radius'
+	)
+})
 const caseQuery = ref('')
 const visibleCount = ref(12)
 // 默认只创建一批预览节点，其他写法可搜索或分批展示，控制首次渲染开销。
@@ -479,21 +481,21 @@ const tapMessage = ref('点击预览区，查看事件接收位置')
 
 // 只补齐当前方向缺少的边框属性，避免公共四边框覆盖示例或干扰预览。
 const borderPreviewClasses: Record<string, string> = {
-	'border-color': 'border-4 border-solid',
+	'border-color': 'border-4',
 	'border-style': '[border-width:4px] border-[#0d9488]',
-	'border-width': 'border-solid border-[#0d9488]',
-	'border-top-color': 'border-t-4 [border-top-style:solid]',
+	'border-width': 'border-[#0d9488]',
+	'border-top-color': 'border-t-4',
 	'border-top-style': '[border-top-width:4px] border-t-[#0d9488]',
-	'border-top-width': '[border-top-style:solid] border-t-[#0d9488]',
-	'border-right-color': 'border-r-4 [border-right-style:solid]',
+	'border-top-width': 'border-t-[#0d9488]',
+	'border-right-color': 'border-r-4',
 	'border-right-style': '[border-right-width:4px] border-r-[#0d9488]',
-	'border-right-width': '[border-right-style:solid] border-r-[#0d9488]',
-	'border-bottom-color': 'border-b-4 [border-bottom-style:solid]',
+	'border-right-width': 'border-r-[#0d9488]',
+	'border-bottom-color': 'border-b-4',
 	'border-bottom-style': '[border-bottom-width:4px] border-b-[#0d9488]',
-	'border-bottom-width': '[border-bottom-style:solid] border-b-[#0d9488]',
-	'border-left-color': 'border-l-4 [border-left-style:solid]',
+	'border-bottom-width': 'border-b-[#0d9488]',
+	'border-left-color': 'border-l-4',
 	'border-left-style': '[border-left-width:4px] border-l-[#0d9488]',
-	'border-left-width': '[border-left-style:solid] border-l-[#0d9488]'
+	'border-left-width': 'border-l-[#0d9488]'
 }
 
 onLoad((options) => {

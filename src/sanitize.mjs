@@ -293,6 +293,12 @@ function sanitizeDeclaration(declaration, config, preserveValues = false) {
 	}
 	// Web 支持浏览器原生属性与变量，不应用 App 兼容改写。
 	if (!config.nativeCss) return
+	// App 移除 @property 后仍需保留 Tailwind 的默认实线，同时允许其他 class 改写样式变量。
+	if (
+		/^border(?:-(?:top|right|bottom|left))?-style$/.test(declaration.prop) &&
+		/^var\(\s*--tw-border-style\s*\)$/.test(declaration.value)
+	)
+		declaration.value = 'var(--tw-border-style, solid)'
 	if (declaration.prop === '-webkit-backdrop-filter') {
 		declaration.remove()
 		return

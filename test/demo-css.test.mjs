@@ -123,6 +123,68 @@ test('命名颜色、容器尺寸与字号使用两个代表值，常用语法�
 	}
 })
 
+test('动画变量示例在 App 展开静态主题，其他端保留引用，并使用全局关键帧', async (t) => {
+	const previous = process.env.UNI_PLATFORM
+	t.after(() => {
+		if (previous == null) delete process.env.UNI_PLATFORM
+		else process.env.UNI_PLATFORM = previous
+	})
+	for (const platform of [
+		'web',
+		'app-android',
+		'app-ios',
+		'app-harmony',
+		'mp-weixin',
+		'mp-alipay'
+	]) {
+		const animation = (await readCatalog(platform)).find(
+			(demo) => demo.property === 'animation'
+		)
+		const sample = animation.cases.find((sample) => sample.className.startsWith('animate-('))
+		assert.ok(sample, platform)
+		process.env.UNI_PLATFORM = platform
+		const plugins = uniAppXTailwind({ entry: fixture + 'tailwind.css', utsRenameRetry: false })
+		const app = plugins.find((plugin) => plugin.name === 'uniappx-tailwind-app-style')
+		const classes = plugins.find((plugin) => plugin.name === 'uniappx-tailwind-important-class')
+		const compiled = await app.transform(
+			"@import './tailwind.css';",
+			fixture + 'App.uvue?vue&type=style&index=0&lang.css'
+		)
+		const root = postcss.parse(compiled.code)
+		let animationValue
+		root.walkDecls(sample.value.slice(4, -1), (decl) => {
+			animationValue = decl.value
+		})
+		assert.equal(animationValue, 'demo-slide 2s ease-in-out infinite alternate')
+		const globalFrames = new Map()
+		root.walkAtRules('keyframes', (frame) => globalFrames.set(frame.params, frame))
+		const frames = globalFrames.get('demo-slide')
+		assert.ok(frames, '变量中的自定义动画名必须有对应的全局关键帧')
+		assert.deepEqual(
+			frames.nodes.map((frame) => [frame.selector, frame.first.prop, frame.first.value]),
+			[
+				['from', 'transform', 'translateX(0px)'],
+				['to', 'transform', 'translateX(120px)']
+			]
+		)
+		const file = fixture + 'pages/css/property.uvue'
+		const source = await readFile(file, 'utf8')
+		// 页面关键帧会被 Vue 改名，变量不能依赖这些局部定义。
+		postcss
+			.parse(source.match(/<style[^>]*>([\s\S]*?)<\/style>/)[1])
+			.walkAtRules('keyframes', (frame) => {
+				assert.notEqual(frame.params, 'demo-slide')
+			})
+		const local = await classes.transform(source, file)
+		let value
+		for (const style of local.code.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g))
+			postcss.parse(style[1]).walkRules('.' + toSafeClassName(sample.className), (rule) => {
+				value = rule.nodes.find((node) => node.prop === 'animation')?.value
+			})
+		assert.equal(value, platform.startsWith('app-') ? animationValue : sample.value, platform)
+	}
+})
+
 test('示例可按工具类搜索，搜索后重置展示数量并能找到后面的写法', async () => {
 	const demos = await readCatalog('web')
 	const watches = new Map()
@@ -308,12 +370,13 @@ test('官方 CSS 目录中的 110 项属性均可导航，示例 class 在六端
 					})
 				}
 				const prefix = demo.property.replace(/-(color|style|width)$/, '')
-				const expected =
-					demo.kind === 'border'
-						? []
-						: ['width', 'style', 'color']
-								.filter((suffix) => demo.property !== `${prefix}-${suffix}`)
-								.map((suffix) => `${prefix}-${suffix}`)
+				// 宽度工具类自带样式声明，基础类只补颜色，不能重复覆盖工具类的默认样式。
+				const expected = {
+					'border': [],
+					'border-width': ['color'],
+					'border-color': ['width', 'style'],
+					'border-style': ['width', 'color']
+				}[demo.kind].map((suffix) => `${prefix}-${suffix}`)
 				assert.deepEqual(
 					[...baseProperties].sort(),
 					expected.sort(),
@@ -328,6 +391,17 @@ test('官方 CSS 目录中的 110 项属性均可导航，示例 class 在六端
 					const rule = rules.get(selector)
 					assert.ok(rule, `${platform}: ${demo.property} 的 ${name} 没有生成 CSS`)
 					rule.walkDecls((decl) => declarations.push(decl))
+				}
+				// 任意属性语法只输出指定属性；普通、变量及任意长度工具类应保留默认样式。
+				if (demo.kind === 'border-width' && !sample.className.startsWith('[')) {
+					const styleProperty = demo.property.replace(/-width$/, '-style')
+					assert.equal(
+						declarations.find((decl) => decl.prop === styleProperty)?.value,
+						platform === 'web'
+							? 'var(--tw-border-style)'
+							: 'var(--tw-border-style, solid)',
+						`${platform}: ${sample.className} 的 ${styleProperty} 默认样式不正确`
+					)
 				}
 				const expected = sample.css
 					? postcss.parse(sample.css).nodes.map((decl) => decl.prop)
@@ -348,6 +422,97 @@ test('官方 CSS 目录中的 110 项属性均可导航，示例 class 在六端
 			}
 		}
 	}
+})
+
+test('插件完整转换保留条件指令原文，包括开头换行和表达式内部换行', async (t) => {
+	const previous = process.env.UNI_PLATFORM
+	t.after(() => {
+		if (previous == null) delete process.env.UNI_PLATFORM
+		else process.env.UNI_PLATFORM = previous
+	})
+	process.env.UNI_PLATFORM = 'app-android'
+	const plugins = uniAppXTailwind({ entry: fixture + 'tailwind.css', utsRenameRetry: false })
+	const classes = plugins.find((plugin) => plugin.name === 'uniappx-tailwind-important-class')
+	for (const newline of ['\n', '\r\n']) {
+		for (const expression of [
+			"['paint', 'border'].includes(demo.kind)",
+			`${newline} ['paint', 'border'].includes(demo.kind)${newline}`,
+			`demo.kind ===${newline} 'paint'`,
+			`${newline} true${newline}`
+		]) {
+			const first = `v-if="${expression}"`
+			const second = `v-else-if="${expression}"`
+			const source = `<template><view ${first} class="w-[13px]" /><view ${second} class="w-[13px]" /></template>`
+			const result = await classes.transform(source, fixture + 'pages/css/property.uvue')
+			assert.ok(result.code.includes(first), first)
+			assert.ok(result.code.includes(second), second)
+			// 确认经过了真实类名转换，避免未命中插件时的原文检查假通过。
+			assert.match(result.code, /class="w-13px"/)
+		}
+	}
+})
+
+test('App 预览条件由配套 SDK 保留为响应式分支，不会编译为恒假', async (t) => {
+	const compilerPath = process.env.UNIAPPX_TEST_VAPOR_COMPILER
+	if (!compilerPath) {
+		t.skip('设置 UNIAPPX_TEST_VAPOR_COMPILER 和 NODE_PATH 为 HV 或 HX 对应的配套 SDK 路径')
+		return
+	}
+	const previous = new Map(
+		['UNI_PLATFORM', 'UNI_APP_X', 'UNI_APP_X_DOM2'].map((name) => [name, process.env[name]])
+	)
+	t.after(() => {
+		for (const [name, value] of previous) {
+			if (value == null) delete process.env[name]
+			else process.env[name] = value
+		}
+	})
+	Object.assign(process.env, {
+		UNI_PLATFORM: 'app-android',
+		UNI_APP_X: 'true',
+		UNI_APP_X_DOM2: 'true'
+	})
+	const sdkRequire = createRequire(compilerPath)
+	// 与 SDK CLI 一样初始化别名和原生标签规则，避免把 button 等框架组件误作原生节点。
+	sdkRequire('@dcloudio/uni-cli-shared/dist/alias')
+	const compiler = sdkRequire(compilerPath)
+	const { isDom2AppNativeTag } = sdkRequire('@dcloudio/uni-shared')
+	const file = fixture + 'pages/css/property.uvue'
+	const plugins = uniAppXTailwind({ entry: fixture + 'tailwind.css', utsRenameRetry: false })
+	const classes = plugins.find((plugin) => plugin.name === 'uniappx-tailwind-important-class')
+	const transformed = await classes.transform(await readFile(file, 'utf8'), file)
+	const template = filterConditions(
+		transformed.code.match(/<template>([\s\S]*?)<\/template>/)[1],
+		createConditionContext('app-android'),
+		file
+	)
+	const warnings = []
+	const result = compiler.compile(template, {
+		platform: 'app-android',
+		componentType: 'page',
+		filename: file,
+		relativeFilename: 'pages/css/property.uvue',
+		className: 'PreviewRegression',
+		prefixIdentifiers: true,
+		inline: true,
+		bindingMetadata: {
+			demo: 'setup-ref',
+			isFlexPreview: 'setup-ref',
+			isPaintPreview: 'setup-ref'
+		},
+		r: (helper) => helper,
+		isNativeTag: isDom2AppNativeTag,
+		isUserComponent: (node) => !isDom2AppNativeTag(node.tag),
+		emitSharedData() {},
+		onError(error) {
+			throw error
+		},
+		onWarn: (warning) => warnings.push(warning.message)
+	})
+	assert.deepEqual(warnings, [])
+	assert.match(result.code, /toSharedDataBoolean\(isFlexPreview\.value\)/)
+	assert.match(result.code, /toSharedDataBoolean\(isPaintPreview\.value\)/)
+	assert.doesNotMatch(result.code, /createSharedDataIf\(\(\) => false/)
 })
 
 test('演示页面的 App CSS 可由 HV 或 HX 配套 SDK 编译', async (t) => {
@@ -377,7 +542,8 @@ test('演示页面的 App CSS 可由 HV 或 HX 配套 SDK 编译', async (t) => 
 				)
 				const parsed = await compiler.parseCss(applied?.code ?? style[1], {
 					platform,
-					output: 'bin'
+					output: 'bin',
+					emitDebugJson: true
 				})
 				assert.deepEqual(
 					parsed.messages.map((message) => message.text),
@@ -385,7 +551,28 @@ test('演示页面的 App CSS 可由 HV 或 HX 配套 SDK 编译', async (t) => 
 					`${platform}: ${page}`
 				)
 				if (page !== 'pages/css/property.uvue') continue
-				// 编译成功之外，核对新增主题类的实际长度与保留的原生属性，避免 rem 藏在变量中。
+				// 变量简写即使编译无报错也可能无法播放，必须核对原生长属性的具体值。
+				const animation = parsed.decoded.sections
+					.flatMap((section) => section.rules)
+					.find(
+						(rule) =>
+							rule.kindName === 'StyleRule' &&
+							rule.name === toSafeClassName('animate-(--animate-demo)')
+					)
+				assert.ok(animation, platform)
+				const animationValues = Object.fromEntries(
+					animation.declarations.map((node) => [node.propertyName, node.value])
+				)
+				for (const [name, value] of Object.entries({
+					'animation-name': 'demo-slide',
+					'animation-duration': '2s',
+					'animation-timing-function': 'ease-in-out',
+					'animation-direction': 'alternate',
+					'animation-iteration-count': 'infinite',
+					'animation-play-state': 'running'
+				}))
+					assert.equal(animationValues[name], value, `${platform}: ${name}`)
+				// 编译成功之外，核对长度、边框默认样式和颜色的原生声明，避免变量或静默丢弃掩盖问题。
 				const root = postcss.parse(applied?.code ?? style[1])
 				for (const [name, property, value, nativeId] of [
 					['text-sm', 'font-size', '14px', 'FontSize'],
@@ -394,10 +581,47 @@ test('演示页面的 App CSS 可由 HV 或 HX 配套 SDK 编译', async (t) => 
 					['w-3xs', 'width', '160px', 'Width'],
 					['w-2xs', 'width', '200px', 'Width'],
 					['font-sans', 'font-family', 'sans-serif', 'FontFamily'],
-					['shadow-2xs', 'box-shadow', '0 1px rgba(0,0,0,0.05)', 'BoxShadow']
+					['shadow-2xs', 'box-shadow', '0 1px rgba(0,0,0,0.05)', 'BoxShadow'],
+					...[
+						['t', 'top', 'Top'],
+						['r', 'right', 'Right'],
+						['b', 'bottom', 'Bottom'],
+						['l', 'left', 'Left']
+					].flatMap(([prefix, side, nativeSide]) => [
+						[
+							`border-${prefix}-4`,
+							`border-${side}-width`,
+							'4px',
+							`Border${nativeSide}Width`
+						],
+						[
+							`border-${prefix}-4`,
+							`border-${side}-style`,
+							'var(--tw-border-style, solid)',
+							`Border${nativeSide}Style`
+						],
+						[
+							`[border-${side}-style:solid]`,
+							`border-${side}-style`,
+							'solid',
+							`Border${nativeSide}Style`
+						],
+						[
+							`border-${prefix}-red-500`,
+							`border-${side}-color`,
+							'var(--color-red-500)',
+							`Border${nativeSide}Color`
+						],
+						[
+							`border-${prefix}-blue-500/50`,
+							`border-${side}-color`,
+							'rgba(43,127,255,0.5)',
+							`Border${nativeSide}Color`
+						]
+					])
 				]) {
 					let rule
-					root.walkRules('.' + name, (node) => {
+					root.walkRules('.' + toSafeClassName(name), (node) => {
 						rule = node
 					})
 					assert.ok(rule, `${platform}: ${name}`)

@@ -2955,9 +2955,9 @@ export const cssDemos: CssDemo[] = [
 		support: 'Web / App Vapor 5.31+',
 		cases: [
 			{
-				value: 'var(--demo-animation)',
-				className: 'animate-(--demo-animation)',
-				note: '动画简写变量，引用页面内的 demo-travel 关键帧'
+				value: 'var(--animate-demo)',
+				className: 'animate-(--animate-demo)',
+				note: '自定义 demo-slide 关键帧：2s 内向右移动 120px，再反向返回，循环往返；App 编译为固定值。'
 			},
 			{ value: 'spin 1s linear infinite', className: 'animate-spin', note: '' },
 			{
