@@ -69,12 +69,14 @@ export default defineConfig({
 	--color-brand: var(--brand);
 }
 
-:root {
+page {
 	--brand: #2563eb;
 }
 ```
 
 这个公开 CSS 入口从插件内部加载 Tailwind，适用于 npm 和 pnpm 的依赖布局。单包接入请使用它；直接导入 `tailwindcss` 仍要求宿主单独安装 Tailwind。
+
+主题使用 uni-app x 全端支持的 `page` 选择器。插件将 Tailwind 入口及其导入样式中的 `:root` 统一为 `page`，再由框架处理平台转换与样式隔离。页面设置 `styleIsolation: 'isolated'` 时不能依赖 App 的 `page` 变量，需在页面或组件内定义所需变量，详见 [平台处理与限制](./CONFIGURATION.md#平台处理与限制)。
 
 需要扫描其他组件模块或共享脚本时，按项目实际目录增加 `@source`。例如项目将组件模块放在 `uni_modules/ui-kit`、共享 class 表放在 `utils`：
 

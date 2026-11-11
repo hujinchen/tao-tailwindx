@@ -45,7 +45,6 @@ export function uniAppXTailwind(options = {}) {
 	const platform = detectPlatform()
 	const isWebPlatform = platform === 'web' || platform === 'h5'
 	const supportsDarkVariant = isWebPlatform || platform.startsWith('mp-')
-	const rootSelector = isWebPlatform ? ':root' : 'page'
 	let resolverContext = null
 	const resolveImport = async (source, importer) => {
 		const result = await resolverContext.resolve(source, importer, { skipSelf: true })
@@ -130,7 +129,7 @@ export function uniAppXTailwind(options = {}) {
 							config.localStyles == null ||
 							config.localStylesRevision !== config.sourceRevision
 						)
-							await compileEntry(config, rootSelector)
+							await compileEntry(config)
 						const file = resolve(id.split(/[?#]/, 1)[0])
 						const key = normalizePath(file)
 						const aliases = config.localStyles?.aliasesByFile.get(key)
@@ -191,7 +190,7 @@ export function uniAppXTailwind(options = {}) {
 							config.localStyles == null ||
 							config.localStylesRevision !== config.sourceRevision
 						)
-							await compileEntry(config, rootSelector)
+							await compileEntry(config)
 						const source = transformLocalStyles(
 							code,
 							resolve(id.split(/[?#]/, 1)[0]),
@@ -233,7 +232,7 @@ export function uniAppXTailwind(options = {}) {
 				const onScanChange = async (file) => {
 					if (!invalidateForSourceChange(config, file)) return
 					const affected = collectAffectedStyleModules(config, server, file)
-					if (config.componentLocalStyles) await compileEntry(config, rootSelector)
+					if (config.componentLocalStyles) await compileEntry(config)
 					for (const module of new Set([
 						...affected,
 						...collectAffectedStyleModules(config, server, file),
@@ -285,7 +284,7 @@ export function uniAppXTailwind(options = {}) {
 					context.server.moduleGraph.invalidateModule(module)
 				}
 				// 先完成候选扫描，再让 Vite 生成页面 style 更新，避免热更新拿到上一轮候选。
-				if (config.componentLocalStyles) await compileEntry(config, rootSelector)
+				if (config.componentLocalStyles) await compileEntry(config)
 				debugLog(
 					config,
 					`HMR action: invalidated local styles=${localStyleModules.length}; App styles=${appStyleModules.length}`
@@ -332,7 +331,7 @@ export function uniAppXTailwind(options = {}) {
 				}
 
 				const checkedSources = await refreshEntryCacheIfSourcesChanged(config)
-				const compiled = await compileEntry(config, rootSelector, checkedSources)
+				const compiled = await compileEntry(config, checkedSources)
 				if (config.buildSourceRevision != null)
 					config.buildSourceRevision = config.localStylesRevision
 				config.entryKeyframes.set(styleModuleKey(id), compiled.keyframes)
@@ -355,12 +354,6 @@ export function uniAppXTailwind(options = {}) {
 				output.walkAtRules('import', (node) => {
 					if (isEntryImport(node)) node.replaceWith(postcss.parse(compiled.css).nodes)
 				})
-				// Web 样式隔离 v2 会给 App 加 scoped，主题根必须避开组件作用域。
-				if (isWebPlatform && new URLSearchParams(id.split('?')[1]).has('scoped')) {
-					output.walkRules(':root', (rule) => {
-						rule.selector = ':global(:root)'
-					})
-				}
 				const result = {
 					code: output.toString(),
 					map: null
@@ -495,7 +488,6 @@ export function uniAppXTailwind(options = {}) {
 							collectArbitraryApplyDeclarations(
 								rules.get(`.__tailwind_arbitrary_${index}`),
 								config,
-								rootSelector,
 								id
 							)
 						])
@@ -513,7 +505,7 @@ export function uniAppXTailwind(options = {}) {
 						const rule = rules.get(`.__tailwind_apply_${index}`)
 						const sanitized = sanitize(
 							postcss.root({ nodes: rule ? [rule.clone()] : [] }),
-							{ ...config, rootSelector, preserveDeclarations },
+							{ ...config, preserveDeclarations },
 							id
 						)
 						declarationsByApply.set(
@@ -523,7 +515,7 @@ export function uniAppXTailwind(options = {}) {
 						)
 					}
 					for (const rule of rules.values()) rule.remove()
-					collectKeyframes(sanitize(result.root, { ...config, rootSelector }, id))
+					collectKeyframes(sanitize(result.root, config, id))
 				}
 				let output = css
 				for (const node of applies.reverse()) {
@@ -606,9 +598,9 @@ export function uniAppXTailwind(options = {}) {
 						css,
 						{
 							...config,
-							rootSelector,
 							scopeId,
-							preserveVueScope: isWebPlatform && scopeId != null,
+							preserveVueScope: isWebPlatform,
+							preserveRootSelectors: isWebPlatform,
 							tailwindKeyframes,
 							removeKeyframes: false,
 							removeAnimations: false
@@ -627,9 +619,9 @@ export function uniAppXTailwind(options = {}) {
 					code,
 					{
 						...config,
-						rootSelector,
 						scopeId,
-						preserveVueScope: isWebPlatform && scopeId != null,
+						preserveVueScope: isWebPlatform,
+						preserveRootSelectors: isWebPlatform,
 						tailwindKeyframes
 					},
 					id
@@ -646,11 +638,11 @@ export function uniAppXTailwind(options = {}) {
 }
 
 /** 提取同批任意值探针的声明，不与其他表达式共享可消费的计数。 */
-function collectArbitraryApplyDeclarations(rule, config, rootSelector, id) {
+function collectArbitraryApplyDeclarations(rule, config, id) {
 	const declarations = new Map()
 	const root = sanitize(
 		tailwindCalculations(postcss.root({ nodes: rule ? [rule.clone()] : [] }), config),
-		{ ...config, rootSelector, preserveAllValues: true },
+		{ ...config, preserveAllValues: true },
 		id
 	)
 	for (const node of root.nodes ?? []) {
@@ -1052,9 +1044,9 @@ function warnIfNativeDarkVariantRemoved(css, config, id) {
 	)
 }
 
-async function compileEntry(config, rootSelector, checkedSources = null) {
+async function compileEntry(config, checkedSources = null) {
 	if (config.compiledEntryPromise != null) return config.compiledEntryPromise
-	const promise = compileEntryFresh(config, rootSelector, checkedSources).catch((error) => {
+	const promise = compileEntryFresh(config, checkedSources).catch((error) => {
 		// 只清除本次失败，旧请求不能撤销已经开始的新编译。
 		if (config.compiledEntryPromise === promise) config.compiledEntryPromise = null
 		throw error
@@ -1092,11 +1084,11 @@ function walkTailwindUtilityRules(root, visit) {
 	})
 }
 
-async function compileEntryFresh(config, rootSelector, checkedSources) {
+async function compileEntryFresh(config, checkedSources) {
 	const startedAt = Date.now()
 	const revision = config.sourceRevision
 	const refreshed = await prepareSourceRefresh(config, revision, checkedSources)
-	if (config.sourceRevision !== revision) return compileEntry(config, rootSelector)
+	if (config.sourceRevision !== revision) return compileEntry(config)
 	if (refreshed?.unchanged) {
 		config.sourceCache = refreshed.sourceCache
 		config.sourceSignatures = refreshed.sourceSignatures
@@ -1110,7 +1102,7 @@ async function compileEntryFresh(config, rootSelector, checkedSources) {
 	config.tailwindCompiler = null
 	config.registerClassName = createClassNameRegistry()
 	const expanded = await getExpandedEntry(config)
-	if (config.sourceRevision !== revision) return compileEntry(config, rootSelector)
+	if (config.sourceRevision !== revision) return compileEntry(config)
 	const dependencies = new Set(expanded.dependencies)
 	const source = expanded.source
 	debugLog(
@@ -1118,7 +1110,7 @@ async function compileEntryFresh(config, rootSelector, checkedSources) {
 		`Tailwind compile start: entry=${config.entry}; source=${source.toString().length}`
 	)
 	let initialResult = await compileTailwindInput(config, source)
-	if (config.sourceRevision !== revision) return compileEntry(config, rootSelector)
+	if (config.sourceRevision !== revision) return compileEntry(config)
 	const directories = new Map()
 	collectTailwindDependencies(initialResult, dependencies, directories)
 	const directoryDependencies = [...directories.values()]
@@ -1137,7 +1129,7 @@ async function compileEntryFresh(config, rootSelector, checkedSources) {
 		conditionContext: config.conditionContext,
 		customAttributes: config.customAttributes
 	})
-	if (config.sourceRevision !== revision) return compileEntry(config, rootSelector)
+	if (config.sourceRevision !== revision) return compileEntry(config)
 	const encodedCandidates = new Set(
 		[...preparedCache.records.values()].flatMap((record) => [...record.encodedCandidates])
 	)
@@ -1154,16 +1146,16 @@ async function compileEntryFresh(config, rootSelector, checkedSources) {
 		})
 	if (encodedCandidates.size > 0)
 		initialResult = await compileTailwindInput(config, source, encodedCandidates)
-	if (config.sourceRevision !== revision) return compileEntry(config, rootSelector)
+	if (config.sourceRevision !== revision) return compileEntry(config)
 	const normalizedRoot = await normalizeTailwindAnimations(initialResult.root, config)
-	if (config.sourceRevision !== revision) return compileEntry(config, rootSelector)
+	if (config.sourceRevision !== revision) return compileEntry(config)
 	const {
 		classNames: generatedClassNames,
 		originalCandidates,
 		compiledRules,
 		root: globalRoot,
 		utilityRules
-	} = collectGeneratedClassNames(normalizedRoot, config, rootSelector)
+	} = collectGeneratedClassNames(normalizedRoot, config)
 	const generatedCandidates = new Set(
 		[...generatedClassNames].map((name) => originalCandidates.get(name) ?? name)
 	)
@@ -1182,7 +1174,7 @@ async function compileEntryFresh(config, rootSelector, checkedSources) {
 			signatures: sourceSignatures
 		}
 	)
-	if (config.sourceRevision !== revision) return compileEntry(config, rootSelector)
+	if (config.sourceRevision !== revision) return compileEntry(config)
 	if (config.componentLocalStyles && styles.unownedFiles.length > 0)
 		debugLog(
 			config,
@@ -1218,7 +1210,7 @@ async function compileEntryFresh(config, rootSelector, checkedSources) {
 	warnIfNativeDarkVariantRemoved(initialResult.css, config, config.entry)
 	const css = globalRoot.toString()
 	// 旧编译只能等待最新结果，不能把旧候选标记为最新版本。
-	if (config.sourceRevision !== revision) return compileEntry(config, rootSelector)
+	if (config.sourceRevision !== revision) return compileEntry(config)
 	config.sourceOwners = styles.ownersByFile
 	config.localStyles = localStyles
 	config.localStylesRevision = revision
@@ -1328,13 +1320,12 @@ function collectTailwindDependencies(result, dependencies, directories) {
 	}
 }
 
-function collectGeneratedClassNames(root, config, rootSelector) {
+function collectGeneratedClassNames(root, config) {
 	const originalCandidates = new Map()
 	const sanitized = sanitize(
 		tailwindCalculations(root, config),
 		{
 			...config,
-			rootSelector,
 			// 在唯一一次清洗中登记原始类名，同时保留冲突检查与局部归属映射。
 			registerCssClassName(candidate) {
 				config.registerClassName(candidate)

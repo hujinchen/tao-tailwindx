@@ -12,7 +12,7 @@
 	}
 }
 
-:root {
+page {
 	--brand: #2563eb;
 	--accent: #1d4ed8;
 	--demo-canvas: #f5f7fb;
@@ -46,7 +46,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-	:root {
+	page {
 		--brand: #3b82f6;
 		--accent: #60a5fa;
 		--demo-canvas: #0b1220;

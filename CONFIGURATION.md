@@ -150,12 +150,16 @@ Node 构建工具也可从 `tao-tailwindx` 导入 `parseThemeValues(css)`，使�
 
 | 项目           | Web                | App / 小程序                                                                                      |
 | -------------- | ------------------ | ------------------------------------------------------------------------------------------------- |
-| 根变量选择器   | `:root`            | `page`                                                                                            |
+| 编译前根选择器 | `page`             | `page`                                                                                            |
 | 媒体查询       | 保留               | 小程序保留；App 仅保留明暗配色查询                                                                |
 | 原生声明与变量 | 保留浏览器原生形式 | 清理 `content`、`resize`、`@property` 和 `display: block/grid/table` 等输出，适配颜色与部分计算值 |
 | 动画           | 保留               | 保留关键帧与动画声明，按目标 SDK 和节点支持范围验收                                               |
 
 `@layer` 会展开，明显非法的 `#...` 占位值会删除；合法任意值继续处理。Tailwind 优化全端关闭，避免改写已适配的声明形式。
+
+Tailwind 入口及其导入样式中的 `:root` 统一为 `page`，已有 `page` 保持不变。平台映射和样式隔离交给 uni-app x；Web 后置清洗保留框架生成的 `uni-page-body`、`body` 规则和作用域，不再强制使用 `:global(:root)`。Web 最终 CSS 不一定仍包含 `page`，以目标 SDK 的编译结果为准。
+
+这会改变原先 Web `:root` 的全局作用范围。按官方隔离语义，App 中的 `page` 变量需要先作用于页面，再由子元素继承；`styleIsolation: 'isolated'` 的页面不能依赖这些变量，需在页面或组件内定义所需变量，或使用页面默认的 `app` 隔离策略。深色媒体查询中的变量同样受此限制；具体行为按目标 SDK 验收。参见 [page 选择器与 CSS 变量继承](https://doc.dcloud.net.cn/uni-app-x/css/common/style-isolation.html#page-选择器与-css-变量继承)。
 
 App 的 Tailwind 静态主题动画会内联 `--animate-*` 值，不能再通过覆盖该变量调整动画。含 `var()` / `env()` 的动态主题动画保持引用，运行支持需单独验收；手写动画不参与该内联。
 

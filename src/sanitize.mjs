@@ -86,7 +86,7 @@ export function sanitize(css, options = {}, from = undefined) {
 		allowDarkVariantSelectors: options.allowDarkVariantSelectors ?? false,
 		preserveColorSchemeMedia: options.preserveColorSchemeMedia ?? false,
 		preserveVueScope: options.preserveVueScope ?? false,
-		rootSelector: options.rootSelector ?? 'page',
+		preserveRootSelectors: options.preserveRootSelectors ?? false,
 		preserveDeclarations: options.preserveDeclarations ?? new Map(),
 		preserveAllValues: options.preserveAllValues ?? false
 	})
@@ -150,6 +150,9 @@ function sanitizeContainer(container, config) {
 			.filter(
 				({ selector, validationSelector }) =>
 					isRootSelector(validationSelector) ||
+					(config.preserveRootSelectors &&
+						(validationSelector === 'uni-page-body' ||
+							validationSelector === 'body')) ||
 					!config.strict ||
 					isVaporClassSelector(validationSelector, config.allowEscapedSelectors) ||
 					(config.allowDarkVariantSelectors && isDarkVariantSelector(validationSelector))
@@ -159,15 +162,15 @@ function sanitizeContainer(container, config) {
 			continue
 		}
 
-		const selectors = allowedSelectors.flatMap(
-			({ selector, validationSelector, preserveValues }) =>
-				(isRootSelector(validationSelector)
-					? [config.rootSelector ?? 'page']
-					: [selector]
-				).map((value) => ({
-					selector: value,
-					preserveValues
-				}))
+		const selectors = allowedSelectors.map(
+			({ selector, validationSelector, preserveValues }) => ({
+				// 仅在框架编译前统一根规则；Web 编译后的宿主和作用域保持原样。
+				selector:
+					validationSelector === ':root' && !config.preserveRootSelectors
+						? selector.replace(':root', 'page')
+						: selector,
+				preserveValues
+			})
 		)
 		const groups = new Map()
 		for (const item of selectors) {

@@ -20,13 +20,14 @@ const hostFile = (file) => fileURLToPath(new URL(`./demo-template/${file}`, impo
 const temporaryParent = tmpdir()
 const require = createRequire(import.meta.url)
 
-test('Web App 样式隔离下主题根保持全局，普通工具类继续由 Vue 隔离', async (t) => {
+test('各端 App 主题统一生成 page，作用域交给框架处理', async (t) => {
 	const entry = await defaultThemeEntry(t)
 	await writeFile(
 		entry,
 		`@import ${JSON.stringify(require.resolve('tailwindcss/index.css'))} source(none);
 @source inline("text-red-500");
 :root { --demo-ink: #172033; }
+page { --page-space: 12px; }
 @media (prefers-color-scheme: dark) { :root { --demo-ink: #edf2fa; } }`
 	)
 	const previousPlatform = process.env.UNI_PLATFORM
@@ -34,7 +35,15 @@ test('Web App 样式隔离下主题根保持全局，普通工具类继续由 Vu
 		if (previousPlatform == null) delete process.env.UNI_PLATFORM
 		else process.env.UNI_PLATFORM = previousPlatform
 	})
-	for (const platform of ['web', 'app-android']) {
+	for (const platform of [
+		'web',
+		'h5',
+		'app-android',
+		'app-ios',
+		'app-harmony',
+		'mp-weixin',
+		'mp-alipay'
+	]) {
 		process.env.UNI_PLATFORM = platform
 		const app = uniAppXTailwind({ entry }).find(
 			(plugin) => plugin.name === 'uniappx-tailwind-app-style'
@@ -47,17 +56,39 @@ test('Web App 样式隔离下主题根保持全局，普通工具类继续由 Vu
 				'&lang.css'
 			const output = await app.transform("@import './tailwind.css';", id)
 			const root = postcss.parse(output.code)
-			const rootSelector =
-				platform === 'web' ? (scoped.length > 0 ? ':global(:root)' : ':root') : 'page'
 			const variables = []
-			root.walkRules(rootSelector, (rule) => {
+			root.walkRules('page', (rule) => {
 				rule.walkDecls('--demo-ink', (decl) => variables.push(decl.value))
 			})
 			assert.deepEqual(variables, ['#172033', '#edf2fa'])
 			assert.ok(root.nodes.some((rule) => rule.selector === '.text-red-500'))
-			if (platform !== 'web' || scoped.length === 0)
-				assert.doesNotMatch(output.code, /:global/)
+			assert.match(output.code, /page\s*\{[^}]*--page-space:\s*12px/)
+			assert.match(output.code, /page\s*\{[^}]*--color-red-500:/)
+			assert.doesNotMatch(output.code, /:root|:host|:global/)
 		}
+	}
+})
+
+test('Web 后置清洗在 CSS 和 Vite 模块中保留框架的页面宿主及作用域', () => {
+	const previousPlatform = process.env.UNI_PLATFORM
+	try {
+		for (const platform of ['web', 'h5']) {
+			process.env.UNI_PLATFORM = platform
+			const compat = uniAppXTailwind().find(
+				(plugin) => plugin.name === 'uniappx-tailwind-vapor-compat'
+			)
+			const css =
+				'uni-page-body[data-v-abc123] { --brand: red; } body[data-v-abc123] { --brand: red; }'
+			for (const code of [
+				css,
+				`const __vite__css = ${JSON.stringify(css)}; export default __vite__css;`
+			])
+				for (const id of ['global.css', 'App.uvue?vue&type=style&scoped=abc123&lang.css'])
+					assert.equal(compat.transform(code, id).code, code)
+		}
+	} finally {
+		if (previousPlatform == null) delete process.env.UNI_PLATFORM
+		else process.env.UNI_PLATFORM = previousPlatform
 	}
 })
 

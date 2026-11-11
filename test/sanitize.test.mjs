@@ -305,30 +305,37 @@ test('将根变量作用域限定到 uni-app x 页面选择器', () => {
 	assert.match(output, /page\s*\{[^}]*--color-brand:\s*red/)
 })
 
-test('根变量支持标准 Web 根选择器', () => {
+test('Web 后置清洗不把已编译的标准根选择器改回 page', () => {
 	const output = sanitize(':root { --font-weight-bold: 700; }', {
-		rootSelector: ':root'
+		preserveRootSelectors: true
 	}).toString()
 
 	assert.match(output, /:root\s*\{[^}]*--font-weight-bold:\s*700/)
 })
 
-test('保留 page 根变量并映射到已配置的根选择器', () => {
-	const webOutput = sanitize('page { --app-primary: #1677ff; }', {
-		rootSelector: ':root'
-	}).toString()
-	const appOutput = sanitize('page { --app-primary: #1677ff; }').toString()
+test('各端编译前的 page 根规则保持不变', () => {
+	const css = 'page { --app-primary: #1677ff; }'
+	for (const nativeCss of [true, false])
+		assert.equal(sanitize(css, { nativeCss }).toString(), css)
+})
 
-	assert.match(webOutput, /:root\s*\{[^}]*--app-primary:\s*#1677ff/)
-	assert.match(appOutput, /page\s*\{[^}]*--app-primary:\s*#1677ff/)
+test('Web 后置清洗保留框架页面规则、变量和作用域，仍过滤其他不支持的选择器', () => {
+	const css =
+		'uni-page-body[data-v-abc123] { --brand: red; height: 100%; } body { --brand: red; }'
+	const options = { nativeCss: false, preserveRootSelectors: true, preserveVueScope: true }
+	assert.equal(sanitize(css, options).toString(), css)
+	assert.equal(sanitize(css).toString(), '')
+	assert.equal(sanitize(css, { nativeCss: false }).toString(), '')
+	for (const selector of ['view', 'body .child', 'uni-page-body:hover', 'body[data-other]'])
+		assert.equal(sanitize(`${selector} { color: red; }`, options).toString(), '', selector)
 })
 
 test('所有平台都保留明暗配色方案媒体查询', () => {
-	for (const rootSelector of [':root', 'page']) {
+	for (const nativeCss of [true, false]) {
 		const output = sanitize(
 			'@media (prefers-color-scheme: light) { page { --app-primary: #1677ff; } }' +
 				'@media (prefers-color-scheme: dark) { page { --app-primary: #3d8fff; } }',
-			{ rootSelector, preserveColorSchemeMedia: true }
+			{ nativeCss, preserveColorSchemeMedia: true }
 		).toString()
 
 		assert.match(output, /@media\s*\(prefers-color-scheme:\s*light\)/)
@@ -470,14 +477,15 @@ test('Web scoped CSS 保留 Vue 作用域属性并按基础 class 校验', () =>
 	assert.match(output, /\.mt-12\[data-v-abc123\]\s*\{/)
 })
 
-test('Web scoped 根选择器映射到平台根，同时保留其中的主题变量', () => {
-	const output = sanitize('page[data-v-abc123] { --app-primary: #1677ff; }', {
-		preserveVueScope: true,
-		rootSelector: ':root'
-	}).toString()
-
-	assert.match(output, /:root\s*\{\s*--app-primary:\s*#1677ff/)
-	assert.doesNotMatch(output, /data-v-abc123|\bpage\s*\{/)
+test('根规则统一为 page 时保留要求保留的 Vue 作用域', () => {
+	const expected = 'page[data-v-abc123] { --app-primary: #1677ff; }'
+	for (const selector of ['page', ':root'])
+		assert.equal(
+			sanitize(`${selector}[data-v-abc123] { --app-primary: #1677ff; }`, {
+				preserveVueScope: true
+			}).toString(),
+			expected
+		)
 })
 
 test('启用时保留官方 dark 变体选择器', () => {
